@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medi-Turnos | Portal del Paciente</title>
+<style>
+  :root {
+    --green: #1a7a4c;
+    --green-dark: #145c3a;
+    --green-light: #e8f5ee;
+    --green-mid: #d1e7dd;
+    --green-soft: #f0faf4;
+    --text: #1a2e22;
+    --text-soft: #5a6b60;
+    --border: #b7d4c4;
+    --white: #ffffff;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --radius: 14px;
+    --shadow: 0 4px 16px rgba(26, 122, 76, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--green-soft);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--green);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-left img {
+    height: 42px;
+    background: white;
+    border-radius: 10px;
+    padding: 4px 8px;
+  }
+  .header-left .fallback-logo {
+    height: 42px;
+    width: 42px;
+    background: white;
+    color: var(--green);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  .header-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .header-title small {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+  .patient-chip {
+    background: rgba(255,255,255,0.18);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .patient-chip span {
+    width: 28px;
+    height: 28px;
+    background: white;
+    color: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* ===== LAYOUT ===== */
+  .app {
+    display: flex;
+    min-height: calc(100vh - 66px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 230px;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar .menu-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-soft);
+    padding: 0 20px 10px;
+  }
+  .side-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .side-item:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
+  }
+  .side-item.active {
+    background: var(--green-light);
+    color: var(--green);
+    border-left-color: var(--green);
+    font-weight: 600;
+  }
+  .side-item .icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+
+  /* Cerrar sesión */
+  .logout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--danger);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .logout-item:hover {
+    background: var(--danger-bg);
+    border-left-color: var(--danger);
+  }
+  .logout-item .icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    padding: 24px 28px 40px;
+    max-width: 960px;
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+  }
+  .breadcrumb strong {
+    color: var(--green);
+  }
+
+  /* Cards de acción */
+  .action-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .action-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: inherit;
+  }
+  .action-card:hover {
+    border-color: var(--green);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26, 122, 76, 0.12);
+  }
+  .action-card .icon {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .action-card strong {
+    display: block;
+    font-size: 15px;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .action-card p {
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.4;
+  }
+
+  /* Card de turnos */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    margin-bottom: 14px;
+  }
+  .card-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-header p {
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--green);
+    margin: 14px 0 6px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+
+  .appt-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--green-mid);
+  }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-time {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 8px 11px;
+    border-radius: 10px;
+    min-width: 58px;
+    text-align: center;
+  }
+  .appt-info { flex: 1; }
+  .appt-info strong { display: block; font-size: 14px; }
+  .appt-info small { color: var(--text-soft); font-size: 12px; }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .badge.confirmed { background: #d1fae5; color: #065f46; }
+  .badge.pending { background: #fef3c7; color: #92400e; }
+  .badge.attended { background: #e0f2fe; color: #0369a1; }
+
+  /* Contactos */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .contact-card {
+    background: var(--green-light);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .contact-card .icon { font-size: 22px; margin-bottom: 4px; }
+  .contact-card strong { display: block; font-size: 13px; margin-bottom: 2px; }
+  .contact-card a {
+    color: var(--green-dark);
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .contact-card a:hover { text-decoration: underline; }
+
+  .info-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 0 10px 10px 0;
+    padding: 11px 14px;
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-top: 14px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green-dark);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .app { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      gap: 4px;
+    }
+    .sidebar .menu-label { width: 100%; padding: 4px 10px; }
+    .side-item, .logout-item {
+      border-left: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .action-cards {
+      grid-template-columns: 1fr;
+    }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER con logo -->
+<header class="header">
+  <div class="header-left">
+    <img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+    <div class="fallback-logo" style="display:none">MT</div>
+    <div class="header-title">
+      Medi-Turnos
+      <small>Portal del Paciente</small>
+    </div>
+  </div>
+  <div class="patient-chip">
+    <span>JP</span>
+    Juan Pérez
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- MENÚ LATERAL -->
+  <aside class="sidebar">
+    <div class="menu-label">Menú</div>
+    <a class="side-item active" href="#" onclick="goTo('inicio'); return false;">
+      <span class="icon">🏠</span> Inicio
+    </a>
+    <a class="side-item" href="#" onclick="goTo('turnos'); return false;">
+      <span class="icon">📅</span> Turnos
+    </a>
+    <a class="side-item" href="#" onclick="goTo('recetas'); return false;">
+      <span class="icon">💊</span> Recetas
+    </a>
+    <a class="side-item" href="#" onclick="goTo('datos'); return false;">
+      <span class="icon">👤</span> Datos personales
+    </a>
+
+    <!-- Cerrar sesión (rojo, bien visible) -->
+    <a class="logout-item" href="#" onclick="cerrarSesion(); return false;">
+      <span class="icon">↪</span> Cerrar sesión
+    </a>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="main">
+    <div class="breadcrumb">Inicio &gt; <strong>Turnos</strong></div>
+
+    <!-- Cards de acción -->
+    <div class="action-cards">
+      <a class="action-card" href="#" onclick="goTo('nuevo-turno'); return false;">
+        <div class="icon">➕</div>
+        <strong>Nuevo turno</strong>
+        <p>Reservá el turno que más te convenga.</p>
+      </a>
+      <a class="action-card" href="#" onclick="goTo('mis-turnos'); return false;">
+        <div class="icon">📋</div>
+        <strong>Mis turnos</strong>
+        <p>Visualizá los turnos que tenés reservados.</p>
+      </a>
+      <a class="action-card" href="#" onclick="goTo('confirmar'); return false;">
+        <div class="icon">✅</div>
+        <strong>Confirmar turno</strong>
+        <p>Confirmá tu asistencia al próximo turno.</p>
+      </a>
+    </div>
+
+    <!-- Turnos -->
+    <section class="card">
+      <div class="card-header">
+        <h3>Mis turnos</h3>
+        <p>Próximo turno y últimos turnos anteriores</p>
+      </div>
+
+      <div class="section-label">Próximo turno</div>
+      <div id="proximoTurno"></div>
+
+      <div class="section-label">Turnos anteriores</div>
+      <div id="turnosAnteriores"></div>
+    </section>
+
+    <!-- Contactos -->
+    <section class="card">
+      <div class="card-header">
+        <h3>Contactos del consultorio</h3>
+        <p>Canales de comunicación disponibles</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="icon">📞</div>
+          <strong>Teléfono</strong>
+          <a href="tel:+541145678900">11 4567-8900</a>
+        </div>
+        <div class="contact-card">
+          <div class="icon">💬</div>
+          <strong>WhatsApp</strong>
+          <a href="https://wa.me/5491145678900" target="_blank">Enviar mensaje</a>
+        </div>
+        <div class="contact-card">
+          <div class="icon">✉️</div>
+          <strong>Email</strong>
+          <a href="mailto:turnos@mediturnos.com">turnos@mediturnos.com</a>
+        </div>
+        <div class="contact-card">
+          <div class="icon">📍</div>
+          <strong>Dirección</strong>
+          <a href="#">Av. Santa Fe 1234, CABA</a>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Horario de atención telefónica:</strong> Lunes a viernes de 9:00 a 18:00 hs.<br>
+        Para cancelaciones o cambios, avisá con al menos 24 horas de anticipación.
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const proximo = {
+  date: '02/09/2026',
+  time: '10:00',
+  type: 'Control dermatológico',
+  status: 'Confirmado',
+  cls: 'confirmed'
+};
+
+const anteriores = [
+  { date: '20/08/2026', time: '11:00', type: 'Control dermatológico', status: 'Atendido', cls: 'attended' },
+  { date: '05/08/2026', time: '09:30', type: 'Primera consulta', status: 'Atendido', cls: 'attended' }
+];
+
+function renderProximo() {
+  const box = document.getElementById('proximoTurno');
+  if (!proximo) {
+    box.innerHTML = `<p style="color:var(--text-soft);font-size:14px;padding:8px 0">No tenés turnos próximos.</p>`;
+    return;
+  }
+  box.innerHTML = `
+    <div class="appt-item">
+      <div class="appt-time">${proximo.time}</div>
+      <div class="appt-info">
+        <strong>${proximo.date}</strong>
+        <small>${proximo.type}</small>
+      </div>
+      <span class="badge ${proximo.cls}">${proximo.status}</span>
+    </div>`;
+}
+
+function renderAnteriores() {
+  const box = document.getElementById('turnosAnteriores');
+  if (!anteriores.length) {
+    box.innerHTML = `<p style="color:var(--text-soft);font-size:14px;padding:8px 0">Sin turnos anteriores.</p>`;
+    return;
+  }
+  box.innerHTML = anteriores.slice(0, 2).map(a => `
+    <div class="appt-item">
+      <div class="appt-time">${a.time}</div>
+      <div class="appt-info">
+        <strong>${a.date}</strong>
+        <small>${a.type}</small>
+      </div>
+      <span class="badge ${a.cls}">${a.status}</span>
+    </div>
+  `).join('');
+}
+
+function goTo(page) {
+  document.querySelectorAll('.side-item').forEach(el => el.classList.remove('active'));
+  const map = { inicio: 0, turnos: 1, recetas: 2, datos: 3 };
+  if (map[page] !== undefined) {
+    document.querySelectorAll('.side-item')[map[page]].classList.add('active');
+  }
+
+  const names = {
+    'inicio': 'Inicio',
+    'turnos': 'Turnos',
+    'recetas': 'Recetas',
+    'datos': 'Datos personales',
+    'nuevo-turno': 'Nuevo turno',
+    'mis-turnos': 'Mis turnos',
+    'confirmar': 'Confirmar turno'
+  };
+  showToast('Próximamente: “' + (names[page] || page) + '”');
+}
+
+function cerrarSesion() {
+  if (confirm('¿Querés cerrar la sesión?')) {
+    showToast('Sesión cerrada');
+    // location.href = 'index.html';  // descomentar cuando exista la página de login
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+renderProximo();
+renderAnteriores();
+</script>
+</body>
+</html>
