@@ -1,3 +1,4 @@
+
 # Medi-Turnos — versión completa y funcional
 
 ## Cómo ejecutarlo
@@ -15,27 +16,3 @@ Desde `index.html` podés acceder a las tres áreas:
 
 ## Estructura
 
-```
-mediturnos/
-├── index.html                 → Landing / entrada única
-├── admin-login.html
-├── admin-dashboard.html
-├── pacientes-login.html
-├── pacientes.html
-├── turnos.html
-├── profesionales.html
-├── configuracion.html
-├── profesional-login.html
-├── profesional-dashboard.html
-├── README.md
-└── assets/
-    ├── styles.css             → Estilos compartidos (completo)
-    └── Logo-MediTurnos.png
-```
-
-## Notas
-
-- Todos los HTML comparten el mismo `assets/styles.css`.
-- Los enlaces de navegación y “Volver al inicio” funcionan correctamente.
-- El dashboard profesional tiene menú lateral + secciones internas (SPA ligera).
-- Esta versión es una maqueta estática: no tiene base de datos ni autenticación real.
