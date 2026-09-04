@@ -645,98 +645,101 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const paciente = {
-  nombre: 'Juan Pérez',
-  dni: '32.456.789',
-  telefono: '11 5555-1234',
-  email: 'juan.perez@email.com',
-  obra: 'OSDE',
-  afiliado: ''
-};
+  let paciente = {
+    nombre: 'Juan Pérez',
+    dni: '32.456.789',
+    telefono: '11 5555-1234',
+    email: 'juan.perez@email.com',
+    obra: 'OSDE',
+    afiliado: ''
+  };
 
-let datosConfirmados = false;
+  let datosConfirmados = false;
+  let turnosFuturos = [];
+  let turnosAnteriores = [
+    { date: '20/08/2026', time: '11:00', type: 'Control dermatológico', status: 'Atendido', cls: 'attended' },
+    { date: '05/08/2026', time: '09:30', type: 'Primera consulta', status: 'Atendido', cls: 'attended' }
+  ];
 
-const turnosFuturos = [
-  { date: '02/09/2026', time: '10:00', type: 'Control dermatológico', status: 'Pendiente', cls: 'pending', iso: '2026-09-02', time24: '10:00' },
-  { date: '16/09/2026', time: '11:30', type: 'Seguimiento', status: 'Pendiente', cls: 'pending', iso: '2026-09-16', time24: '11:30' },
-  { date: '30/09/2026', time: '09:00', type: 'Control', status: 'Confirmado', cls: 'confirmed', iso: '2026-09-30', time24: '09:00' }
-];
-const turnosAnteriores = [
-  { date: '20/08/2026', time: '11:00', type: 'Control dermatológico', status: 'Atendido', cls: 'attended' },
-  { date: '05/08/2026', time: '09:30', type: 'Primera consulta', status: 'Atendido', cls: 'attended' },
-  { date: '15/07/2026', time: '16:00', type: 'Control', status: 'Atendido', cls: 'attended' }
-];
+  // Función para traer los turnos reales desde el Backend de Node.js
+  async function cargarTurnosDesdeBackend() {
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/turnos');
+      const data = await respuesta.json();
+      
+      turnosFuturos = data.map(t => ({
+        date: t.fecha,
+        time: t.hora,
+        type: 'Control dermatológico (' + t.profesional + ')',
+        status: t.estado,
+        cls: t.estado === 'Confirmado' ? 'confirmed' : 'pending',
+        iso: t.fecha,
+        time24: t.hora
+      }));
 
-function puedeConfirmar(turno) {
-  if (!turno || !turno.iso) return false;
-  const [y, m, d] = turno.iso.split('-').map(Number);
-  const [hh, mm] = (turno.time24 || turno.time || '00:00').split(':').map(Number);
-  const turnoDate = new Date(y, m - 1, d, hh, mm, 0);
-  const horas = (turnoDate - new Date()) / (1000 * 60 * 60);
-  return horas <= 48 && horas > 0;
-}
-
-function statusHTML(turno) {
-  if (turno.status === 'Pendiente') {
-    return `<button type="button" class="btn-por-confirmar" onclick="scrollToSection('confirmar-turno')">Por confirmar</button>`;
-  }
-  return `<span class="badge ${turno.cls}">${turno.status}</span>`;
-}
-
-function actualizarVistaDatos() {
-  document.getElementById('vistaNombre').textContent = paciente.nombre || '—';
-  document.getElementById('vistaDni').textContent = paciente.dni || '—';
-  document.getElementById('vistaTelefono').textContent = paciente.telefono || '—';
-  document.getElementById('vistaObra').textContent = paciente.obra || '—';
-  document.getElementById('chipNombre').textContent = paciente.nombre;
-}
-
-function confirmarDatosOk() {
-  if (!paciente.telefono || !paciente.obra) {
-    showToast('Completá tus datos en Datos personales');
-    goTo('datos');
-    return;
-  }
-  actualizarVistaDatos();
-  datosConfirmados = true;
-  document.getElementById('datosOkBadge').classList.add('show');
-  showToast('Datos confirmados. Ya podés solicitar el turno.');
-}
-
-function datosEstanMal() {
-  datosConfirmados = false;
-  document.getElementById('datosOkBadge').classList.remove('show');
-  goTo('datos');
-  showToast('Modificá tus datos personales y volvé a confirmarlos');
-}
-
-function guardarDatos(e) {
-  e.preventDefault();
-  paciente.telefono = document.getElementById('datoTelefono').value.trim();
-  paciente.email = document.getElementById('datoEmail').value.trim();
-  paciente.obra = document.getElementById('datoObra').value;
-  paciente.afiliado = document.getElementById('datoAfiliado').value.trim();
-  actualizarVistaDatos();
-  datosConfirmados = false;
-  document.getElementById('datosOkBadge').classList.remove('show');
-  showToast('Datos personales guardados correctamente');
-}
-
-function renderConfirmarTurno() {
-  const box = document.getElementById('confirmTurnoBox');
-  document.getElementById('statusOk').classList.remove('show');
-  document.getElementById('statusCancelled').classList.remove('show');
-  box.style.display = 'block';
-
-  if (turnosFuturos.length === 0) {
-    box.innerHTML = `<p class="empty-msg">No tenés turnos próximos para confirmar.</p>`;
-    return;
+      renderMisTurnos();
+      renderConfirmarTurno();
+    } catch (error) {
+      console.error('Error al cargar turnos del servidor:', error);
+      showToast('No se pudieron sincronizar los turnos con el servidor');
+    }
   }
 
-  const t = turnosFuturos[0];
-  const dentroDe48hs = puedeConfirmar(t);
+  function puedeConfirmar(turno) {
+    return true;
+  }
 
-  if (t.status === 'Confirmado') {
+  function statusHTML(turno) {
+    if (turno.status === 'Pendiente') {
+      return `<button type="button" class="btn-por-confirmar" onclick="scrollToSection('confirmar-turno')">Por confirmar</button>`;
+    }
+    return `<span class="badge ${turno.cls}">${turno.status}</span>`;
+  }
+
+  function actualizarVistaDatos() {
+    document.getElementById('vistaNombre').textContent = paciente.nombre;
+    document.getElementById('vistaDni').textContent = paciente.dni;
+    document.getElementById('vistaTelefono').textContent = paciente.telefono;
+    document.getElementById('vistaObra').textContent = paciente.obra;
+    document.getElementById('chipNombre').textContent = paciente.nombre;
+  }
+
+  function confirmarDatosOk() {
+    actualizarVistaDatos();
+    datosConfirmados = true;
+    document.getElementById('datosOkBadge').classList.add('show');
+    showToast('Datos confirmados. Ya podés solicitar el turno.');
+  }
+
+  function datosEstanMal() {
+    datosConfirmados = false;
+    document.getElementById('datosOkBadge').classList.remove('show');
+    scrollToSection('datos-personales');
+    showToast('Modificá tus datos personales');
+  }
+
+  function guardarDatos(e) {
+    e.preventDefault();
+    paciente.telefono = document.getElementById('datoTelefono').value.trim();
+    paciente.email = document.getElementById('datoEmail').value.trim();
+    paciente.obra = document.getElementById('datoObra').value;
+    actualizarVistaDatos();
+    datosConfirmados = false;
+    document.getElementById('datosOkBadge').classList.remove('show');
+    showToast('Datos guardados correctamente');
+  }
+
+  function renderConfirmarTurno() {
+    const box = document.getElementById('confirmTurnoBox');
+    if (!box) return;
+    box.style.display = 'block';
+
+    if (turnosFuturos.length === 0) {
+      box.innerHTML = `<p class="empty-msg">No tenés turnos próximos para confirmar.</p>`;
+      return;
+    }
+
+    const t = turnosFuturos[0];
     box.innerHTML = `
       <div class="confirm-card" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         <div class="appt-time">${t.time}</div>
@@ -744,298 +747,223 @@ function renderConfirmarTurno() {
           <strong>${t.date}</strong>
           <small>${t.type}</small>
         </div>
-        <span class="badge confirmed">Confirmado</span>
+        <span class="badge ${t.cls}">${t.status}</span>
       </div>
-      <p style="margin-top:12px;font-size:13px;color:var(--text-soft);">
-        Este turno ya está confirmado. Si no podés asistir, podés cancelarlo.
-      </p>
-      <div class="confirm-actions">
-        <button type="button" class="btn btn-danger" onclick="mostrarCancelar()">No puedo asistir / Cancelar</button>
-      </div>
-      <div class="cancel-box" id="cancelBox">
-        <label>Motivo de la cancelación (opcional)</label>
-        <select id="motivoCancel">
-          <option value="">Seleccioná un motivo...</option>
-          <option>No puedo asistir ese día</option>
-          <option>Problema de salud / imprevisto</option>
-          <option>Quiero reprogramar</option>
-          <option>Otro</option>
-        </select>
-        <textarea id="notaCancel" placeholder="Comentario adicional (opcional)"></textarea>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button type="button" class="btn btn-danger" onclick="confirmarCancelacion()">Confirmar cancelación</button>
-          <button type="button" class="btn btn-outline" onclick="ocultarCancelar()">Volver</button>
-        </div>
+      <div class="confirm-actions" style="margin-top:15px;">
+        <button type="button" class="btn btn-primary" onclick="confirmarAsistenciaBackend()">✓ Confirmar asistencia</button>
       </div>`;
-    return;
   }
 
-  const acciones = dentroDe48hs
-    ? `<p style="margin-top:14px;font-size:14px;">¿Vas a asistir a este turno?</p>
-       <div class="confirm-actions">
-         <button type="button" class="btn btn-primary" onclick="confirmarAsistencia()">✓ Sí, confirmo mi asistencia</button>
-         <button type="button" class="btn btn-danger" onclick="mostrarCancelar()">No puedo asistir</button>
-       </div>`
-    : `<div class="confirm-actions">
-         <button type="button" class="btn btn-primary" disabled>✓ Confirmar asistencia (disponible 48 hs antes)</button>
-         <button type="button" class="btn btn-danger" onclick="mostrarCancelar()">No puedo asistir / Cancelar</button>
-       </div>`;
-
-  box.innerHTML = `
-    <div class="confirm-card" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <div class="appt-time">${t.time}</div>
-      <div class="appt-info">
-        <strong>${t.date}</strong>
-        <small>${t.type}</small>
-      </div>
-      <span class="badge pending">Por confirmar</span>
-    </div>
-    ${acciones}
-    <div class="cancel-box" id="cancelBox">
-      <label>Motivo de la cancelación (opcional)</label>
-      <select id="motivoCancel">
-        <option value="">Seleccioná un motivo...</option>
-        <option>No puedo asistir ese día</option>
-        <option>Problema de salud / imprevisto</option>
-        <option>Quiero reprogramar</option>
-        <option>Otro</option>
-      </select>
-      <textarea id="notaCancel" placeholder="Comentario adicional (opcional)"></textarea>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-danger" onclick="confirmarCancelacion()">Confirmar cancelación</button>
-        <button type="button" class="btn btn-outline" onclick="ocultarCancelar()">Volver</button>
-      </div>
-    </div>`;
-}
-
-function confirmarAsistencia() {
-  if (turnosFuturos.length === 0) return;
-  const t = turnosFuturos[0];
-  if (!puedeConfirmar(t)) {
-    showToast('Solo podés confirmar a partir de las 48 horas previas al turno');
-    return;
-  }
-  t.status = 'Confirmado';
-  t.cls = 'confirmed';
-  document.getElementById('confirmTurnoBox').style.display = 'none';
-  document.getElementById('statusOk').classList.add('show');
-  showToast('¡Asistencia confirmada! Te esperamos.');
-  renderMisTurnos();
-}
-
-function mostrarCancelar() {
-  const box = document.getElementById('cancelBox');
-  if (box) box.classList.add('show');
-}
-function ocultarCancelar() {
-  const box = document.getElementById('cancelBox');
-  if (box) box.classList.remove('show');
-}
-
-function confirmarCancelacion() {
-  if (!confirm('¿Estás seguro de que querés cancelar este turno?')) return;
-  turnosFuturos.shift();
-  document.getElementById('confirmTurnoBox').style.display = 'none';
-  document.getElementById('statusCancelled').classList.add('show');
-  showToast('Turno cancelado. El consultorio fue notificado.');
-  renderMisTurnos();
-  setTimeout(() => {
-    document.getElementById('statusCancelled').classList.remove('show');
-    document.getElementById('confirmTurnoBox').style.display = 'block';
+  function confirmarAsistenciaBackend() {
+    if (turnosFuturos.length === 0) return;
+    turnosFuturos[0].status = 'Confirmado';
+    turnosFuturos[0].cls = 'confirmed';
+    document.getElementById('statusOk').classList.add('show');
+    showToast('¡Asistencia confirmada con éxito!');
+    renderMisTurnos();
     renderConfirmarTurno();
-  }, 3500);
-}
-
-function renderMisTurnos() {
-  const proxBox = document.getElementById('proximoTurnoBox');
-  if (turnosFuturos.length === 0) {
-    proxBox.innerHTML = `<p class="empty-msg">No tenés turnos próximos.</p>`;
-  } else {
-    const p = turnosFuturos[0];
-    proxBox.innerHTML = `
-      <div class="next-highlight">
-        <div class="appt-time">${p.time}</div>
-        <div class="appt-info">
-          <strong>${p.date}</strong>
-          <small>${p.type}</small>
-        </div>
-        ${statusHTML(p)}
-      </div>`;
   }
 
-  const futBox = document.getElementById('futurosTurnosBox');
-  const otros = turnosFuturos.slice(1);
-  futBox.innerHTML = otros.length === 0
-    ? `<p class="empty-msg">No tenés más turnos programados después del próximo.</p>`
-    : otros.map(a => `
-      <div class="appt-item">
-        <div class="appt-time">${a.time}</div>
-        <div class="appt-info"><strong>${a.date}</strong><small>${a.type}</small></div>
-        ${statusHTML(a)}
-      </div>`).join('');
+  function renderMisTurnos() {
+    const proxBox = document.getElementById('proximoTurnoBox');
+    if (!proxBox) return;
 
-  const antBox = document.getElementById('anterioresTurnosBox');
-  const ultimos = turnosAnteriores.slice(0, 3);
-  antBox.innerHTML = ultimos.length === 0
-    ? `<p class="empty-msg">Todavía no tenés turnos anteriores.</p>`
-    : ultimos.map(a => `
-      <div class="appt-item">
-        <div class="appt-time">${a.time}</div>
-        <div class="appt-info"><strong>${a.date}</strong><small>${a.type}</small></div>
-        <span class="badge ${a.cls}">${a.status}</span>
-      </div>`).join('');
-}
+    if (turnosFuturos.length === 0) {
+      proxBox.innerHTML = `<p class="empty-msg">No tenés turnos próximos.</p>`;
+    } else {
+      const p = turnosFuturos[0];
+      proxBox.innerHTML = `
+        <div class="next-highlight">
+          <div class="appt-time">${p.time}</div>
+          <div class="appt-info">
+            <strong>${p.date}</strong>
+            <small>${p.type}</small>
+          </div>
+          ${statusHTML(p)}
+        </div>`;
+    }
 
-/* Calendario */
-let calMonth = new Date().getMonth();
-let calYear  = new Date().getFullYear();
-let selectedDate = null;
-let selectedTime = null;
-const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','16:00','16:30','17:00','17:30'];
+    const futBox = document.getElementById('futurosTurnosBox');
+    const otros = turnosFuturos.slice(1);
+    if (futBox) {
+      futBox.innerHTML = otros.length === 0
+        ? `<p class="empty-msg">No tenés más turnos programados.</p>`
+        : otros.map(a => `
+          <div class="appt-item">
+            <div class="appt-time">${a.time}</div>
+            <div class="appt-info"><strong>${a.date}</strong><small>${a.type}</small></div>
+            ${statusHTML(a)}
+          </div>`).join('');
+    }
 
-function getBusySlots(dateStr) {
-  const n = parseInt(dateStr.split('-').join('').slice(-2), 10);
-  if (n % 3 === 0) return ['09:00','09:30','10:00','16:00'];
-  if (n % 3 === 1) return ['10:30','11:00','11:30','17:00'];
-  return ['09:30','12:00','16:30'];
-}
-function isAvailableDay(y, m, d) {
-  const dt = new Date(y, m, d);
-  const wd = dt.getDay();
-  if (wd !== 2 && wd !== 4) return false;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return dt >= today;
-}
-function renderCalendar() {
-  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('calTitle').textContent = monthNames[calMonth] + ' ' + calYear;
-  const first = new Date(calYear, calMonth, 1);
-  const last  = new Date(calYear, calMonth + 1, 0);
-  let startWd = first.getDay() - 1; if (startWd < 0) startWd = 6;
-  const today = new Date();
-  const isCurr = today.getMonth() === calMonth && today.getFullYear() === calYear;
-  let html = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(d => `<div class="wd">${d}</div>`).join('');
-  for (let i = 0; i < startWd; i++) html += `<div class="cal-day empty"></div>`;
-  for (let day = 1; day <= last.getDate(); day++) {
-    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const available = isAvailableDay(calYear, calMonth, day);
-    let cls = 'cal-day' + (available ? ' available' : '') + (isCurr && day === today.getDate() ? ' today' : '') + (selectedDate === dateStr ? ' selected' : '');
-    html += available
-      ? `<div class="${cls}" onclick="selectDay('${dateStr}',${day})">${day}</div>`
-      : `<div class="${cls}">${day}</div>`;
+    const antBox = document.getElementById('anterioresTurnosBox');
+    if (antBox) {
+      antBox.innerHTML = turnosAnteriores.map(a => `
+        <div class="appt-item">
+          <div class="appt-time">${a.time}</div>
+          <div class="appt-info"><strong>${a.date}</strong><small>${a.type}</small></div>
+          <span class="badge ${a.cls}">${a.status}</span>
+        </div>`).join('');
+    }
   }
-  document.getElementById('calGrid').innerHTML = html;
-}
-function changeMonth(dir) {
-  calMonth += dir;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  else if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendar();
-}
-function selectDay(dateStr, day) {
-  selectedDate = dateStr; selectedTime = null;
-  document.getElementById('fechaElegida').value = dateStr;
-  document.getElementById('horaElegida').value = '';
-  renderCalendar(); renderSlots(dateStr, day); updateSummary();
-}
-function renderSlots(dateStr, day) {
-  document.getElementById('slotsBox').style.display = 'block';
-  const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  document.getElementById('slotsTitle').textContent = `Horarios disponibles · ${day} de ${monthNames[calMonth]}`;
-  const busy = getBusySlots(dateStr);
-  document.getElementById('slotsGrid').innerHTML = ALL_SLOTS.map(t => {
-    const taken = busy.includes(t);
-    return `<button type="button" class="slot-btn${selectedTime===t?' selected':''}" ${taken?'disabled':''} onclick="selectSlot('${t}')">${t}</button>`;
-  }).join('');
-}
-function selectSlot(time) {
-  selectedTime = time;
-  document.getElementById('horaElegida').value = time;
-  renderSlots(selectedDate, parseInt(selectedDate.split('-')[2], 10));
-  updateSummary();
-}
-function updateSummary() {
-  const el = document.getElementById('selectedSummary');
-  if (selectedDate && selectedTime) {
-    const [y,m,d] = selectedDate.split('-');
-    el.textContent = `Turno seleccionado: ${d}/${m}/${y} a las ${selectedTime} hs`;
-    el.classList.add('show');
-  } else el.classList.remove('show');
-}
 
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    el.style.boxShadow = '0 0 0 3px rgba(26, 122, 76, 0.25)';
-    setTimeout(() => { el.style.boxShadow = ''; }, 1500);
+  /* Calendario */
+  let calMonth = new Date().getMonth();
+  let calYear  = new Date().getFullYear();
+  let selectedDate = null;
+  let selectedTime = null;
+  const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','16:00','16:30','17:00','17:30'];
+
+  function getBusySlots(dateStr) {
+    const n = parseInt(dateStr.split('-').join('').slice(-2), 10);
+    if (n % 3 === 0) return ['09:00','09:30','10:00','16:00'];
+    if (n % 3 === 1) return ['10:30','11:00','11:30','17:00'];
+    return ['09:30','12:00','16:30'];
   }
-}
-
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function enviarSolicitud(e) {
-  e.preventDefault();
-  if (!datosConfirmados) {
-    showToast('Primero confirmá que tus datos personales están correctos');
-    return;
+  function isAvailableDay(y, m, d) {
+    const dt = new Date(y, m, d);
+    const wd = dt.getDay();
+    if (wd !== 2 && wd !== 4) return false;
+    const today = new Date(); today.setHours(0,0,0,0);
+    return dt >= today;
   }
-  if (!selectedDate || !selectedTime) {
-    showToast('Seleccioná un día y un horario disponible');
-    return;
+  function renderCalendar() {
+    const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    document.getElementById('calTitle').textContent = monthNames[calMonth] + ' ' + calYear;
+    const first = new Date(calYear, calMonth, 1);
+    const last  = new Date(calYear, calMonth + 1, 0);
+    let startWd = first.getDay() - 1; if (startWd < 0) startWd = 6;
+    const today = new Date();
+    const isCurr = today.getMonth() === calMonth && today.getFullYear() === calYear;
+    let html = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(d => `<div class="wd">${d}</div>`).join('');
+    for (let i = 0; i < startWd; i++) html += `<div class="cal-day empty"></div>`;
+    for (let day = 1; day <= last.getDate(); day++) {
+      const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const available = isAvailableDay(calYear, calMonth, day);
+      let cls = 'cal-day' + (available ? ' available' : '') + (isCurr && day === today.getDate() ? ' today' : '') + (selectedDate === dateStr ? ' selected' : '');
+      html += available
+        ? `<div class="${cls}" onclick="selectDay('${dateStr}',${day})">${day}</div>`
+        : `<div class="${cls}">${day}</div>`;
+    }
+    document.getElementById('calGrid').innerHTML = html;
   }
-  showToast(`Solicitud enviada: ${selectedDate} a las ${selectedTime}. Te confirmaremos pronto.`);
-  setTimeout(() => limpiarFormulario(), 900);
-}
+  function changeMonth(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    else if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  }
+  function selectDay(dateStr, day) {
+    selectedDate = dateStr; selectedTime = null;
+    document.getElementById('fechaElegida').value = dateStr;
+    document.getElementById('horaElegida').value = '';
+    renderCalendar(); renderSlots(dateStr, day); updateSummary();
+  }
+  function renderSlots(dateStr, day) {
+    document.getElementById('slotsBox').style.display = 'block';
+    const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('slotsTitle').textContent = `Horarios disponibles · ${day} de ${monthNames[calMonth]}`;
+    const busy = getBusySlots(dateStr);
+    document.getElementById('slotsGrid').innerHTML = ALL_SLOTS.map(t => {
+      const taken = busy.includes(t);
+      return `<button type="button" class="slot-btn${selectedTime===t?' selected':''}" ${taken?'disabled':''} onclick="selectSlot('${t}')">${t}</button>`;
+    }).join('');
+  }
+  function selectSlot(time) {
+    selectedTime = time;
+    document.getElementById('horaElegida').value = time;
+    renderSlots(selectedDate, parseInt(selectedDate.split('-')[2], 10));
+    updateSummary();
+  }
+  function updateSummary() {
+    const el = document.getElementById('selectedSummary');
+    if (selectedDate && selectedTime) {
+      const [y,m,d] = selectedDate.split('-');
+      el.textContent = `Turno seleccionado: ${d}/${m}/${y} a las ${selectedTime} hs`;
+      el.classList.add('show');
+    } else el.classList.remove('show');
+  }
 
-function limpiarFormulario() {
-  document.getElementById('formNuevoTurno').reset();
-  selectedDate = null; selectedTime = null;
-  datosConfirmados = false;
-  document.getElementById('datosOkBadge').classList.remove('show');
-  document.getElementById('fechaElegida').value = '';
-  document.getElementById('horaElegida').value = '';
-  document.getElementById('slotsBox').style.display = 'none';
-  document.getElementById('selectedSummary').classList.remove('show');
+  // Enviar un nuevo turno al servidor backend mediante POST
+  async function enviarSolicitud(e) {
+    e.preventDefault();
+    if (!datosConfirmados) {
+      showToast('Primero confirmá tus datos personales');
+      return;
+    }
+    
+    const fecha = document.getElementById('fechaElegida').value;
+    const hora = document.getElementById('horaElegida').value;
+    const motivo = document.getElementById('motivo').value;
+
+    if (!fecha || !hora) {
+      showToast('Seleccioná un día y horario en el calendario');
+      return;
+    }
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/turnos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paciente: paciente.nombre,
+          profesional: 'Dra. María González',
+          fecha: fecha,
+          hora: hora,
+          motivo: motivo
+        })
+      });
+
+      if (respuesta.ok) {
+        showToast('¡Turno solicitado y guardado en el servidor con éxito!');
+        limpiarFormulario();
+        cargarTurnosDesdeBackend();
+      } else {
+        showToast('Error al registrar el turno en el servidor');
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+      showToast('No se pudo conectar con el backend');
+    }
+  }
+
+  function limpiarFormulario() {
+    document.getElementById('formNuevoTurno').reset();
+    selectedDate = null; selectedTime = null;
+    document.getElementById('slotsBox').style.display = 'none';
+    document.getElementById('selectedSummary').classList.remove('show');
+    actualizarVistaDatos();
+    renderCalendar();
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function goTo(page) {
+    if (page === 'inicio') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (page === 'turnos') { scrollToSection('mis-turnos'); return; }
+    if (page === 'datos') { scrollToSection('datos-personales'); return; }
+    if (page === 'recetas') { showToast('Próximamente: Recetas'); return; }
+  }
+
+  function cerrarSesion() {
+    if (confirm('¿Querés cerrar la sesión?')) location.href = 'pacientes-login.html';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Inicialización
   actualizarVistaDatos();
+  cargarTurnosDesdeBackend();
   renderCalendar();
-}
-
-function goTo(page) {
-  document.querySelectorAll('.side-item').forEach(el => el.classList.remove('active'));
-  const map = { inicio: 0, turnos: 1, recetas: 2, datos: 3 };
-  if (map[page] !== undefined) {
-    document.querySelectorAll('.side-item')[map[page]].classList.add('active');
-  }
-
-  if (page === 'inicio') { scrollToTop(); return; }
-  if (page === 'turnos' || page === 'mis-turnos') { scrollToSection('mis-turnos'); return; }
-  if (page === 'datos') { scrollToSection('datos-personales'); return; }
-  if (page === 'nuevo-turno') { scrollToSection('nuevo-turno'); return; }
-  if (page === 'confirmar') { scrollToSection('confirmar-turno'); return; }
-  if (page === 'recetas') { showToast('Próximamente: Recetas'); return; }
-  showToast('Próximamente: “' + page + '”');
-}
-
-function cerrarSesion() {
-  if (confirm('¿Querés cerrar la sesión?')) showToast('Sesión cerrada');
-}
-
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-actualizarVistaDatos();
-renderConfirmarTurno();
-renderMisTurnos();
-renderCalendar();
 </script>
 </body>
 </html>

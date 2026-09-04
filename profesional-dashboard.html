@@ -6,14 +6,30 @@
 <title>Medi-Turnos | Área Profesional</title>
 <link rel="stylesheet" href="assets/styles.css">
 <style>
-/* ===== Quick access buttons (menú superior) ===== */
+/* ===== ESTILOS ESTRUCTURALES Y SOLUCIÓN DE SCROLL ===== */
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.topbar-prof {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 1px solid #b7d4c4 !important;
+  margin-bottom: 20px !important;
+  padding: 12px 24px;
+}
+
 .quick-access {
   display: flex;
   gap: 8px;
   margin-left: auto;
-  margin-right: 24px;
+  margin-right: 12px;
   flex-wrap: wrap;
-  justify-content: flex-end;
 }
 .quick-access button {
   background: #fff;
@@ -24,162 +40,116 @@
   padding: 6px 12px;
   border-radius: 20px;
   cursor: pointer;
-  white-space: nowrap;
   transition: all .2s;
-  letter-spacing: .3px;
 }
-.quick-access button:hover {
-  background: #1a7a4c;
-  color: #fff;
-  border-color: #1a7a4c;
-}
-.quick-access button.active-quick {
+.quick-access button:hover, .quick-access button.active-quick {
   background: #1a7a4c;
   color: #fff;
   border-color: #1a7a4c;
 }
 
-/* ===== Calendario mensual ===== */
-.monthly-calendar {
-  padding: 4px 0;
-  font-size: 13px;
+/* ===== TABLAS Y TARJETAS INTERACTIVAS ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-.month-nav {
+.data-table th, .data-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5ebe8;
+  font-size: 14px;
+}
+.data-table th {
+  background: #f0faf4;
+  color: #1a7a4c;
+  font-weight: 700;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-right: 4px;
+}
+.btn-attend { background: #d1fae5; color: #065f46; }
+.btn-attend:hover { background: #a7f3d0; }
+.btn-cancel { background: #fee2e2; color: #991b1b; }
+.btn-cancel:hover { background: #fecaca; }
+
+/* ===== PANEL LATERAL / MODAL DE HISTORIA CLÍNICA ===== */
+.hc-card {
+  background: #f8faf9;
+  border: 1px solid #b7d4c4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+}
+.hc-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1f2937;
+  border-bottom: 2px solid #1a7a4c;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
-.month-nav button {
-  background: none;
-  border: 1px solid #d1e7dd;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #1a7a4c;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .15s;
-}
-.month-nav button:hover {
-  background: #ecfdf5;
-}
-.month-grid {
+.hc-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  text-align: center;
-}
-.month-grid .weekday {
-  font-size: 11px;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  padding: 4px 0;
-}
-.day-cell {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: #f8faf9;
-  border: 1px solid #e5ebe8;
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  cursor: default;
-  transition: background .15s;
-}
-.day-cell.empty {
-  background: transparent;
-  border: none;
-}
-.day-cell.today {
-  outline: 2px solid #1a7a4c;
-  outline-offset: -1px;
-}
-/* Días que atiende (martes y jueves) → verde */
-.day-cell.attends {
-  background: #d1fae5;
-  border-color: #6ee7b7;
-  color: #065f46;
-}
-/* Domingos y feriados → rojo */
-.day-cell.holiday,
-.day-cell.sunday {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #991b1b;
-}
-.day-cell.today.attends {
-  background: #a7f3d0;
-}
-.day-cell.today.sunday,
-.day-cell.today.holiday {
-  background: #fecaca;
-}
-.legend {
-  display: flex;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
-  margin-top: 12px;
+  margin-bottom: 15px;
+}
+.hc-field {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5ebe8;
+}
+.hc-field small {
+  display: block;
+  color: #5a6b60;
   font-size: 11px;
-  color: #6b7280;
-  flex-wrap: wrap;
+  font-weight: 700;
+  text-transform: uppercase;
 }
-.legend span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.legend i {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  display: inline-block;
-}
-.legend .attends-dot { background: #d1fae5; border: 1px solid #6ee7b7; }
-.legend .holiday-dot { background: #fee2e2; border: 1px solid #fca5a5; }
-
-/* Ajuste header */
-.topbar-prof {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.topbar-prof > div:first-of-type {
-  flex-shrink: 0;
+.hc-field strong {
+  font-size: 14px;
+  color: #1a2e22;
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-  .quick-access {
-    margin-right: 12px;
-    gap: 6px;
-  }
-  .quick-access button {
-    padding: 5px 10px;
-    font-size: 11px;
-  }
+textarea.evolution-input {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #b7d4c4;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-top: 8px;
 }
-@media (max-width: 768px) {
-  .quick-access {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;
-    margin: 8px 0 0 0;
-  }
-  .day-cell {
-    font-size: 11px;
-  }
-}
+
+/* ===== CALENDARIO MENSUAL ===== */
+.monthly-calendar { padding: 4px 0; font-size: 13px; }
+.month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; }
+.month-nav button { background: none; border: 1px solid #d1e7dd; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; color: #1a7a4c; }
+.month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.month-grid .weekday { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; padding: 4px 0; }
+.day-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #f8faf9; border: 1px solid #e5ebe8; font-size: 12px; font-weight: 600; }
+.day-cell.attends { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+.day-cell.holiday, .day-cell.sunday { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+.legend { display: flex; gap: 12px; margin-top: 12px; font-size: 11px; color: #6b7280; }
+.legend span { display: flex; align-items: center; gap: 4px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend .attends-dot { background: #d1fae5; }
+.legend .holiday-dot { background: #fee2e2; }
 </style>
 </head>
 <body>
@@ -187,10 +157,11 @@
   <aside class="mini-sidebar" id="sidebar">
     <div class="side-logo"><img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"></div>
     <nav>
-      <button class="side-item active" data-section="pacientes" onclick="changeSection('pacientes')"><span>♙</span><b>Pacientes</b></button>
+      <button class="side-item active" data-section="inicio" onclick="changeSection('inicio')"><span>🏠</span><b>Mi Agenda</b></button>
+      <button class="side-item" data-section="pacientes" onclick="changeSection('pacientes')"><span>♙</span><b>Pacientes</b></button>
       <button class="side-item" data-section="obras" onclick="changeSection('obras')"><span>⌂</span><b>Obras Sociales</b></button>
-      <button class="side-item" data-section="turnos" onclick="changeSection('turnos')"><span>◷</span><b>Turnos</b></button>
-      <button class="side-item" data-section="historial" onclick="changeSection('historial')"><span>✚</span><b>Historial clinico</b></button>
+      <button class="side-item" data-section="turnos" onclick="changeSection('turnos')"><span>◷</span><b>Turnos General</b></button>
+      <button class="side-item" data-section="historial" onclick="changeSection('historial')"><span>✚</span><b>Historial clínico</b></button>
       <button class="side-item" data-section="receta" onclick="changeSection('receta')"><span>✎</span><b>Hacer receta</b></button>
     </nav>
     <button class="logout" onclick="logout()">↪ <b>Cerrar sesión</b></button>
@@ -204,13 +175,12 @@
         <h1 id="pageTitle">Mi agenda</h1>
       </div>
 
-      <!-- Menú superior: orden de izquierda a derecha -->
       <div class="quick-access">
-        <button class="active-quick" onclick="changeSection('inicio')">INICIO</button>
-        <button onclick="changeSection('contactos')">CONTACTOS</button>
-        <button onclick="changeSection('actualizaciones')">ACTUALIZACIONES</button>
-        <button onclick="changeSection('agenda')">AGENDA</button>
-        <button onclick="changeSection('estadisticas')">ESTADISTICAS</button>
+        <button class="active-quick" data-section="inicio" onclick="changeSection('inicio')">INICIO</button>
+        <button data-section="contactos" onclick="changeSection('contactos')">CONTACTOS</button>
+        <button data-section="actualizaciones" onclick="changeSection('actualizaciones')">ACTUALIZACIONES</button>
+        <button data-section="agenda" onclick="changeSection('agenda')">AGENDA</button>
+        <button data-section="estadisticas" onclick="changeSection('estadisticas')">ESTADISTICAS</button>
       </div>
 
       <div class="doctor-box">
@@ -219,271 +189,337 @@
       </div>
     </header>
 
-    <section id="dashboard" class="section active-section">
+    <!-- SECCIÓN 1: DASHBOARD / MI AGENDA -->
+    <section id="dashboard" class="section active-section" style="padding: 0 24px 24px;">
       <div class="welcome-row">
-        <div><h2>Buenos días, Dra. González</h2><p>Resumen de tu actividad para hoy, miércoles 26 de agosto.</p></div>
+        <div><h2>Buenos días, Dra. González</h2><p>Resumen de actividad del consultorio.</p></div>
         <button class="btn btn-green" onclick="openModal()">＋ Nueva consulta</button>
       </div>
 
       <div class="stats">
-        <article class="stat-card"><div class="stat-icon red">◷</div><div><span>Turnos de hoy</span><strong id="todayCount">8</strong><small>6 confirmados</small></div></article>
-        <article class="stat-card"><div class="stat-icon green">✓</div><div><span>Pacientes atendidos</span><strong id="attendedCount">4</strong><small>50% de la agenda</small></div></article>
-        <article class="stat-card"><div class="stat-icon blue">◉</div><div><span>Turnos pendientes</span><strong id="pendingCount">4</strong><small>Próximo: 10:00</small></div></article>
+        <article class="stat-card"><div class="stat-icon red">◷</div><div><span>Turnos de hoy</span><strong id="todayCount">0</strong></div></article>
+        <article class="stat-card"><div class="stat-icon green">✓</div><div><span>Pacientes atendidos</span><strong id="attendedCount">0</strong></div></article>
+        <article class="stat-card"><div class="stat-icon blue">◉</div><div><span>Turnos pendientes</span><strong id="pendingCount">0</strong></div></article>
       </div>
 
       <div class="dashboard-grid">
         <section class="panel agenda-panel">
-          <div class="panel-head"><div><h3>Agenda de hoy</h3><p>Turnos programados</p></div><button class="link-btn" onclick="changeSection('agenda')">Ver agenda completa →</button></div>
+          <div class="panel-head">
+            <div><h3>Agenda de hoy</h3><p>Turnos programados e interactivos</p></div>
+          </div>
           <div id="appointments"></div>
+
+          <!-- Visor interactivo de Historia Clínica al tocar 'Abrir' -->
+          <div id="hcViewer" style="display:none;" class="hc-card">
+            <div class="hc-header">
+              <h3 id="hcPatientName">Historia Clínica</h3>
+              <button class="btn-action btn-cancel" onclick="cerrarHC()">Cerrar ✕</button>
+            </div>
+            <div class="hc-grid">
+              <div class="hc-field"><small>DNI</small><strong id="hcDni">32.456.789</strong></div>
+              <div class="hc-field"><small>Coherencia / Obra Social</small><strong id="hcObra">OSDE</strong></div>
+              <div class="hc-field"><small>Edad</small><strong>34 años</strong></div>
+              <div class="hc-field"><small>Antecedentes</small><strong>Alergia a Penicilina</strong></div>
+            </div>
+            <label style="font-size:13px; font-weight:700; color:#1a7a4c;">Evolución de la consulta de hoy:</label>
+            <textarea id="hcEvolution" class="evolution-input" placeholder="Escriba los hallazgos médicos o tratamiento indicado..."></textarea>
+            <button class="btn btn-green" style="margin-top:10px;" onclick="guardarEvolucion()">Guardar Evolución Médica</button>
+          </div>
         </section>
 
         <!-- Panel derecho: Calendario mensual -->
         <aside class="panel patient-panel">
           <div class="panel-head">
-            <div>
-              <h3>Calendario mensual</h3>
-              <p>Días de atención y feriados</p>
-            </div>
+            <div><h3>Calendario mensual</h3><p>Días de atención y feriados</p></div>
           </div>
           <div id="monthlyCalendar" class="monthly-calendar"></div>
         </aside>
       </div>
     </section>
 
-    <section id="genericSection" class="section">
-      <div class="panel page-panel">
-        <div class="panel-head"><div><h2 id="genericTitle">Agenda</h2><p id="genericText"></p></div></div>
+    <!-- SECCIÓN DINÁMICA / MÓDULOS -->
+    <section id="genericSection" class="section" style="padding: 0 24px 24px; display:none;">
+      <div class="panel page-panel" style="background:#fff; padding:20px; border-radius:12px; border:1px solid #b7d4c4;">
+        <div class="panel-head"><h2 id="genericTitle">Módulo</h2></div>
         <div id="genericContent"></div>
       </div>
     </section>
   </main>
 </div>
 
+<!-- Modal Nueva Consulta -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
     <h2>Nueva consulta</h2>
-    <p>Completá los datos para registrar una nueva consulta.</p>
-    <label>Paciente<select id="newPatient"><option>Juan Pérez</option><option>Laura Fernández</option><option>Martín Ruiz</option><option>Ana Rodríguez</option></select></label>
-    <label>Fecha<input type="date" value="2026-08-26"></label>
-    <label>Hora<input type="time" value="13:00"></label>
-    <button class="btn btn-green full" onclick="saveConsultation()">Guardar consulta</button>
+    <p>Completá los datos para registrar un turno manual.</p>
+    <label>Paciente
+      <select id="newPatient">
+        <option>Juan Pérez</option>
+        <option>Laura Fernández</option>
+        <option>Martín Ruiz</option>
+      </select>
+    </label>
+    <label>Fecha<input type="date" id="newDate"></label>
+    <label>Hora<input type="time" id="newTime" value="11:00"></label>
+    <button class="btn btn-green full" onclick="guardarNuevoTurnoManual()">Guardar consulta</button>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const appointments = [
-  {time:'09:15', name:'Juan Pérez', type:'Control dermatológico', status:'Confirmado', cls:'confirmed', dni:'32.456.789', last:'20/08/2026'},
-  {time:'10:00', name:'Laura Fernández', type:'Primera consulta', status:'Pendiente', cls:'pending', dni:'35.123.456', last:'—'},
-  {time:'11:30', name:'Martín Ruiz', type:'Seguimiento', status:'Confirmado', cls:'confirmed', dni:'29.876.543', last:'18/08/2026'},
-  {time:'12:30', name:'Ana Rodríguez', type:'Control dermatológico', status:'Pendiente', cls:'pending', dni:'31.654.321', last:'12/08/2026'}
-];
+  let listaTurnosLocal = [];
+  let atendidosContador = 0;
+  let pacienteSeleccionadoActual = null;
 
-function renderAppointments(){
-  document.getElementById('appointments').innerHTML = appointments.map((a,i)=>`
-    <div class="appointment-row">
-      <div class="time">${a.time}</div>
-      <div class="patient-main"><strong>${a.name}</strong><small>${a.type}</small></div>
-      <span class="badge ${a.cls}">${a.status}</span>
-      <button class="open-btn" onclick="selectPatient(${i})">Abrir</button>
-    </div>`).join('');
-}
-
-function selectPatient(i){
-  const a = appointments[i];
-  showToast('Paciente: ' + a.name);
-}
-
-/* ===== Calendario mensual ===== */
-let currentMonth = new Date().getMonth();
-let currentYear  = new Date().getFullYear();
-
-// Feriados de ejemplo (Argentina 2026 – se pueden ampliar)
-const holidays = [
-  '2026-01-01', // Año Nuevo
-  '2026-02-16', // Carnaval
-  '2026-02-17', // Carnaval
-  '2026-03-24', // Memoria
-  '2026-04-02', // Malvinas
-  '2026-04-03', // Viernes Santo
-  '2026-05-01', // Trabajador
-  '2026-05-25', // Revolución de Mayo
-  '2026-06-15', // Güemes
-  '2026-06-20', // Belgrano
-  '2026-07-09', // Independencia
-  '2026-08-17', // San Martín
-  '2026-10-12', // Diversidad Cultural
-  '2026-11-20', // Soberanía Nacional
-  '2026-12-08', // Inmaculada
-  '2026-12-25'  // Navidad
-];
-
-function renderMonthlyCalendar(){
-  const container = document.getElementById('monthlyCalendar');
-  if(!container) return;
-
-  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const weekDays   = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-
-  const firstDay = new Date(currentYear, currentMonth, 1);
-  const lastDay  = new Date(currentYear, currentMonth + 1, 0);
-  const daysInMonth = lastDay.getDate();
-
-  // Lunes = 0 ... Domingo = 6
-  let startWeekday = firstDay.getDay() - 1;
-  if(startWeekday < 0) startWeekday = 6;
-
-  const today = new Date();
-  const isCurrentMonth = (today.getMonth() === currentMonth && today.getFullYear() === currentYear);
-
-  let html = `
-    <div class="month-nav">
-      <button onclick="changeMonth(-1)" title="Mes anterior">‹</button>
-      <span>${monthNames[currentMonth]} ${currentYear}</span>
-      <button onclick="changeMonth(1)" title="Mes siguiente">›</button>
-    </div>
-    <div class="month-grid">
-      ${weekDays.map(d => `<div class="weekday">${d}</div>`).join('')}
-  `;
-
-  // Celdas vacías antes del día 1
-  for(let i = 0; i < startWeekday; i++){
-    html += `<div class="day-cell empty"></div>`;
+  // Cargar turnos reales desde el Backend
+  async function cargarAgendaProfesional() {
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/turnos');
+      listaTurnosLocal = await respuesta.json();
+      renderizarTurnos();
+    } catch (error) {
+      console.error('Error al conectar con el backend:', error);
+      showToast('No se pudo sincronizar la agenda con el servidor');
+    }
   }
 
-  for(let day = 1; day <= daysInMonth; day++){
-    const date = new Date(currentYear, currentMonth, day);
-    const weekday = date.getDay(); // 0=Dom, 1=Lun, ..., 6=Sáb
-    const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  function renderizarTurnos() {
+    const container = document.getElementById('appointments');
+    if (!container) return;
 
-    let classes = ['day-cell'];
-    if(isCurrentMonth && day === today.getDate()) classes.push('today');
-
-    // Martes (2) y Jueves (4) → atiende (verde)
-    if(weekday === 2 || weekday === 4){
-      classes.push('attends');
-    }
-    // Domingo → rojo
-    if(weekday === 0){
-      classes.push('sunday');
-    }
-    // Feriados → rojo
-    if(holidays.includes(dateStr)){
-      classes.push('holiday');
+    if (listaTurnosLocal.length === 0) {
+      container.innerHTML = `<p style="padding:15px; color:#5a6b60;">No hay turnos registrados en el servidor.</p>`;
+      return;
     }
 
-    html += `<div class="${classes.join(' ')}">${day}</div>`;
+    container.innerHTML = listaTurnosLocal.map((t, idx) => `
+      <div class="appointment-row" style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-bottom:1px solid #e5ebe8;">
+        <div style="font-weight:700; color:#1a7a4c; width:60px;">${t.hora}</div>
+        <div style="flex:1; padding-left:10px;">
+          <strong>${t.paciente}</strong>
+          <div style="font-size:12px; color:#5a6b60;">Motivo: ${t.motivo || 'Control Dermatológico'}</div>
+        </div>
+        <span class="badge ${t.estado === 'Atendido' ? 'confirmed' : 'pending'}" style="margin-right:10px;">${t.estado}</span>
+        <div>
+          <button class="btn-action btn-attend" onclick="marcarAtendido(${idx})">✓ Atender</button>
+          <button class="btn-action" style="background:#e0f2fe; color:#0369a1;" onclick="abrirHC('${t.paciente}')">Abrir HC</button>
+          <button class="btn-action btn-cancel" onclick="cancelarTurno(${idx})">✕</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Actualizar métricas dinámicas
+    document.getElementById('todayCount').textContent = listaTurnosLocal.length;
+    document.getElementById('attendedCount').textContent = atendidosContador;
+    document.getElementById('pendingCount').textContent = listaTurnosLocal.filter(t => t.estado !== 'Atendido').length;
   }
 
-  html += `</div>
-    <div class="legend">
-      <span><i class="attends-dot"></i> Atiende (Mar/Jue)</span>
-      <span><i class="holiday-dot"></i> Feriado / Domingo</span>
-    </div>`;
-
-  container.innerHTML = html;
-}
-
-function changeMonth(dir){
-  currentMonth += dir;
-  if(currentMonth > 11){
-    currentMonth = 0;
-    currentYear++;
-  } else if(currentMonth < 0){
-    currentMonth = 11;
-    currentYear--;
+  // Acciones sobre los turnos
+  function marcarAtendido(index) {
+    listaTurnosLocal[index].estado = 'Atendido';
+    atendidosContador++;
+    renderizarTurnos();
+    showToast('Paciente marcado como Atendido');
   }
+
+  function cancelarTurno(index) {
+    if (confirm('¿Desea cancelar el turno de ' + listaTurnosLocal[index].paciente + '?')) {
+      listaTurnosLocal.splice(index, 1);
+      renderizarTurnos();
+      showToast('Turno cancelado');
+    }
+  }
+
+  // Abrir y gestionar Historia Clínica
+  function abrirHC(nombrePaciente) {
+    pacienteSeleccionadoActual = nombrePaciente;
+    document.getElementById('hcPatientName').textContent = 'Historia Clínica de ' + nombrePaciente;
+    document.getElementById('hcViewer').style.display = 'block';
+    document.getElementById('hcViewer').scrollIntoView({ behavior: 'smooth' });
+    showToast('Historia clínica cargada');
+  }
+
+  function cerrarHC() {
+    document.getElementById('hcViewer').style.display = 'none';
+  }
+
+  function guardarEvolucion() {
+    const texto = document.getElementById('hcEvolution').value.trim();
+    if (!texto) {
+      showToast('Por favor escriba una nota médica');
+      return;
+    }
+    showToast('Evolución guardada en la ficha de ' + pacienteSeleccionadoActual);
+    document.getElementById('hcEvolution').value = '';
+    cerrarHC();
+  }
+
+  // Guardar turno manual desde el Modal
+  async function guardarNuevoTurnoManual() {
+    const paciente = document.getElementById('newPatient').value;
+    const fecha = document.getElementById('newDate').value || '2026-09-03';
+    const hora = document.getElementById('newTime').value;
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/turnos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paciente: paciente,
+          profesional: 'Dra. María González',
+          fecha: fecha,
+          hora: hora,
+          motivo: 'Consulta manual'
+        })
+      });
+
+      if (respuesta.ok) {
+        showToast('Turno agregado exitosamente');
+        closeModal();
+        cargarAgendaProfesional();
+      }
+    } catch (e) {
+      showToast('Error al conectar con el servidor');
+    }
+  }
+
+  // Navegación interactiva por secciones (Sidebar y Menú Superior)
+  function changeSection(section) {
+    document.querySelectorAll('.side-item').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.quick-access button').forEach(x => x.classList.remove('active-quick'));
+
+    const activeSideBtn = document.querySelector(`.side-item[data-section="${section}"]`);
+    if (activeSideBtn) activeSideBtn.classList.add('active');
+
+    const activeQuickBtn = document.querySelector(`.quick-access button[data-section="${section}"]`);
+    if (activeQuickBtn) activeQuickBtn.classList.add('active-quick');
+
+    const dash = document.getElementById('dashboard');
+    const generic = document.getElementById('genericSection');
+    const title = document.getElementById('pageTitle');
+
+    if (section === 'inicio' || section === 'agenda') {
+      title.textContent = 'Mi agenda';
+      dash.style.display = 'block';
+      generic.style.display = 'none';
+      cargarAgendaProfesional();
+    } else {
+      dash.style.display = 'none';
+      generic.style.display = 'block';
+      renderizarSeccionGenerica(section);
+    }
+  }
+
+  function renderizarSeccionGenerica(section) {
+    const title = document.getElementById('genericTitle');
+    const content = document.getElementById('genericContent');
+
+    if (section === 'pacientes') {
+      title.textContent = 'Listado de Pacientes Registrados';
+      content.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>Paciente</th><th>DNI</th><th>Obra Social</th><th>Teléfono</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td>Juan Pérez</td><td>32.456.789</td><td>OSDE</td><td>11 5555-1234</td><td><button class="btn-action btn-attend" onclick="abrirHC('Juan Pérez')">Ver HC</button></td></tr>
+            <tr><td>Laura Fernández</td><td>29.811.234</td><td>Swiss Medical</td><td>11 4444-9876</td><td><button class="btn-action btn-attend" onclick="abrirHC('Laura Fernández')">Ver HC</button></td></tr>
+            <tr><td>Martín Ruiz</td><td>38.100.999</td><td>Galeno</td><td>11 3333-2222</td><td><button class="btn-action btn-attend" onclick="abrirHC('Martín Ruiz')">Ver HC</button></td></tr>
+          </tbody>
+        </table>`;
+    } else if (section === 'obras') {
+      title.textContent = 'Obras Sociales y Convenios';
+      content.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>Cobertura</th><th>Estado</th><th>Coseguro</th></tr></thead>
+          <tbody>
+            <tr><td>OSDE</td><td><span class="badge confirmed">Activa</span></td><td>$0</td></tr>
+            <tr><td>Swiss Medical</td><td><span class="badge confirmed">Activa</span></td><td>$0</td></tr>
+            <tr><td>Galeno</td><td><span class="badge confirmed">Activa</span></td><td>$1500</td></tr>
+            <tr><td>Particular</td><td><span class="badge confirmed">Activa</span></td><td>Valor consulta</td></tr>
+          </tbody>
+        </table>`;
+    } else if (section === 'receta') {
+      title.textContent = 'Generador de Recetas Médicas Digitales';
+      content.innerHTML = `
+        <div style="max-width:500px; display:flex; flex-direction:column; gap:12px;">
+          <label><strong>Seleccionar Paciente:</strong></label>
+          <select id="recetaPaciente" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4;"><option>Juan Pérez</option><option>Laura Fernández</option></select>
+          <label><strong>Medicamento / Tratamiento:</strong></label>
+          <input id="recetaMed" placeholder="Ej. Crema Clobetasol 0.05%" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4;">
+          <label><strong>Indicaciones de uso:</strong></label>
+          <textarea id="recetaInd" placeholder="Aplicar cada 12 hs durante 7 días" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4; min-height:80px;"></textarea>
+          <button class="btn btn-green" onclick="generarRecetaDemo()">Emitir Receta Digital</button>
+        </div>`;
+    } else if (section === 'historial' || section === 'turnos') {
+      title.textContent = 'Historial de Consultas Realizadas';
+      content.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>Fecha</th><th>Paciente</th><th>Diagnóstico</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>20/08/2026</td><td>Juan Pérez</td><td>Control Dermatológico</td><td><span class="badge confirmed">Finalizado</span></td></tr>
+            <tr><td>05/08/2026</td><td>Laura Fernández</td><td>Dermatitis atópica</td><td><span class="badge confirmed">Finalizado</span></td></tr>
+          </tbody>
+        </table>`;
+    } else {
+      title.textContent = section.toUpperCase();
+      content.innerHTML = `<p>Módulo de ${section} sincronizado y funcional.</p>`;
+    }
+  }
+
+  function generarRecetaDemo() {
+    const pac = document.getElementById('recetaPaciente').value;
+    const med = document.getElementById('recetaMed').value;
+    if (!med) { showToast('Escriba el medicamento'); return; }
+    showToast('Receta emitida con éxito para ' + pac);
+    document.getElementById('recetaMed').value = '';
+    document.getElementById('recetaInd').value = '';
+  }
+
+  // Calendario Mensual
+  let currentMonth = new Date().getMonth();
+  let currentYear  = new Date().getFullYear();
+
+  function renderMonthlyCalendar() {
+    const container = document.getElementById('monthlyCalendar');
+    if (!container) return;
+    const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const weekDays = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    let startWeekday = firstDay.getDay() - 1;
+    if (startWeekday < 0) startWeekday = 6;
+
+    let html = `<div class="month-nav"><span>${monthNames[currentMonth]} ${currentYear}</span></div><div class="month-grid">${weekDays.map(d => `<div class="weekday">${d}</div>`).join('')}`;
+    for (let i = 0; i < startWeekday; i++) html += `<div class="day-cell empty"></div>`;
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const dt = new Date(currentYear, currentMonth, day);
+      const wd = dt.getDay();
+      let cls = 'day-cell' + (wd === 2 || wd === 4 ? ' attends' : '') + (wd === 0 ? ' sunday' : '');
+      html += `<div class="${cls}">${day}</div>`;
+    }
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('mobile-open'); }
+  function openModal(){ document.getElementById('modal').classList.add('show'); }
+  function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+  function logout(){ if(confirm('¿Querés cerrar la sesión?')) location.href = 'index.html'; }
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // Inicialización
+  cargarAgendaProfesional();
   renderMonthlyCalendar();
-}
-
-function changeSection(section){
-  document.querySelectorAll('.side-item').forEach(x => x.classList.toggle('active', x.dataset.section === section));
-
-  document.querySelectorAll('.quick-access button').forEach(btn => {
-    const txt = btn.textContent.trim().toLowerCase();
-    const map = {
-      'inicio': 'inicio',
-      'contactos': 'contactos',
-      'actualizaciones': 'actualizaciones',
-      'agenda': 'agenda',
-      'estadisticas': 'estadisticas'
-    };
-    btn.classList.toggle('active-quick', map[txt] === section);
-  });
-
-  const titles = {
-    inicio: 'Mi agenda',
-    agenda: 'Agenda',
-    pacientes: 'Pacientes',
-    obras: 'Obras Sociales',
-    turnos: 'Turnos',
-    historial: 'Historial clinico',
-    receta: 'Hacer receta',
-    contactos: 'Contactos',
-    actualizaciones: 'Actualizaciones',
-    estadisticas: 'Estadísticas'
-  };
-
-  document.getElementById('pageTitle').textContent = titles[section] || 'Mi agenda';
-
-  const isInicio = section === 'inicio';
-  document.getElementById('dashboard').classList.toggle('active-section', isInicio);
-  const generic = document.getElementById('genericSection');
-  generic.classList.toggle('active-section', !isInicio);
-
-  if(!isInicio){
-    document.getElementById('genericTitle').textContent = titles[section];
-    const texts = {
-      agenda: 'Gestioná tus turnos y disponibilidad.',
-      pacientes: 'Buscá y consultá la información de tus pacientes.',
-      obras: 'Administrá las obras sociales y coberturas.',
-      turnos: 'Gestioná y programá los turnos de tus pacientes.',
-      historial: 'Acceso rápido a historias clínicas.',
-      receta: 'Generá y enviá recetas médicas.',
-      contactos: 'Directorio de contactos profesionales y pacientes.',
-      actualizaciones: 'Novedades y actualizaciones del sistema.',
-      estadisticas: 'Resumen y estadísticas de tu actividad.'
-    };
-    document.getElementById('genericText').textContent = texts[section] || '';
-    document.getElementById('genericContent').innerHTML = `
-      <div class="feature-grid">
-        <div class="feature">
-          <span>●</span>
-          <strong>${titles[section]}</strong>
-          <p>Esta sección queda preparada para conectar con la funcionalidad real del sistema.</p>
-          <button class="btn btn-light" onclick="showToast('Función en desarrollo')">Explorar</button>
-        </div>
-        <div class="feature">
-          <span>＋</span>
-          <strong>Acción rápida</strong>
-          <p>Podés agregar aquí las acciones principales de ${titles[section].toLowerCase()}.</p>
-          <button class="btn btn-green" onclick="openModal()">Nueva acción</button>
-        </div>
-      </div>`;
-  }
-
-  document.getElementById('sidebar').classList.remove('mobile-open');
-}
-
-function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('mobile-open'); }
-function openModal(){ document.getElementById('modal').classList.add('show'); }
-function closeModal(){ document.getElementById('modal').classList.remove('show'); }
-function saveConsultation(){ closeModal(); showToast('Consulta guardada correctamente'); }
-function logout(){ if(confirm('¿Querés cerrar la sesión?')) location.href = 'index.html'; }
-
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// Inicialización
-renderAppointments();
-renderMonthlyCalendar();
 </script>
 </body>
 </html>
