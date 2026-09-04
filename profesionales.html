@@ -1,13 +1,164 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Administración | Medi-Turnos</title><link rel="stylesheet" href="assets/styles.css"></head>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profesionales | Medi-Turnos</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+/* Modal y formulario de alta */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #fff; padding: 24px; border-radius: 12px;
+  width: 100%; max-width: 450px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px; background: none;
+  border: none; font-size: 20px; cursor: pointer; color: #6b7280;
+}
+.modal form label {
+  display: block; margin-top: 12px; font-weight: 600; font-size: 13px; color: #374151;
+}
+.modal form input, .modal form select {
+  width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #d1e7dd;
+  border-radius: 6px; box-sizing: border-box; font-size: 14px;
+}
+.toast {
+  position: fixed; bottom: 20px; right: 20px; background: #1a7a4c; color: #fff;
+  padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
 <body>
-<header class="topbar"><div class="brand"><img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"><span>Administración</span></div><div class="help">◯ Ayuda</div></header>
-<div class="layout"><aside class="sidebar"><div class="side-title">Menú</div><nav class="nav"><a class="" href="admin-dashboard.html"><span class="dot"></span>Dashboard</a><a class="" href="pacientes.html"><span class="dot"></span>Pacientes</a><a class="" href="turnos.html"><span class="dot"></span>Turnos</a><a class="active" href="profesionales.html"><span class="dot"></span>Profesionales</a><a class="" href="configuracion.html"><span class="dot"></span>Configuración</a><a href="index.html"><span class="dot"></span>← Volver al inicio</a></nav></aside>
-<main class="main">
-<div class="page-head"><div><h1>Profesionales</h1><p>Especialistas registrados en Medi-Turnos.</p></div><button class="btn btn-green">+ Nuevo profesional</button></div>
-<div class="card"><div class="table-wrap"><table><thead><tr><th>Profesional</th><th>Especialidad</th><th>Matrícula</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-<tr><td><b>Dra. María González</b></td><td>Dermatología</td><td>MP 12345</td><td><span class="badge green">Activo</span></td><td><button class="btn btn-light">Ver</button></td></tr>
-<tr><td><b>Dr. Carlos López</b></td><td>Dermatología</td><td>MP 18452</td><td><span class="badge green">Activo</span></td><td><button class="btn btn-light">Ver</button></td></tr>
-</tbody></table></div></div>
-</main></div></body></html>
+<header class="topbar">
+  <div class="brand"><img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"><span>Administración</span></div>
+  <div class="help">◯ Ayuda</div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-title">Menú</div>
+    <nav class="nav">
+      <a href="admin-dashboard.html"><span class="dot"></span>Dashboard</a>
+      <a href="pacientes.html"><span class="dot"></span>Pacientes</a>
+      <a href="turnos.html"><span class="dot"></span>Turnos</a>
+      <a class="active" href="profesionales.html"><span class="dot"></span>Profesionales</a>
+      <a href="configuracion.html"><span class="dot"></span>Configuración</a>
+      <a href="index.html"><span class="dot"></span>← Volver al inicio</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Profesionales</h1>
+        <p>Especialistas registrados en Medi-Turnos.</p>
+      </div>
+      <button class="btn btn-green" onclick="openModal()">+ Nuevo profesional</button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Profesional</th>
+              <th>Especialidad</th>
+              <th>Matrícula</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="profesionalesTable">
+            <tr>
+              <td><b>Dra. María González</b></td>
+              <td>Dermatología</td>
+              <td>MP 12345</td>
+              <td><span class="badge green">Activo</span></td>
+              <td><button class="btn btn-light" onclick="verProfesional('Dra. María González', 'Dermatología', 'MP 12345')">Ver</button></td>
+            </tr>
+            <tr>
+              <td><b>Dr. Carlos López</b></td>
+              <td>Dermatología</td>
+              <td>MP 18452</td>
+              <td><span class="badge green">Activo</span></td>
+              <td><button class="btn btn-light" onclick="verProfesional('Dr. Carlos López', 'Dermatología', 'MP 18452')">Ver</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal para dar de alta nuevo profesional -->
+<div class="modal-backdrop" id="modalProf">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Nuevo Profesional</h2>
+    <p>Completá los datos para registrar un médico en la plataforma.</p>
+    <form id="formNuevoProf">
+      <label>Nombre completo</label>
+      <input type="text" id="profNombre" placeholder="Ej. Dr. Roberto Gómez" required>
+      <label>Especialidad</label>
+      <input type="text" id="profEspecialidad" placeholder="Ej. Cardiología" required>
+      <label>Matrícula</label>
+      <input type="text" id="profMatricula" placeholder="Ej. MP 99887" required>
+      <button type="submit" class="btn btn-green full" style="margin-top:16px; width:100%;">Guardar profesional</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function openModal() { document.getElementById('modalProf').classList.add('show'); }
+function closeModal() { document.getElementById('modalProf').classList.remove('show'); }
+
+document.getElementById('formNuevoProf').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById('profNombre').value;
+  const especialidad = document.getElementById('profEspecialidad').value;
+  const matricula = document.getElementById('profMatricula').value;
+
+  const tbody = document.getElementById('profesionalesTable');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${nombre}</b></td>
+    <td>${especialidad}</td>
+    <td>${matricula}</td>
+    <td><span class="badge green">Activo</span></td>
+    <td><button class="btn btn-light" onclick="verProfesional('${nombre}', '${especialidad}', '${matricula}')">Ver</button></td>
+  `;
+  tbody.appendChild(tr);
+
+  showToast('Profesional registrado correctamente');
+  closeModal();
+  document.getElementById('formNuevoProf').reset();
+});
+
+function verProfesional(nombre, especialidad, matricula) {
+  showToast(`Especialista: ${nombre} | ${especialidad} (${matricula})`);
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

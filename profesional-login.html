@@ -11,12 +11,41 @@
 <section class="login-card"><div class="login-box">
 <img class="login-logo" src="assets/Logo-MediTurnos.png" alt="Medi-Turnos">
 <h2>BIENVENIDO</h2><p class="sub">Ingresá tus credenciales para continuar</p>
-<form class="login-form" action="profesional-dashboard.html">
-<label>Usuario</label><input required placeholder="Ingrese su usuario">
-<label>Contraseña</label><input required type="password" placeholder="Ingrese su contraseña">
-<label>Perfil</label><select><option>Acceso profesional</option></select>
-<button class="login-btn">Ingresar</button>
+<form class="login-form" id="loginForm">
+<label>Usuario</label><input required id="usuario" placeholder="Ingrese su usuario">
+<label>Contraseña</label><input required type="password" id="password" placeholder="Ingrese su contraseña">
+<label>Perfil</label><select id="perfil"><option>Acceso profesional</option></select>
+<button class="login-btn" type="submit">Ingresar</button>
 <button class="login-link" type="button">¿Olvidaste tu contraseña?</button>
 <div class="login-footer">Sistema seguro y confidencial</div>
 </form></div></section>
-</main></div></body></html>
+</main></div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const usuarioInput = document.getElementById('usuario').value.trim();
+  const passwordInput = document.getElementById('password').value.trim();
+
+  try {
+    const res = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario: usuarioInput, password: passwordInput })
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      window.location.href = data.redirect;
+    } else {
+      alert(data.mensaje);
+    }
+  } catch (error) {
+    console.error('Error al conectar con el servidor:', error);
+    alert('Asegurate de que el servidor backend esté corriendo en el puerto 3000');
+  }
+});
+</script>
+</body></html>
