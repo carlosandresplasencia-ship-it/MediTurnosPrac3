@@ -1,5 +1,4 @@
 ﻿import { createContext, useState, useEffect } from 'react';
-import API from '../services/api';
 
 export const AuthContext = createContext();
 
@@ -8,26 +7,39 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      API.get('/auth/me/')
-        .then((res) => setUser(res.data))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+    const saved = localStorage.getItem('user');
+    if (saved) {
+      setUser(JSON.parse(saved));
     }
+    setLoading(false);
   }, []);
 
   const login = async (username, password) => {
-    const res = await API.post('/auth/token/', { username, password });
-    localStorage.setItem('token', res.data.access);
-    const userRes = await API.get('/auth/me/');
-    setUser(userRes.data);
-    return userRes.data;
+    // === LOGIN TEMPORAL DE DESARROLLO ===
+    // Cuando tengamos el backend correcto lo reemplazamos
+    const usuarios = {
+      'admin_mediturnos': { username: 'admin_mediturnos', first_name: 'Admin', last_name: 'Sistema', rol: 'ADMIN' },
+      'dr_gonzalez':      { username: 'dr_gonzalez', first_name: 'Carlos', last_name: 'Gonzalez', rol: 'MEDICO' },
+      'dra_perez':        { username: 'dra_perez', first_name: 'Maria', last_name: 'Perez', rol: 'MEDICO' },
+      'juan_perez':       { username: 'juan_perez', first_name: 'Juan', last_name: 'Perez', rol: 'PACIENTE' },
+      'lucia_gomez':      { username: 'lucia_gomez', first_name: 'Lucia', last_name: 'Gomez', rol: 'PACIENTE' },
+    };
+
+    const passOk = password === '1234' || password === 'Medico1234!' || password === 'Admin1234!' || password === 'Paciente1234!';
+
+    if (usuarios[username] && passOk) {
+      const userData = usuarios[username];
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', 'dev-token');
+      setUser(userData);
+      return userData;
+    }
+
+    throw new Error('Credenciales inválidas');
   };
 
   const logout = () => {
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
     setUser(null);
   };

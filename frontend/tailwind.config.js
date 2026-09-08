@@ -8,9 +8,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          blue: '#0284c7',
-          darkBlue: '#0369a1',
-          teal: '#0d9488',
+          green: '#1a7a4c',
+          greenDark: '#145c3a',
+          greenLight: '#e8f5ee',
+          greenMid: '#d1e7dd',
+          soft: '#f0faf4',
+          border: '#b7d4c4',
+          text: '#1a2e22',
+          textSoft: '#5a6b60',
         }
       }
     },
