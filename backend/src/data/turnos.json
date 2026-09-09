@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "hora": "09:00",
+    "fecha": "2026-09-04",
+    "paciente": "Juan Pérez",
+    "profesional": "Dra. María González",
+    "estado": "Pendiente",
+    "motivo": "Consulta dermatológica"
+  },
+  {
+    "id": 2,
+    "hora": "10:30",
+    "fecha": "2026-09-04",
+    "paciente": "Laura Fernández",
+    "profesional": "Dra. María González",
+    "estado": "Atendido",
+    "motivo": "Control mensual"
+  }
+]
