@@ -19,7 +19,7 @@ body, html {
   z-index: 999 !important;
   background-color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
-  border-bottom: 1px solid #b7d4c4 !important;
+  border-bottom: 1px solid #f5c2c2 !important;
   margin-bottom: 20px !important;
   padding: 12px 24px;
 }
@@ -33,8 +33,8 @@ body, html {
 }
 .quick-access button {
   background: #fff;
-  border: 1px solid #d1e7dd;
-  color: #1a7a4c;
+  border: 1px solid #fecaca;
+  color: #dc2626;
   font-size: 12px;
   font-weight: 600;
   padding: 6px 12px;
@@ -43,9 +43,28 @@ body, html {
   transition: all .2s;
 }
 .quick-access button:hover, .quick-access button.active-quick {
-  background: #1a7a4c;
+  background: #dc2626;
   color: #fff;
-  border-color: #1a7a4c;
+  border-color: #dc2626;
+}
+
+/* Sobrescribir verdes del styles.css compartido */
+.side-item.active {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border-left-color: #dc2626 !important;
+}
+.side-item:hover {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+.btn-green, .btn.btn-green {
+  background: #750419 !important;
+  border-color: #750419 !important;
+  color: #fff !important;
+}
+.btn-green:hover {
+  background: #a43838 !important;
 }
 
 /* ===== TABLAS Y TARJETAS INTERACTIVAS ===== */
@@ -61,12 +80,12 @@ body, html {
 .data-table th, .data-table td {
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid #e5ebe8;
+  border-bottom: 1px solid #f0e5e5;
   font-size: 14px;
 }
 .data-table th {
-  background: #f0faf4;
-  color: #1a7a4c;
+  background: #fef2f2;
+  color: #dc2626;
   font-weight: 700;
 }
 
@@ -86,8 +105,8 @@ body, html {
 
 /* ===== PANEL LATERAL / MODAL DE HISTORIA CLÍNICA ===== */
 .hc-card {
-  background: #f8faf9;
-  border: 1px solid #b7d4c4;
+  background: #fffafa;
+  border: 1px solid #f5c2c2;
   border-radius: 12px;
   padding: 20px;
   margin-top: 15px;
@@ -96,7 +115,7 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #1a7a4c;
+  border-bottom: 2px solid #dc2626;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -110,11 +129,11 @@ body, html {
   background: #fff;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #e5ebe8;
+  border: 1px solid #f0e5e5;
 }
 .hc-field small {
   display: block;
-  color: #5a6b60;
+  color: #6b5a5a;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -127,7 +146,7 @@ body, html {
 textarea.evolution-input {
   width: 100%;
   min-height: 80px;
-  border: 1px solid #b7d4c4;
+  border: 1px solid #f5c2c2;
   border-radius: 8px;
   padding: 10px;
   font-family: inherit;
@@ -137,19 +156,87 @@ textarea.evolution-input {
 }
 
 /* ===== CALENDARIO MENSUAL ===== */
-.monthly-calendar { padding: 4px 0; font-size: 13px; }
-.month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 600; }
-.month-nav button { background: none; border: 1px solid #d1e7dd; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; color: #1a7a4c; }
-.month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-.month-grid .weekday { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; padding: 4px 0; }
-.day-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #f8faf9; border: 1px solid #e5ebe8; font-size: 12px; font-weight: 600; }
-.day-cell.attends { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
-.day-cell.holiday, .day-cell.sunday { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+.monthly-calendar {
+  padding: 8px 4px 4px;
+  font-size: 13px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+.month-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #1a1a1a;
+  letter-spacing: 0.2px;
+}
+.month-nav button {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #dc2626;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.month-nav button:hover {
+  background: #dc2626;
+  color: #fff;
+}
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+}
+.month-grid .weekday {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  padding: 4px 0 8px;
+  letter-spacing: 0.3px;
+}
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+.day-cell.attends {
+  background: #d1fae5;
+  border-color: #6ee7b7;
+  color: #065f46;
+  font-weight: 700;
+}
+.day-cell.holiday,
+.day-cell.sunday {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+.day-cell.empty {
+  background: transparent;
+  border: none;
+}
 .legend { display: flex; gap: 12px; margin-top: 12px; font-size: 11px; color: #6b7280; }
 .legend span { display: flex; align-items: center; gap: 4px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 .legend .attends-dot { background: #d1fae5; }
-.legend .holiday-dot { background: #fee2e2; }
+.legend .holiday-dot { background: #fecaca; }
 </style>
 </head>
 <body>
@@ -157,7 +244,7 @@ textarea.evolution-input {
   <aside class="mini-sidebar" id="sidebar">
     <div class="side-logo"><img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"></div>
     <nav>
-      <button class="side-item active" data-section="inicio" onclick="changeSection('inicio')"><span>🏠</span><b>Mi Agenda</b></button>
+      <button class="side-item active" data-section="inicio" onclick="changeSection('inicio')"><span>🏠</span><b>Inicio</b></button>
       <button class="side-item" data-section="pacientes" onclick="changeSection('pacientes')"><span>♙</span><b>Pacientes</b></button>
       <button class="side-item" data-section="obras" onclick="changeSection('obras')"><span>⌂</span><b>Obras Sociales</b></button>
       <button class="side-item" data-section="turnos" onclick="changeSection('turnos')"><span>◷</span><b>Turnos General</b></button>
@@ -170,10 +257,10 @@ textarea.evolution-input {
   <main class="professional-main">
     <header class="topbar-prof">
       <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
-      <div>
-        <div class="eyebrow">ÁREA PROFESIONAL</div>
-        <h1 id="pageTitle">Mi agenda</h1>
-      </div>
+     <div>
+  <div class="eyebrow" style="font-size: 18px; font-weight: 700; color: #dc2626; letter-spacing: 0.5px;">ÁREA PROFESIONAL</div>
+  <h1 id="pageTitle" style="display: none;">Mi agenda</h1>
+</div>
 
       <div class="quick-access">
         <button class="active-quick" data-section="inicio" onclick="changeSection('inicio')">INICIO</button>
@@ -184,7 +271,7 @@ textarea.evolution-input {
       </div>
 
       <div class="doctor-box">
-        <div class="doctor-avatar">MG</div>
+       <div class="doctor-avatar" style="background: #fee2e2; color: #750419;">MG</div>
         <div><strong>Dra. María González</strong><small>Dermatología · MP 12345</small></div>
       </div>
     </header>
@@ -221,25 +308,28 @@ textarea.evolution-input {
               <div class="hc-field"><small>Edad</small><strong>34 años</strong></div>
               <div class="hc-field"><small>Antecedentes</small><strong>Alergia a Penicilina</strong></div>
             </div>
-            <label style="font-size:13px; font-weight:700; color:#1a7a4c;">Evolución de la consulta de hoy:</label>
+            <label style="font-size:13px; font-weight:700; color:#dc2626;">Evolución de la consulta de hoy:</label>
             <textarea id="hcEvolution" class="evolution-input" placeholder="Escriba los hallazgos médicos o tratamiento indicado..."></textarea>
             <button class="btn btn-green" style="margin-top:10px;" onclick="guardarEvolucion()">Guardar Evolución Médica</button>
           </div>
         </section>
 
         <!-- Panel derecho: Calendario mensual -->
-        <aside class="panel patient-panel">
-          <div class="panel-head">
-            <div><h3>Calendario mensual</h3><p>Días de atención y feriados</p></div>
-          </div>
-          <div id="monthlyCalendar" class="monthly-calendar"></div>
-        </aside>
+<aside class="panel patient-panel">
+  <div class="panel-head" style="display: flex; justify-content: center; text-align: center; width: 100%;">
+    <div style="text-align: center; width: 100%;">
+      <h3 style="color: #590101; margin: 0 0 4px 0; text-align: center;">Calendario mensual</h3>
+      <p style="color: #590101; margin: 0; opacity: 0.85; text-align: center;">Días de atención y feriados</p>
+    </div>
+  </div>
+  <div id="monthlyCalendar" class="monthly-calendar"></div>
+</aside>
       </div>
     </section>
 
     <!-- SECCIÓN DINÁMICA / MÓDULOS -->
     <section id="genericSection" class="section" style="padding: 0 24px 24px; display:none;">
-      <div class="panel page-panel" style="background:#fff; padding:20px; border-radius:12px; border:1px solid #b7d4c4;">
+      <div class="panel page-panel" style="background:#fff; padding:20px; border-radius:12px; border:1px solid #f5c2c2;">
         <div class="panel-head"><h2 id="genericTitle">Módulo</h2></div>
         <div id="genericContent"></div>
       </div>
@@ -290,16 +380,16 @@ textarea.evolution-input {
     if (!container) return;
 
     if (listaTurnosLocal.length === 0) {
-      container.innerHTML = `<p style="padding:15px; color:#5a6b60;">No hay turnos registrados en el servidor.</p>`;
+      container.innerHTML = `<p style="padding:15px; color:#6b5a5a;">No hay turnos registrados en el servidor.</p>`;
       return;
     }
 
     container.innerHTML = listaTurnosLocal.map((t, idx) => `
-      <div class="appointment-row" style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-bottom:1px solid #e5ebe8;">
-        <div style="font-weight:700; color:#1a7a4c; width:60px;">${t.hora}</div>
+      <div class="appointment-row" style="display:flex; align-items:center; justify-content:space-between; padding:12px; border-bottom:1px solid #f0e5e5;">
+        <div style="font-weight:700; color:#dc2626; width:60px;">${t.hora}</div>
         <div style="flex:1; padding-left:10px;">
           <strong>${t.paciente}</strong>
-          <div style="font-size:12px; color:#5a6b60;">Motivo: ${t.motivo || 'Control Dermatológico'}</div>
+          <div style="font-size:12px; color:#6b5a5a;">Motivo: ${t.motivo || 'Control Dermatológico'}</div>
         </div>
         <span class="badge ${t.estado === 'Atendido' ? 'confirmed' : 'pending'}" style="margin-right:10px;">${t.estado}</span>
         <div>
@@ -444,11 +534,11 @@ textarea.evolution-input {
       content.innerHTML = `
         <div style="max-width:500px; display:flex; flex-direction:column; gap:12px;">
           <label><strong>Seleccionar Paciente:</strong></label>
-          <select id="recetaPaciente" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4;"><option>Juan Pérez</option><option>Laura Fernández</option></select>
+          <select id="recetaPaciente" style="padding:10px; border-radius:8px; border:1px solid #f5c2c2;"><option>Juan Pérez</option><option>Laura Fernández</option></select>
           <label><strong>Medicamento / Tratamiento:</strong></label>
-          <input id="recetaMed" placeholder="Ej. Crema Clobetasol 0.05%" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4;">
+          <input id="recetaMed" placeholder="Ej. Crema Clobetasol 0.05%" style="padding:10px; border-radius:8px; border:1px solid #f5c2c2;">
           <label><strong>Indicaciones de uso:</strong></label>
-          <textarea id="recetaInd" placeholder="Aplicar cada 12 hs durante 7 días" style="padding:10px; border-radius:8px; border:1px solid #b7d4c4; min-height:80px;"></textarea>
+          <textarea id="recetaInd" placeholder="Aplicar cada 12 hs durante 7 días" style="padding:10px; border-radius:8px; border:1px solid #f5c2c2; min-height:80px;"></textarea>
           <button class="btn btn-green" onclick="generarRecetaDemo()">Emitir Receta Digital</button>
         </div>`;
     } else if (section === 'historial' || section === 'turnos') {
@@ -490,7 +580,7 @@ textarea.evolution-input {
     let startWeekday = firstDay.getDay() - 1;
     if (startWeekday < 0) startWeekday = 6;
 
-    let html = `<div class="month-nav"><span>${monthNames[currentMonth]} ${currentYear}</span></div><div class="month-grid">${weekDays.map(d => `<div class="weekday">${d}</div>`).join('')}`;
+   let html = `<div class="month-nav"><span style="text-align:center; width:100%;">${monthNames[currentMonth]} ${currentYear}</span></div><div class="month-grid">${weekDays.map(d => `<div class="weekday">${d}</div>`).join('')}`;
     for (let i = 0; i < startWeekday; i++) html += `<div class="day-cell empty"></div>`;
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const dt = new Date(currentYear, currentMonth, day);
