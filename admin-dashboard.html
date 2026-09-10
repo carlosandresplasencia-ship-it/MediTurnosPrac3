@@ -205,7 +205,6 @@ input:checked + .slider-main:before { transform: translateX(22px); }
 input:checked + .slider-sub { background-color: #34d399; }
 input:checked + .slider-sub:before { transform: translateX(16px); }
 
-/* ESTILOS PARA EL MODAL DE NUEVO USUARIO */
 .modal-backdrop {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(17, 24, 39, 0.6); display: none; justify-content: center;
@@ -245,7 +244,6 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
       <span class="dot-online"></span> NODE.JS PORT: 3000
     </div>
 
-    <!-- BOTÓN AGREGAR NUEVO USUARIO -->
     <button class="btn btn-green" onclick="abrirModalUsuario()">＋ Nuevo Usuario</button>
 
     <select class="nav-select" onchange="if(this.value) location.href=this.value;">
@@ -421,6 +419,39 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
     <div class="area-card">
       <h2>Área Administrativa</h2>
 
+      <!-- PACIENTES -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Pacientes</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_pacientes">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_pacientes" checked onchange="toggleModuloMain('sec_pacientes')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_pacientes">
+          <div class="toggle-row">
+            <span>Agregar paciente</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_agregar" checked onchange="updatePermiso('sec_pacientes_agregar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Editar paciente</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_editar" checked onchange="updatePermiso('sec_pacientes_editar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Eliminar paciente</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_eliminar" checked onchange="updatePermiso('sec_pacientes_eliminar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Ver HC</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_hc" checked onchange="updatePermiso('sec_pacientes_hc')"><span class="slider-sub"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- GESTIÓN DE MÉDICOS -->
       <div class="modulo-card">
         <div class="modulo-header">
           <span>Gestión de Médicos</span>
@@ -452,28 +483,38 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
       </div>
 
+      <!-- SECRETARÍA - MENÚ LATERAL GENERAL -->
       <div class="modulo-card">
         <div class="modulo-header">
-          <span>Módulo Secretaría</span>
+          <span>Menú lateral general (Secretaría)</span>
           <div class="main-switch-container">
-            <span class="status-badge on" id="badge_admin_sec">ON</span>
+            <span class="status-badge on" id="badge_sec_menu">ON</span>
             <label class="switch-main">
-              <input type="checkbox" id="main_admin_sec" checked onchange="toggleModuloMain('admin_sec')">
+              <input type="checkbox" id="main_sec_menu" checked onchange="toggleModuloMain('sec_menu')">
               <span class="slider-main"></span>
             </label>
           </div>
         </div>
-        <div class="dev-console-drawer open" id="drawer_admin_sec">
+        <div class="dev-console-drawer open" id="drawer_sec_menu">
           <div class="toggle-row">
-            <span>Ver Recepción</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_sec_ver" checked onchange="updatePermiso('admin_sec_ver')"><span class="slider-sub"></span></label>
+            <span>Obras Sociales</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_menu_obras" checked onchange="updatePermiso('sec_menu_obras')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Modificar Turnos General</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_sec_editar" checked onchange="updatePermiso('admin_sec_editar')"><span class="slider-sub"></span></label>
+            <span>Turnos General</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_menu_turnos" checked onchange="updatePermiso('sec_menu_turnos')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Historial clínico</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_menu_historial" checked onchange="updatePermiso('sec_menu_historial')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Hacer receta</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_menu_receta" checked onchange="updatePermiso('sec_menu_receta')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
+
     </div>
 
   </div>
@@ -545,7 +586,6 @@ function updatePermiso(key) {
   showToast(`Permiso [${key}]: ${chk.checked ? 'HABILITADO' : 'DESHABILITADO'}`);
 }
 
-/* LÓGICA DEL MODAL DE NUEVO USUARIO */
 function abrirModalUsuario() {
   document.getElementById('modalUsuario').classList.add('show');
 }
@@ -588,7 +628,11 @@ function cargarEstadosGuardados() {
   const saved = JSON.parse(localStorage.getItem('medi_dev_config'));
   if (!saved) return;
 
-  const modulosKeys = ['pac_turnos', 'pac_datos', 'prof_contactos', 'prof_agenda', 'prof_hc', 'admin_medicos', 'admin_sec'];
+  const modulosKeys = [
+    'pac_turnos', 'pac_datos',
+    'prof_contactos', 'prof_agenda', 'prof_hc',
+    'admin_medicos', 'sec_pacientes', 'sec_menu'
+  ];
 
   modulosKeys.forEach(modKey => {
     const mainSwitch = document.getElementById(`main_${modKey}`);
@@ -618,6 +662,7 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-cargarEstadosGuardados();</script>
+cargarEstadosGuardados();
+</script>
 </body>
 </html>
