@@ -529,6 +529,42 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
       </div>
 
+      <!-- HISTORIAL CLÍNICO -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Historial Clínico</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_hc">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_hc" checked onchange="toggleModuloMain('sec_hc')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_hc">
+          <div class="toggle-row">
+            <span>Nueva Historia Clínica Base (＋)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_agregar" checked onchange="updatePermiso('sec_hc_agregar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Cargar Consulta a Paciente (🩺)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_consulta" checked onchange="updatePermiso('sec_hc_consulta')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Ver Ficha / Imprimir / Descargar (👁️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_ver" checked onchange="updatePermiso('sec_hc_ver')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Editar Registro (✏️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_editar" checked onchange="updatePermiso('sec_hc_editar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Eliminar Registro (✕)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_eliminar" checked onchange="updatePermiso('sec_hc_eliminar')"><span class="slider-sub"></span></label>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -667,7 +703,7 @@ function cargarEstadosGuardados() {
   const modulosKeys = [
     'pac_turnos', 'pac_datos',
     'prof_contactos', 'prof_agenda', 'prof_hc',
-    'sec_pacientes', 'sec_obras', 'sec_turnos'
+    'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
   ];
 
   if (saved) {
