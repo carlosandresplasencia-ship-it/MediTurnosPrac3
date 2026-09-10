@@ -184,8 +184,18 @@ input:checked + .slider-main:before { transform: translateX(22px); }
   padding: 6px 0;
   border-bottom: 1px solid #374151;
   font-size: 12px;
+  transition: opacity 0.2s;
 }
 .toggle-row:last-child { border-bottom: none; }
+.toggle-row.sub-level {
+  padding-left: 14px;
+  background: rgba(255,255,255,0.03);
+  border-left: 2px solid #34d399;
+}
+.toggle-row.disabled-row {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
 .switch-sub {
   position: relative;
@@ -451,66 +461,70 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
       </div>
 
-      <!-- GESTIÓN DE MÉDICOS -->
+      <!-- OBRAS SOCIALES -->
       <div class="modulo-card">
         <div class="modulo-header">
-          <span>Gestión de Médicos</span>
+          <span>Obras Sociales</span>
           <div class="main-switch-container">
-            <span class="status-badge on" id="badge_admin_medicos">ON</span>
+            <span class="status-badge on" id="badge_sec_obras">ON</span>
             <label class="switch-main">
-              <input type="checkbox" id="main_admin_medicos" checked onchange="toggleModuloMain('admin_medicos')">
+              <input type="checkbox" id="main_sec_obras" checked onchange="toggleModuloMain('sec_obras')">
               <span class="slider-main"></span>
             </label>
           </div>
         </div>
-        <div class="dev-console-drawer open" id="drawer_admin_medicos">
+        <div class="dev-console-drawer open" id="drawer_sec_obras">
           <div class="toggle-row">
-            <span>Ver Cartilla</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_medicos_ver" checked onchange="updatePermiso('admin_medicos_ver')"><span class="slider-sub"></span></label>
+            <span>Ver Detalle Ficha (Modal 📋)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_obras_detalle" checked onchange="updatePermiso('sec_obras_detalle')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row sub-level" id="row_sec_obras_autorizaciones">
+            <span>↳ Permitir Clic en Autorizaciones (Portal Web)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_obras_autorizaciones" checked onchange="updatePermiso('sec_obras_autorizaciones')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Editar Datos Médico</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_medicos_editar" checked onchange="updatePermiso('admin_medicos_editar')"><span class="slider-sub"></span></label>
+            <span>Agregar Obra Social</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_obras_agregar" checked onchange="updatePermiso('sec_obras_agregar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Dar de Alta Médico</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_medicos_agregar" checked onchange="updatePermiso('admin_medicos_agregar')"><span class="slider-sub"></span></label>
+            <span>Editar Obra Social</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_obras_editar" checked onchange="updatePermiso('sec_obras_editar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Eliminar Médico</span>
-            <label class="switch-sub"><input type="checkbox" id="admin_medicos_eliminar" onchange="updatePermiso('admin_medicos_eliminar')"><span class="slider-sub"></span></label>
+            <span>Eliminar Obra Social</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_obras_eliminar" checked onchange="updatePermiso('sec_obras_eliminar')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
 
-      <!-- SECRETARÍA - MENÚ LATERAL GENERAL -->
+      <!-- TURNOS GENERAL -->
       <div class="modulo-card">
         <div class="modulo-header">
-          <span>Menú lateral general (Secretaría)</span>
+          <span>Turnos General</span>
           <div class="main-switch-container">
-            <span class="status-badge on" id="badge_sec_menu">ON</span>
+            <span class="status-badge on" id="badge_sec_turnos">ON</span>
             <label class="switch-main">
-              <input type="checkbox" id="main_sec_menu" checked onchange="toggleModuloMain('sec_menu')">
+              <input type="checkbox" id="main_sec_turnos" checked onchange="toggleModuloMain('sec_turnos')">
               <span class="slider-main"></span>
             </label>
           </div>
         </div>
-        <div class="dev-console-drawer open" id="drawer_sec_menu">
+        <div class="dev-console-drawer open" id="drawer_sec_turnos">
           <div class="toggle-row">
-            <span>Obras Sociales</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_menu_obras" checked onchange="updatePermiso('sec_menu_obras')"><span class="slider-sub"></span></label>
+            <span>Modificar / Editar Turno (✏️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_editar" checked onchange="updatePermiso('sec_turnos_editar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Turnos General</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_menu_turnos" checked onchange="updatePermiso('sec_menu_turnos')"><span class="slider-sub"></span></label>
+            <span>Cancelar Turno (⬇️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_cancelar" checked onchange="updatePermiso('sec_turnos_cancelar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Historial clínico</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_menu_historial" checked onchange="updatePermiso('sec_menu_historial')"><span class="slider-sub"></span></label>
+            <span>Finalizar Turno (✅)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_finalizar" checked onchange="updatePermiso('sec_turnos_finalizar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Hacer receta</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_menu_receta" checked onchange="updatePermiso('sec_menu_receta')"><span class="slider-sub"></span></label>
+            <span>Eliminar Registro (✕)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_eliminar" checked onchange="updatePermiso('sec_turnos_eliminar')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -554,6 +568,24 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
 <script>
 const devConfig = JSON.parse(localStorage.getItem('medi_dev_config')) || {};
 
+function syncDependenciaDetalle() {
+  const chkDetalle = document.getElementById('sec_obras_detalle');
+  const chkAuto = document.getElementById('sec_obras_autorizaciones');
+  const rowAuto = document.getElementById('row_sec_obras_autorizaciones');
+
+  if (!chkDetalle || !chkAuto || !rowAuto) return;
+
+  if (chkDetalle.checked) {
+    rowAuto.classList.remove('disabled-row');
+    chkAuto.disabled = false;
+  } else {
+    rowAuto.classList.add('disabled-row');
+    chkAuto.checked = false;
+    chkAuto.disabled = true;
+    devConfig['sec_obras_autorizaciones'] = false;
+  }
+}
+
 function toggleModuloMain(modKey) {
   const mainSwitch = document.getElementById(`main_${modKey}`);
   const drawer = document.getElementById(`drawer_${modKey}`);
@@ -582,6 +614,11 @@ function updatePermiso(key) {
   if (!chk) return;
   
   devConfig[key] = chk.checked;
+
+  if (key === 'sec_obras_detalle') {
+    syncDependenciaDetalle();
+  }
+
   localStorage.setItem('medi_dev_config', JSON.stringify(devConfig));
   showToast(`Permiso [${key}]: ${chk.checked ? 'HABILITADO' : 'DESHABILITADO'}`);
 }
@@ -626,31 +663,34 @@ function resetearConfiguracion() {
 
 function cargarEstadosGuardados() {
   const saved = JSON.parse(localStorage.getItem('medi_dev_config'));
-  if (!saved) return;
 
   const modulosKeys = [
     'pac_turnos', 'pac_datos',
     'prof_contactos', 'prof_agenda', 'prof_hc',
-    'admin_medicos', 'sec_pacientes', 'sec_menu'
+    'sec_pacientes', 'sec_obras', 'sec_turnos'
   ];
 
-  modulosKeys.forEach(modKey => {
-    const mainSwitch = document.getElementById(`main_${modKey}`);
-    if (mainSwitch && saved[`main_${modKey}`] !== undefined) {
-      mainSwitch.checked = saved[`main_${modKey}`];
-      toggleModuloMain(modKey);
-    }
-  });
-
-  Object.keys(saved).forEach(key => {
-    if (!key.startsWith('main_')) {
-      const chk = document.getElementById(key);
-      if (chk) {
-        chk.checked = saved[key];
-        devConfig[key] = saved[key];
+  if (saved) {
+    modulosKeys.forEach(modKey => {
+      const mainSwitch = document.getElementById(`main_${modKey}`);
+      if (mainSwitch && saved[`main_${modKey}`] !== undefined) {
+        mainSwitch.checked = saved[`main_${modKey}`];
+        toggleModuloMain(modKey);
       }
-    }
-  });
+    });
+
+    Object.keys(saved).forEach(key => {
+      if (!key.startsWith('main_')) {
+        const chk = document.getElementById(key);
+        if (chk) {
+          chk.checked = saved[key];
+          devConfig[key] = saved[key];
+        }
+      }
+    });
+  }
+
+  syncDependenciaDetalle();
 }
 
 let toastTimer;
