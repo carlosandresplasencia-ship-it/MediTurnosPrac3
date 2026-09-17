@@ -429,7 +429,7 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
     <div class="area-card">
       <h2>Área Administrativa</h2>
 
-      <!-- NUEVO: CONTACTOS / ACCESOS (SECRETARÍA) -->
+      <!-- CONTACTOS / ACCESOS (SECRETARÍA) -->
       <div class="modulo-card">
         <div class="modulo-header">
           <span>Contactos / Accesos</span>
@@ -475,6 +475,14 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_pacientes">
           <div class="toggle-row">
+            <span>Ver Habilitados</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_ver_habilitados" checked onchange="updatePermiso('sec_pacientes_ver_habilitados')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Ver Deshabilitados</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_ver_deshabilitados" checked onchange="updatePermiso('sec_pacientes_ver_deshabilitados')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
             <span>Agregar paciente</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_agregar" checked onchange="updatePermiso('sec_pacientes_agregar')"><span class="slider-sub"></span></label>
           </div>
@@ -483,7 +491,7 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_editar" checked onchange="updatePermiso('sec_pacientes_editar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Eliminar paciente</span>
+            <span>Deshabilitar / Habilitar paciente</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_eliminar" checked onchange="updatePermiso('sec_pacientes_eliminar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
@@ -575,10 +583,6 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_hc">
           <div class="toggle-row">
-            <span>Nueva Historia Clínica Base (＋)</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_hc_agregar" checked onchange="updatePermiso('sec_hc_agregar')"><span class="slider-sub"></span></label>
-          </div>
-          <div class="toggle-row">
             <span>Cargar Consulta a Paciente (🩺)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_hc_consulta" checked onchange="updatePermiso('sec_hc_consulta')"><span class="slider-sub"></span></label>
           </div>
@@ -587,12 +591,8 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
             <label class="switch-sub"><input type="checkbox" id="sec_hc_ver" checked onchange="updatePermiso('sec_hc_ver')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Editar Registro (✏️)</span>
+            <span>Editar Contacto/Cobertura (✏️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_hc_editar" checked onchange="updatePermiso('sec_hc_editar')"><span class="slider-sub"></span></label>
-          </div>
-          <div class="toggle-row">
-            <span>Eliminar Registro (✕)</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_hc_eliminar" checked onchange="updatePermiso('sec_hc_eliminar')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -684,6 +684,20 @@ function updatePermiso(key) {
   if (!chk) return;
   
   devConfig[key] = chk.checked;
+
+  if (key === 'sec_pacientes_hc') {
+    const chkVerHC = document.getElementById('sec_hc_ver');
+    if (chkVerHC) {
+      chkVerHC.checked = chk.checked;
+      devConfig['sec_hc_ver'] = chk.checked;
+    }
+  } else if (key === 'sec_hc_ver') {
+    const chkPacHC = document.getElementById('sec_pacientes_hc');
+    if (chkPacHC) {
+      chkPacHC.checked = chk.checked;
+      devConfig['sec_pacientes_hc'] = chk.checked;
+    }
+  }
 
   if (key === 'sec_obras_detalle') {
     syncDependenciaDetalle();
