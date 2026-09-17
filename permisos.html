@@ -474,6 +474,11 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           </div>
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_pacientes">
+          <!-- NUEVO PERMISO PARA EL BOTÓN VER PACIENTE -->
+          <div class="toggle-row">
+            <span>Ver Paciente (Ficha Completa 👁️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_ver" checked onchange="updatePermiso('sec_pacientes_ver')"><span class="slider-sub"></span></label>
+          </div>
           <div class="toggle-row">
             <span>Ver Habilitados</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_ver_habilitados" checked onchange="updatePermiso('sec_pacientes_ver_habilitados')"><span class="slider-sub"></span></label>
@@ -497,6 +502,10 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           <div class="toggle-row">
             <span>Ver HC</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_hc" checked onchange="updatePermiso('sec_pacientes_hc')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Hacer Receta (Botón 💊)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_receta" checked onchange="updatePermiso('sec_pacientes_receta')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
