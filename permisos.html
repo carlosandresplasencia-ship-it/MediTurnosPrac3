@@ -429,6 +429,38 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
     <div class="area-card">
       <h2>Área Administrativa</h2>
 
+      <!-- NUEVO: CONTACTOS / ACCESOS (SECRETARÍA) -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Contactos / Accesos</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_contactos">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_contactos" checked onchange="toggleModuloMain('sec_contactos')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_contactos">
+          <div class="toggle-row">
+            <span>Ver Contactos</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_ver" checked onchange="updatePermiso('sec_contactos_ver')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Editar Registro</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_editar" checked onchange="updatePermiso('sec_contactos_editar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Agregar Contacto</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_agregar" checked onchange="updatePermiso('sec_contactos_agregar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Eliminar Contacto</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_eliminar" checked onchange="updatePermiso('sec_contactos_eliminar')"><span class="slider-sub"></span></label>
+          </div>
+        </div>
+      </div>
+
       <!-- PACIENTES -->
       <div class="modulo-card">
         <div class="modulo-header">
@@ -627,6 +659,8 @@ function toggleModuloMain(modKey) {
   const drawer = document.getElementById(`drawer_${modKey}`);
   const badge = document.getElementById(`badge_${modKey}`);
 
+  if (!mainSwitch || !drawer || !badge) return;
+
   const isEnabled = mainSwitch.checked;
   devConfig[`main_${modKey}`] = isEnabled;
 
@@ -703,7 +737,7 @@ function cargarEstadosGuardados() {
   const modulosKeys = [
     'pac_turnos', 'pac_datos',
     'prof_contactos', 'prof_agenda', 'prof_hc',
-    'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
+    'sec_contactos', 'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
   ];
 
   if (saved) {
