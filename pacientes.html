@@ -631,6 +631,17 @@
     background: #fef2f2;
   }
 
+  /* Botón rojo sólido (mismo formato que el verde) */
+  .btn-danger-solid {
+    background: #dc2626;
+    color: white;
+    border: none;
+  }
+
+  .btn-danger-solid:hover {
+    background: #b91c1c;
+  }
+
   /* ===== CALENDARIO ===== */
 
   .cal-grid {
@@ -2088,6 +2099,22 @@
             ✓ Confirmar asistencia
           </button>
 
+          <button
+            type="button"
+            class="btn btn-danger-solid"
+            onclick="cancelarTurno()"
+          >
+            Cancelar turno
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline"
+            onclick="modificarTurno()"
+          >
+            Modificar turno
+          </button>
+
         </div>
 
       </div>
@@ -2125,6 +2152,44 @@
 
     renderProximoTurnoAbajo();
 
+  }
+
+  // ============================================================
+  // CANCELAR TURNO
+  // ============================================================
+
+  function cancelarTurno() {
+    if (turnosFuturos.length === 0) return;
+
+    if (!confirm('¿Estás seguro de que querés cancelar este turno?')) {
+      return;
+    }
+
+    // Acá podrías hacer un fetch al backend para cancelar
+    // Por ahora solo lo sacamos de la lista local
+    turnosFuturos.shift(); // elimina el primer turno
+
+    document.getElementById('statusOk').classList.remove('show');
+
+    showToast('Turno cancelado correctamente');
+
+    renderMisTurnos();
+    renderConfirmarTurno();
+    renderProximoTurnoAbajo();
+  }
+
+  // ============================================================
+  // MODIFICAR TURNO
+  // ============================================================
+
+  function modificarTurno() {
+    if (turnosFuturos.length === 0) return;
+
+    showToast('Redirigiendo a modificar turno...');
+
+    // Lleva al usuario a la sección de Nuevo turno
+    // (podés mejorar esto más adelante para precargar los datos)
+    mostrarSeccion('nuevo-turno');
   }
 
   // ============================================================
