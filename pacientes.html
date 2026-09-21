@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Medi-Turnos | Portal del Paciente</title>
+<title>Medi-Turnos | Turnos Online</title>
 
 <!-- Librería para generación de PDF en el navegador -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -35,9 +35,9 @@
   }
 
   .header {
-    background: var(--green);
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
     color: white;
-    padding: 12px 20px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -45,6 +45,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 12px rgba(26, 122, 76, 0.25);
   }
   .header-left { display: flex; align-items: center; gap: 12px; }
   .header-left img {
@@ -116,13 +117,21 @@
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
   }
   .action-card {
-    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 18px 16px; text-align: left; cursor: pointer; transition: all 0.2s;
-    box-shadow: var(--shadow); text-decoration: none; color: inherit;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: inherit;
   }
   .action-card:hover {
-    border-color: var(--green); transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(26, 122, 76, 0.12);
+    border-color: var(--green);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(26, 122, 76, 0.15);
   }
   .action-card .icon { font-size: 26px; margin-bottom: 8px; }
   .action-card strong { display: block; font-size: 15px; color: var(--green); margin-bottom: 4px; }
@@ -422,7 +431,7 @@
     <div class="fallback-logo" style="display:none">MT</div>
     <div class="header-title">
       Medi-Turnos
-      <small>Portal del Paciente</small>
+      <small>Turnos Online · Área Paciente</small>
     </div>
   </div>
   <div class="patient-chip">
@@ -450,34 +459,34 @@
   </aside>
 
   <main class="main">
-    <div class="breadcrumb">Inicio &gt; <strong id="tituloSeccion">Portal del paciente</strong></div>
+    <div class="breadcrumb">Inicio &gt; <strong id="tituloSeccion">Turnos Online</strong></div>
 
     <!-- ===== BOTONES GRANDES ===== -->
     <div class="action-cards">
       <div class="action-card" onclick="mostrarSeccion('nuevo-turno')">
         <div class="icon">➕</div>
-        <strong>Nuevo turno</strong>
-        <p>Reservá el turno que más te convenga.</p>
+        <strong>Solicitar turno</strong>
+        <p>Elegí fecha y horario disponible en el calendario.</p>
       </div>
 
       <div class="action-card" onclick="mostrarSeccion('mis-turnos')">
         <div class="icon">📋</div>
         <strong>Mis turnos</strong>
-        <p>Visualizá los turnos que tenés reservados.</p>
+        <p>Consultá tus turnos próximos y el historial.</p>
       </div>
 
       <div class="action-card" onclick="mostrarSeccion('confirmar-turno')">
         <div class="icon">✅</div>
-        <strong>Confirmar turno</strong>
-        <p>Confirmá tu asistencia al próximo turno.</p>
+        <strong>Confirmar asistencia</strong>
+        <p>Confirmá tu presencia al próximo turno.</p>
       </div>
     </div>
 
     <!-- ===== SECCIÓN: INICIO ===== -->
     <div id="seccion-inicio" class="seccion activa">
       <div class="seccion-header">
-        <h3>👋 Bienvenido al Portal del Paciente</h3>
-        <p>Desde acá podés administrar tus turnos de manera rápida y sencilla.</p>
+        <h3>📅 Sistema de Turnos Online</h3>
+        <p>Reservá, consultá y confirmá tus turnos de forma profesional y sencilla.</p>
       </div>
     </div>
 
@@ -771,15 +780,18 @@
     }
 
     const titulos = {
-      'inicio': 'Portal del paciente',
+      'inicio': 'Turnos Online',
       'mis-turnos': 'Mis turnos',
       'confirmar-turno': 'Confirmar turno',
-      'nuevo-turno': 'Nuevo turno',
+      'nuevo-turno': 'Solicitar turno',
       'datos': 'Datos personales'
     };
-    document.getElementById('tituloSeccion').textContent = titulos[id] || 'Portal del paciente';
+    document.getElementById('tituloSeccion').textContent = titulos[id] || 'Turnos Online';
 
-    document.querySelectorAll('.side-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.side-item').forEach(el => {
+      el.classList.remove('active');
+    });
+
     const map = {
       'inicio': 0,
       'mis-turnos': 1,
@@ -807,14 +819,12 @@
     const turnoACancelar = turnosFuturos[index];
 
     try {
-      // Petición opcional al servidor para persistir la cancelación
       await fetch('http://localhost:3000/api/turnos/cancelar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fecha: turnoACancelar.date, hora: turnoACancelar.time, paciente: paciente.nombre })
       }).catch(err => console.log('Sincronizando de forma local...'));
 
-      // Mover el turno al historial con estado Cancelado
       turnosAnteriores.unshift({
         date: turnoACancelar.date,
         time: turnoACancelar.time,
@@ -823,7 +833,6 @@
         cls: 'cancelled'
       });
 
-      // Remover del listado de turnos futuros
       turnosFuturos.splice(index, 1);
 
       showToast('El turno ha sido cancelado exitosamente');
