@@ -1,5 +1,15 @@
 {
+  "name": "MediTurnosPrac3",
+  "version": "1.0.0",
+  "description": "Sistema de Turnos Médicos - Medi-Turnos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
   "dependencies": {
-    "cors": "^2.8.6"
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "body-parser": "^1.20.3"
   }
 }
