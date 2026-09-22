@@ -1,0 +1,201 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "usuario": "admin",
+      "password": "1234",
+      "rol": "admin",
+      "nombre": "Administrador Master",
+      "email": "admin@mediturnos.com"
+    },
+    {
+      "id": 2,
+      "usuario": "secretaria",
+      "password": "1234",
+      "rol": "secretaria",
+      "nombre": "Secretaría",
+      "email": "secretaria@mediturnos.com"
+    },
+    {
+      "id": 3,
+      "usuario": "doctora",
+      "password": "1234",
+      "rol": "profesional",
+      "nombre": "Dra. María González",
+      "especialidad": "Dermatología",
+      "matricula": "MP 12345",
+      "email": "maria.gonzalez@mediturnos.com"
+    },
+    {
+      "id": 4,
+      "usuario": "profesional",
+      "password": "1234",
+      "rol": "profesional",
+      "nombre": "Dra. María González",
+      "especialidad": "Dermatología",
+      "matricula": "MP 12345",
+      "email": "maria.gonzalez@mediturnos.com"
+    },
+    {
+      "id": 5,
+      "usuario": "paciente",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Juan Pérez",
+      "dni": "32456789",
+      "obra": "OSDE",
+      "telefono": "11 5555-1234",
+      "email": "juan.perez@mail.com"
+    },
+    {
+      "id": 6,
+      "usuario": "32456789",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Juan Pérez",
+      "dni": "32456789",
+      "obra": "OSDE",
+      "telefono": "11 5555-1234",
+      "email": "juan.perez@mail.com"
+    },
+    {
+      "id": 7,
+      "usuario": "33456789",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Colo Pla",
+      "dni": "33456789",
+      "obra": "OSDE",
+      "telefono": "341223344",
+      "email": ""
+    },
+    {
+      "id": 8,
+      "usuario": "11111",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Colo Pla2",
+      "dni": "11111",
+      "obra": "Particular",
+      "telefono": "1111",
+      "email": ""
+    },
+    {
+      "id": 9,
+      "usuario": "123",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Colo Pla2",
+      "dni": "123",
+      "obra": "Particular",
+      "telefono": "1111",
+      "email": ""
+    },
+    {
+      "id": 10,
+      "usuario": "1234",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Colo Pla2",
+      "dni": "1234",
+      "obra": "Particular",
+      "telefono": "1111",
+      "email": ""
+    }
+  ],
+  "turnos": [
+    {
+      "id": 1,
+      "paciente": "Juan Pérez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-09-22",
+      "hora": "11:00",
+      "motivo": "Consulta manual",
+      "estado": "Pendiente",
+      "creado": "2026-09-22T14:02:31.478Z"
+    },
+    {
+      "id": 2,
+      "paciente": "Juan Pérez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-09-22",
+      "hora": "09:30",
+      "motivo": "Consulta manual",
+      "estado": "Pendiente",
+      "creado": "2026-09-22T14:27:38.807Z"
+    },
+    {
+      "id": 3,
+      "paciente": "Martín Ruiz",
+      "profesional": "Dra. María González",
+      "fecha": "2026-09-22",
+      "hora": "10:00",
+      "motivo": "fe",
+      "estado": "Pendiente",
+      "creado": "2026-09-22T14:28:50.163Z"
+    },
+    {
+      "id": 4,
+      "paciente": "Laura Fernández",
+      "profesional": "Dra. María González",
+      "fecha": "2026-09-22",
+      "hora": "10:00",
+      "motivo": "dsa",
+      "estado": "Pendiente",
+      "creado": "2026-09-22T14:36:43.340Z"
+    },
+    {
+      "id": 5,
+      "paciente": "Juan Pérez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-09-22",
+      "hora": "12:00",
+      "motivo": "edd",
+      "estado": "Pendiente",
+      "creado": "2026-09-22T15:25:21.447Z"
+    }
+  ],
+  "pacientes": [
+    {
+      "id": 1,
+      "nombre": "Juan Pérez",
+      "dni": "32456789",
+      "obra": "OSDE",
+      "telefono": "11 5555-1234",
+      "email": "juan.perez@mail.com",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 7,
+      "nombre": "Colo Pla",
+      "dni": "33456789",
+      "obra": "OSDE",
+      "telefono": "341223344",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 8,
+      "nombre": "Colo Pla2",
+      "dni": "11111",
+      "obra": "Particular",
+      "telefono": "1111",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 9,
+      "nombre": "Colo Pla2",
+      "dni": "123",
+      "obra": "Particular",
+      "telefono": "1111",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 10,
+      "nombre": "Colo Pla2",
+      "dni": "1234",
+      "obra": "Particular",
+      "telefono": "1111",
+      "estado": "Habilitado"
+    }
+  ]
+}
