@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medi-Turnos | Estadísticas y Reportes</title>
+<!-- Librería Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --red: #dc2626;
+  --red-dark: #b91c1c;
+  --red-light: #fef2f2;
+  --red-mid: #fecaca;
+  --red-soft: #fff5f5;
+  --border: #f5c2c2;
+  --text: #1a1a1a;
+  --text-soft: #6b5a5a;
+}
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--red-soft);
+  color: var(--text);
+}
+.topbar-prof {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 1px solid var(--border) !important;
+  margin-bottom: 20px !important;
+  padding: 15px 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.logo-box img {
+  height: 40px;
+  object-fit: contain;
+}
+.admin-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0;
+}
+.quick-access {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 12px;
+  flex-wrap: wrap;
+}
+.quick-access button {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s;
+  text-transform: uppercase;
+}
+.quick-access button:hover,
+.quick-access button.active-quick {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+.doctor-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.doctor-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: #750419;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.doctor-box div {
+  font-size: 13px;
+  line-height: 1.2;
+}
+.doctor-box small {
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.container { padding: 0 24px 24px; max-width: 1300px; margin: auto; }
+.hc-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.stats-grid-4x2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; }
+.stats-grid-4x1 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; }
+@media (max-width: 992px) { .stats-grid-4x2, .stats-grid-4x1 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 576px) { .stats-grid-4x2, .stats-grid-4x1 { grid-template-columns: 1fr; } }
+
+.stat-card-item {
+  background: #ffffff; border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 10px; text-align: center; display: flex; flex-direction: column;
+  align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.stat-icon-circle {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--red-light);
+  border: 1px solid var(--red-mid); display: flex; align-items: center;
+  justify-content: center; margin-bottom: 8px; font-size: 18px;
+}
+.stat-icon-circle img { width: 22px; height: 22px; object-fit: contain; }
+.stat-card-item span { font-size: 11px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; margin-bottom: 6px; }
+.stat-card-item strong { font-size: 20px; font-weight: 800; color: var(--red); }
+
+.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; border-radius: 8px; overflow: hidden; }
+.data-table th, .data-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0e5e5; font-size: 13px; }
+.data-table th { background: var(--red-light); color: var(--red); font-weight: 700; }
+
+.filter-date-group { display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
+.filter-date-group label { font-size: 12px; font-weight: 700; color: var(--red); }
+.filter-date-group input, .filter-date-group select { border: 1px solid #fecaca; border-radius: 6px; padding: 5px 8px; font-size: 12px; outline: none; }
+
+.table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+.pagination-box { display: flex; align-items: center; gap: 10px; margin-top: 15px; font-size: 13px; color: var(--text-soft); justify-content: flex-end; }
+.pagination-box button { background: #fff; border: 1px solid var(--border); color: var(--red); padding: 5px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+.pagination-box button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-action { padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; margin-right: 2px; }
+.btn-ver { background: #e0f2fe; color: #0369a1; }
+.btn-finish { background: #d1fae5; color: #065f46; }
+.btn-modificar { background: #fef3c7; color: #92400e; }
+
+/* Estilos para el diseño de Obras Sociales */
+.obras-main-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 15px; }
+.charts-column { display: flex; flex-direction: column; gap: 15px; width: 300px; flex-shrink: 0; }
+.chart-box-small { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; }
+.table-column { flex: 1; min-width: 320px; }
+.total-card-box {
+  background: var(--red-light); border: 1px solid var(--red-mid); border-radius: 10px;
+  padding: 12px 18px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;
+}
+.total-card-box span { font-size: 13px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
+.total-card-box strong { font-size: 18px; font-weight: 800; color: var(--red); }
+</style>
+</head>
+<body>
+
+<header class="topbar-prof">
+  <div class="logo-box">
+    <img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos" onerror="this.src='https://via.placeholder.com/150x50?text=Medi-Turnos'">
+  </div>
+  <div>
+    <h1 class="admin-title">Estadísticas</h1>
+  </div>
+  <div class="quick-access">
+    <button class="active-quick" onclick="cambiarSeccion('general', this)">Estadísticas generales</button>
+    <button onclick="cambiarSeccion('historial', this)">Historial de turnos</button>
+    <button onclick="cambiarSeccion('obras', this)">Est. Obra Social/Particular</button>
+    <button onclick="window.location.href='secretaria.html'">Volver a administración</button>
+  </div>
+  <div class="doctor-box">
+    <div class="doctor-avatar">SC</div>
+    <div><strong>Secretaría</strong><small>Administración · Consultorio</small></div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- BARRA DE FILTRO DE FECHAS Y OBRA SOCIAL GLOBAL -->
+  <div class="hc-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding: 15px 20px;">
+    <div class="filter-date-group">
+      <label>Período:</label>
+      <input type="date" id="filtroDesde" onchange="actualizarDatos()">
+      <span>a</span>
+      <input type="date" id="filtroHasta" onchange="actualizarDatos()">
+
+      <label style="margin-left:12px;">Obra Social:</label>
+      <select id="selectFiltroObraSocial" onchange="actualizarDatos()">
+        <option value="todas">Todas</option>
+        <option value="Osde">Osde</option>
+        <option value="Swiss Medical">Swiss Medical</option>
+        <option value="Particular">Particular / Partic.</option>
+      </select>
+    </div>
+    <div style="font-size:13px; color:var(--text-soft); font-weight:600;">
+      📅 Actualización automática
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1: ESTADÍSTICAS GENERALES -->
+  <section id="sec-general" class="seccion-contenido">
+    <div class="hc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="color:var(--red); margin:0; letter-spacing:0.5px; font-size:16px; text-transform:uppercase;">ESTADÍSTICAS GENERALES</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action btn-finish" onclick="imprimirEstadisticasGenerales()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="descargarPDFEstadisticasGenerales()">📥 Descargar PDF</button>
+          <button class="btn-action btn-modificar" onclick="enviarPorMailGeneral()">✉️ Enviar por Mail</button>
+        </div>
+      </div>
+      <div id="areaEstadisticasGeneralesInner" class="stats-grid-4x2"></div>
+    </div>
+
+    <div class="hc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="color:var(--red); margin:0; font-size:16px; text-transform:uppercase;">Listado de Consultas</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action btn-finish" onclick="imprimirListadoConsultas()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="descargarPDFListadoConsultas()">📥 Descargar PDF</button>
+          <button class="btn-action btn-modificar" onclick="enviarPorMailListadoConsultas()">✉️ Enviar por Mail</button>
+        </div>
+      </div>
+
+      <div class="table-controls">
+        <div class="filter-date-group">
+          <label>Buscar:</label>
+          <input type="text" id="inputBusquedaConsultas" placeholder="Paciente..." oninput="paginaActual=1; renderizarTablaPaginada()" style="width: 140px;">
+          <label style="margin-left:4px;">Asistencia:</label>
+          <select id="selectFiltroAsistencia" onchange="paginaActual=1; renderizarTablaPaginada()">
+            <option value="todos">Todos</option>
+            <option value="si">Sí (Atendido)</option>
+            <option value="no">No (Pendiente)</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+          <label style="margin-left:4px;">Ordenar:</label>
+          <select id="selectOrdenamiento" onchange="paginaActual=1; renderizarTablaPaginada()">
+            <option value="fecha_asc">Fecha (Antigua a Nueva)</option>
+            <option value="fecha_desc">Fecha (Nueva a Antigua)</option>
+          </select>
+        </div>
+        <div class="filter-date-group">
+          <label>Mostrar:</label>
+          <select id="selectPageSize" onchange="paginaActual=1; renderizarTablaPaginada()">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          <span style="font-size:12px; font-weight:700; color:var(--red);">reg.</span>
+        </div>
+      </div>
+
+      <div id="tablaConsultasBox"></div>
+      <div class="pagination-box" id="paginacionContainer"></div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: HISTORIAL DE TURNOS -->
+  <section id="sec-historial" class="seccion-contenido" style="display:none;">
+    <div class="hc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="color:var(--red); margin:0;">Reporte Completo de Turnos</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action btn-finish" onclick="imprimirHistorialTurnos()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="descargarPDFHistorialTurnos()">📥 Descargar PDF</button>
+          <button class="btn-action btn-modificar" onclick="enviarPorMailHistorialTurnos()">✉️ Enviar por Mail</button>
+        </div>
+      </div>
+
+      <div id="areaHistorialResumen" class="stats-grid-4x1" style="margin-bottom: 20px;"></div>
+
+      <div class="table-controls">
+        <div class="filter-date-group">
+          <label>Buscar:</label>
+          <input type="text" id="inputBusquedaHistorial" placeholder="Paciente..." oninput="paginaActualHistorial=1; renderizarTablaHistorialPaginada()" style="width: 140px;">
+          <label style="margin-left:4px;">Asistencia:</label>
+          <select id="selectFiltroAsistenciaHistorial" onchange="paginaActualHistorial=1; renderizarTablaHistorialPaginada()">
+            <option value="todos">Todos</option>
+            <option value="si">Sí (Atendido)</option>
+            <option value="no">No (Pendiente)</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+          <label style="margin-left:4px;">Ordenar:</label>
+          <select id="selectOrdenamientoHistorial" onchange="paginaActualHistorial=1; renderizarTablaHistorialPaginada()">
+            <option value="fecha_asc">Fecha (Antigua a Nueva)</option>
+            <option value="fecha_desc">Fecha (Nueva a Antigua)</option>
+          </select>
+        </div>
+        <div class="filter-date-group">
+          <label>Mostrar:</label>
+          <select id="selectPageSizeHistorial" onchange="paginaActualHistorial=1; renderizarTablaHistorialPaginada()">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          <span style="font-size:12px; font-weight:700; color:var(--red);">reg.</span>
+        </div>
+      </div>
+
+      <div id="tablaHistorialBox"></div>
+      <div class="pagination-box" id="paginacionHistorialContainer"></div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: ESTADÍSTICAS DE OBRA SOCIAL / PARTICULAR -->
+  <section id="sec-obras" class="seccion-contenido" style="display:none;">
+    <div class="hc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="color:var(--red); margin:0;" id="tituloObrasHeader">Estadísticas: Obra Social / Particular</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action btn-finish" onclick="imprimirReporteObras()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="descargarPDFObras()">📥 Descargar PDF</button>
+          <button class="btn-action btn-modificar" onclick="enviarPorMailObras()">✉️ Enviar por Mail</button>
+        </div>
+      </div>
+      
+      <div class="obras-main-layout">
+        <div class="charts-column">
+          <div class="chart-box-small">
+            <canvas id="chartTopObras" width="200" height="200"></canvas>
+          </div>
+          <div class="chart-box-small">
+            <canvas id="chartOsVsPart" width="200" height="200"></canvas>
+          </div>
+        </div>
+        <div class="table-column" id="reporteObrasInnerContainer"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const hoyStr = new Date().toISOString().split('T')[0];
+  const dAyer = new Date(); dAyer.setDate(dAyer.getDate() - 1); const ayerStr = dAyer.toISOString().split('T')[0];
+  const dAnt = new Date(); dAnt.setDate(dAnt.getDate() - 5); const antStr = dAnt.toISOString().split('T')[0];
+
+  window.listaTurnosGeneral = [
+    { id: 1213, fecha: hoyStr, hora: '09:00', paciente: 'Perez Juan', tipoDoc: 'DNI', dni: '11223456', edad: 12, obra: 'Osde', motivo: 'Acne', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1214, fecha: hoyStr, hora: '09:15', paciente: 'Diaz Pedro', tipoDoc: 'DNI', dni: '11222342', edad: 14, obra: 'Particular', motivo: '-', estado: 'Pendiente', medioSolicitud: 'What' },
+    { id: 1215, fecha: hoyStr, hora: '10:00', paciente: 'Gomez Maria', tipoDoc: 'DNI', dni: '33445566', edad: 29, obra: 'Osde', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'App' },
+    { id: 1216, fecha: hoyStr, hora: '10:30', paciente: 'Lopez Ana', tipoDoc: 'DNI', dni: '44556677', edad: 35, obra: 'Swiss Medical', motivo: 'Revision', estado: 'Atendido', medioSolicitud: 'What' },
+    { id: 1217, fecha: hoyStr, hora: '11:00', paciente: 'Benitez Carlos', tipoDoc: 'DNI', dni: '55667788', edad: 45, obra: 'Particular', motivo: 'Dolor', estado: 'Pendiente', medioSolicitud: 'Telefono' },
+    { id: 1218, fecha: ayerStr, hora: '08:30', paciente: 'Ramirez Sofia', tipoDoc: 'DNI', dni: '22334455', edad: 22, obra: 'Osde', motivo: 'Alergia', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1219, fecha: ayerStr, hora: '09:30', paciente: 'Martinezt Lucas', tipoDoc: 'DNI', dni: '33445567', edad: 31, obra: 'Swiss Medical', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'What' },
+    { id: 1220, fecha: ayerStr, hora: '10:15', paciente: 'Fernandez Elena', tipoDoc: 'DNI', dni: '44556688', edad: 50, obra: 'Particular', motivo: 'Manchas', estado: 'Pendiente', medioSolicitud: 'Telefono' },
+    { id: 1221, fecha: ayerStr, hora: '11:00', paciente: 'Gimenez Roberto', tipoDoc: 'DNI', dni: '55667799', edad: 40, obra: 'Osde', motivo: 'Lunares', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1222, fecha: antStr, hora: '14:00', paciente: 'Suarez Claudia', tipoDoc: 'DNI', dni: '66778899', edad: 27, obra: 'Particular', motivo: 'Cosmética', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1223, fecha: antStr, hora: '15:00', paciente: 'Acosta Martin', tipoDoc: 'DNI', dni: '77889900', edad: 38, obra: 'Swiss Medical', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'What' },
+    { id: 1224, fecha: antStr, hora: '16:00', paciente: 'Rios Valeria', tipoDoc: 'DNI', dni: '88990011', edad: 25, obra: 'Osde', motivo: 'Urgencia', estado: 'Atendido', medioSolicitud: 'Telefono' },
+    { id: 1300, fecha: hoyStr, hora: '12:00', paciente: 'Torres Luis', tipoDoc: 'DNI', dni: '12312312', edad: 55, obra: 'Galeno', motivo: 'Consulta', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1301, fecha: hoyStr, hora: '12:30', paciente: 'Ruiz Marta', tipoDoc: 'DNI', dni: '32132132', edad: 60, obra: 'PAMI', motivo: 'Receta', estado: 'Atendido', medioSolicitud: 'Telefono' },
+    { id: 1302, fecha: ayerStr, hora: '13:00', paciente: 'Sosa Javier', tipoDoc: 'DNI', dni: '45645645', edad: 40, obra: 'Medife', motivo: 'Control', estado: 'Pendiente', medioSolicitud: 'What' },
+    { id: 1303, fecha: antStr, hora: '13:30', paciente: 'Paz Florencia', tipoDoc: 'DNI', dni: '78978978', edad: 28, obra: 'IOMA', motivo: 'Estética', estado: 'Atendido', medioSolicitud: 'App' },
+    { id: 1304, fecha: antStr, hora: '14:00', paciente: 'Guzman Hugo', tipoDoc: 'DNI', dni: '14714714', edad: 42, obra: 'Sancor Salud', motivo: 'Consulta', estado: 'Atendido', medioSolicitud: 'What' },
+    { id: 1305, fecha: hoyStr, hora: '14:30', paciente: 'Herrera Ana', tipoDoc: 'DNI', dni: '96385274', edad: 33, obra: 'Galeno', motivo: 'Control', estado: 'Pendiente', medioSolicitud: 'App' }
+  ];
+
+  let paginaActual = 1;
+  let paginaActualHistorial = 1;
+  let paginaActualObras = 1;
+  let turnosFiltradosCache = [];
+  let turnosHistorialFiltradosCache = [];
+  let coberturasCache = [];
+  let chartTopObrasInstance = null;
+  let chartOsVsPartInstance = null;
+
+  window.onload = () => {
+    const hoy = new Date();
+    const haceUnMes = new Date();
+    haceUnMes.setMonth(hoy.getMonth() - 1);
+    document.getElementById('filtroDesde').value = haceUnMes.toISOString().split('T')[0];
+    document.getElementById('filtroHasta').value = hoy.toISOString().split('T')[0];
+    actualizarDatos();
+  };
+
+  function cambiarSeccion(seccionId, btnElement) {
+    document.querySelectorAll('.seccion-contenido').forEach(el => el.style.display = 'none');
+    document.getElementById('sec-' + seccionId).style.display = 'block';
+    document.querySelectorAll('.quick-access button').forEach(b => b.classList.remove('active-quick'));
+    if (btnElement) btnElement.classList.add('active-quick');
+    actualizarDatos();
+  }
+
+  function formatearFechaDDMMAA(fechaStr) {
+    if (!fechaStr) return '-';
+    const partes = fechaStr.split('-');
+    if (partes.length !== 3) return fechaStr;
+    const anioCorto = partes[0].slice(-2);
+    return `${partes[2]}-${partes[1]}-${anioCorto}`;
+  }
+
+  function actualizarDatos() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
+
+    let turnos = window.listaTurnosGeneral.filter(t => t.fecha >= desde && t.fecha <= hasta);
+
+    if (obraSocialFiltro !== 'todas') {
+      turnos = turnos.filter(t => {
+        let os = (t.obra || 'Particular').toLowerCase();
+        if (os.includes('partic')) os = 'particular';
+        let buscada = obraSocialFiltro.toLowerCase();
+        if (buscada.includes('partic')) buscada = 'particular';
+        return os === buscada;
+      });
+    }
+    
+    renderGeneralStats4x2(turnos);
+    turnosHistorialFiltradosCache = turnos;
+    renderizarTablaHistorialPaginada();
+    renderReporteObrasYGraficos(turnos, desde, hasta);
+  }
+
+  function renderGeneralStats4x2(turnos) {
+    const totalTurnos = turnos.length;
+    const turnosAsistidos = turnos.filter(t => t.estado.toLowerCase() === 'atendido' || t.estado.toLowerCase() === 'finalizado').length;
+    const turnosNoAsistidos = turnos.filter(t => t.estado.toLowerCase() === 'pendiente').length;
+    const turnosCancelados = turnos.filter(t => t.estado.toLowerCase() === 'cancelado').length;
+    
+    let appCount = 0; let whatsCount = 0; let telCount = 0;
+    turnos.forEach(t => {
+      let m = (t.medioSolicitud || '').toLowerCase();
+      if(m.includes('app') || m.includes('web') || m.includes('medi')) appCount++;
+      else if(m.includes('what') || m.includes('whats')) whatsCount++;
+      else telCount++;
+    });
+
+    const tasaAsistencia = totalTurnos > 0 ? Math.round((turnosAsistidos / totalTurnos) * 100) : 0;
+
+    document.getElementById('areaEstadisticasGeneralesInner').innerHTML = `
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#d1fae5; color:#065f46;">✅</div>
+        <span>Turnos asistidos</span><strong>${turnosAsistidos}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#fee2e2; color:#991b1b;">⏳</div>
+        <span>Turnos no asistidos</span><strong>${turnosNoAsistidos}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#fef3c7; color:#92400e;">❌</div>
+        <span>Turnos cancelados</span><strong>${turnosCancelados}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle">📈</div>
+        <span>Tasa de asistencia</span><strong>${tasaAsistencia}%</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle">📋</div>
+        <span>Total registros</span><strong>${totalTurnos}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle"><img src="assets/Logo-MediTurnos.png" alt="App" onerror="this.parentElement.innerHTML='📱'"></div>
+        <span>Por APP</span><strong>${appCount}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle">💬</div>
+        <span>Por Whatsapp</span><strong>${whatsCount}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle">📞</div>
+        <span>Teléfono / Otros</span><strong>${telCount}</strong>
+      </div>
+    `;
+
+    document.getElementById('areaHistorialResumen').innerHTML = `
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#d1fae5; color:#065f46;">✅</div>
+        <span>Turnos asistidos</span><strong>${turnosAsistidos}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#fee2e2; color:#991b1b;">⏳</div>
+        <span>Turnos no asistidos</span><strong>${turnosNoAsistidos}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle" style="background:#fef3c7; color:#92400e;">❌</div>
+        <span>Turnos cancelados</span><strong>${turnosCancelados}</strong>
+      </div>
+      <div class="stat-card-item">
+        <div class="stat-icon-circle">📈</div>
+        <span>Tasa de asistencia</span><strong>${tasaAsistencia}%</strong>
+      </div>
+    `;
+
+    turnosFiltradosCache = turnos;
+    renderizarTablaPaginada();
+    renderizarTablaHistorialPaginada();
+  }
+
+  function obtenerTurnosFiltradosActuales() {
+    const busqueda = (document.getElementById('inputBusquedaConsultas').value || '').toLowerCase().trim();
+    const filtroAsistencia = document.getElementById('selectFiltroAsistencia').value;
+    const ordenamiento = document.getElementById('selectOrdenamiento').value;
+    let resultado = turnosFiltradosCache.filter(t => {
+      const pacienteTxt = (t.paciente || '').toLowerCase();
+      const obraTxt = (t.obra || '').toLowerCase();
+      const canalTxt = (t.medioSolicitud || '').toLowerCase();
+      const coincideTexto = !busqueda || (pacienteTxt.includes(busqueda) || obraTxt.includes(busqueda) || canalTxt.includes(busqueda));
+      const est = t.estado.toLowerCase();
+      let coincideAsistencia = true;
+      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado');
+      else if (filtroAsistencia === 'no') coincideAsistencia = (est === 'pendiente');
+      else if (filtroAsistencia === 'cancelado') coincideAsistencia = (est === 'cancelado');
+      return coincideTexto && coincideAsistencia;
+    });
+    resultado.sort((a, b) => {
+      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return a.hora.localeCompare(b.hora); } 
+      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return b.hora.localeCompare(a.hora); }
+      return 0;
+    });
+    return resultado;
+  }
+
+  function obtenerHistorialFiltradosActuales() {
+    const busqueda = (document.getElementById('inputBusquedaHistorial').value || '').toLowerCase().trim();
+    const filtroAsistencia = document.getElementById('selectFiltroAsistenciaHistorial').value;
+    const ordenamiento = document.getElementById('selectOrdenamientoHistorial').value;
+    let resultado = turnosHistorialFiltradosCache.filter(t => {
+      const pacienteTxt = (t.paciente || '').toLowerCase();
+      const obraTxt = (t.obra || '').toLowerCase();
+      const canalTxt = (t.medioSolicitud || '').toLowerCase();
+      const coincideTexto = !busqueda || (pacienteTxt.includes(busqueda) || obraTxt.includes(busqueda) || canalTxt.includes(busqueda));
+      const est = t.estado.toLowerCase();
+      let coincideAsistencia = true;
+      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado');
+      else if (filtroAsistencia === 'no') coincideAsistencia = (est === 'pendiente');
+      else if (filtroAsistencia === 'cancelado') coincideAsistencia = (est === 'cancelado');
+      return coincideTexto && coincideAsistencia;
+    });
+    resultado.sort((a, b) => {
+      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return a.hora.localeCompare(b.hora); } 
+      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return b.hora.localeCompare(a.hora); }
+      return 0;
+    });
+    return resultado;
+  }
+
+  function renderizarTablaPaginada() {
+    const turnosFiltrados = obtenerTurnosFiltradosActuales();
+    const pageSize = parseInt(document.getElementById('selectPageSize').value) || 10;
+    const totalRegistros = turnosFiltrados.length;
+    const totalPaginas = Math.ceil(totalRegistros / pageSize) || 1;
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+    if (paginaActual < 1) paginaActual = 1;
+    const inicio = (paginaActual - 1) * pageSize;
+    const fin = inicio + pageSize;
+    const turnosPagina = turnosFiltrados.slice(inicio, fin);
+    document.getElementById('tablaConsultasBox').innerHTML = generarHTMLTablaLineal(turnosPagina);
+    const inicioMostrado = totalRegistros > 0 ? inicio + 1 : 0;
+    const finMostrado = fin > totalRegistros ? totalRegistros : fin;
+    document.getElementById('paginacionContainer').innerHTML = `
+      <div>Mostrando ${inicioMostrado} a ${finMostrado} de ${totalRegistros} registros</div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button onclick="cambiarPagina(-1)" ${paginaActual === 1 ? 'disabled' : ''}>← Anterior</button>
+        <span style="font-weight:700; color:var(--text);">Página ${paginaActual} de ${totalPaginas}</span>
+        <button onclick="cambiarPagina(1)" ${paginaActual >= totalPaginas ? 'disabled' : ''}>Siguiente →</button>
+      </div>`;
+  }
+
+  function renderizarTablaHistorialPaginada() {
+    const turnosFiltrados = obtenerHistorialFiltradosActuales();
+    const pageSize = parseInt(document.getElementById('selectPageSizeHistorial').value) || 10;
+    const totalRegistros = turnosFiltrados.length;
+    const totalPaginas = Math.ceil(totalRegistros / pageSize) || 1;
+    if (paginaActualHistorial > totalPaginas) paginaActualHistorial = totalPaginas;
+    if (paginaActualHistorial < 1) paginaActualHistorial = 1;
+    const inicio = (paginaActualHistorial - 1) * pageSize;
+    const fin = inicio + pageSize;
+    const turnosPagina = turnosFiltrados.slice(inicio, fin);
+    document.getElementById('tablaHistorialBox').innerHTML = generarHTMLTablaLineal(turnosPagina);
+    const inicioMostrado = totalRegistros > 0 ? inicio + 1 : 0;
+    const finMostrado = fin > totalRegistros ? totalRegistros : fin;
+    document.getElementById('paginacionHistorialContainer').innerHTML = `
+      <div>Mostrando ${inicioMostrado} a ${finMostrado} de ${totalRegistros} registros</div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button onclick="cambiarPaginaHistorial(-1)" ${paginaActualHistorial === 1 ? 'disabled' : ''}>← Anterior</button>
+        <span style="font-weight:700; color:var(--text);">Página ${paginaActualHistorial} de ${totalPaginas}</span>
+        <button onclick="cambiarPaginaHistorial(1)" ${paginaActualHistorial >= totalPaginas ? 'disabled' : ''}>Siguiente →</button>
+      </div>`;
+  }
+
+  function generarHTMLTablaLineal(turnos) {
+    if(turnos.length === 0) return '<p style="text-align:center; padding:20px; color:var(--text-soft);">No se encontraron registros coincidentes.</p>';
+    let html = `<div style="width:100%; overflow:hidden;"><table class="data-table" style="width:100%;">
+      <thead><tr><th>Fecha</th><th>Paciente</th><th>Edad</th><th>O.S / part</th><th>Solic.</th><th>Asist.</th></tr></thead><tbody>`;
+    turnos.forEach(t => {
+      const est = t.estado.toLowerCase();
+      let badgeAsist = '';
+      if (est === 'atendido' || est === 'finalizado') badgeAsist = '<span style="background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">SI</span>';
+      else if (est === 'cancelado') badgeAsist = '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">CANCELADO</span>';
+      else badgeAsist = '<span style="background:#fee2e2; color:#991b1b; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">NO</span>';
+      html += `<tr><td>${formatearFechaDDMMAA(t.fecha)}</td><td>${t.paciente || '-'}</td><td>${t.edad || '-'}</td><td>${t.obra || 'Particular'}</td><td>${t.medioSolicitud || '-'}</td><td>${badgeAsist}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  function cambiarPagina(delta) { paginaActual += delta; renderizarTablaPaginada(); }
+  function cambiarPaginaHistorial(delta) { paginaActualHistorial += delta; renderizarTablaHistorialPaginada(); }
+  function cambiarPaginaObras(delta) { paginaActualObras += delta; renderizarTablaObrasPaginada(); }
+
+  function renderReporteObrasYGraficos(turnos, desde, hasta) {
+    document.getElementById('tituloObrasHeader').textContent = `Estadísticas: Obra Social / Particular (${desde} al ${hasta})`;
+
+    let totalParticular = 0;
+    let totalObrasSociales = 0;
+    const conteoSoloObras = {};
+
+    turnos.forEach(t => {
+      let osRaw = t.obra ? t.obra.trim() : 'Particular';
+      let osCheck = osRaw.toLowerCase();
+      if (osCheck.includes('partic') || osCheck === '' || osCheck === '-') {
+        totalParticular++;
+      } else {
+        totalObrasSociales++;
+        let osName = osRaw.charAt(0).toUpperCase() + osRaw.slice(1);
+        conteoSoloObras[osName] = (conteoSoloObras[osName] || 0) + 1;
+      }
+    });
+
+    const sortedObras = Object.entries(conteoSoloObras).sort((a, b) => b[1] - a[1]);
+    const top4 = sortedObras.slice(0, 4);
+    const otrasObrasCount = sortedObras.slice(4).reduce((acc, curr) => acc + curr[1], 0);
+
+    const labelsTopObrasRaw = top4.map(item => item[0]);
+    const dataTopObras = top4.map(item => item[1]);
+    
+    if (otrasObrasCount > 0) {
+      labelsTopObrasRaw.push('Otras');
+      dataTopObras.push(otrasObrasCount);
+    }
+
+    const totalTopObrasSum = dataTopObras.reduce((a, b) => a + b, 0);
+    const labelsTopObras = labelsTopObrasRaw.map((lbl, idx) => {
+      const val = dataTopObras[idx];
+      const p = totalTopObrasSum > 0 ? ((val / totalTopObrasSum) * 100).toFixed(1) : 0;
+      return `${lbl} (${p}%)`;
+    });
+
+    const totalGeneral = totalObrasSociales + totalParticular;
+    const pOS = totalGeneral > 0 ? ((totalObrasSociales / totalGeneral) * 100).toFixed(1) : 0;
+    const pPart = totalGeneral > 0 ? ((totalParticular / totalGeneral) * 100).toFixed(1) : 0;
+
+    Chart.defaults.animation = false;
+
+    // 1. Gráfico Top Obras
+    if (chartTopObrasInstance) chartTopObrasInstance.destroy();
+    const ctxTop = document.getElementById('chartTopObras').getContext('2d');
+    
+    if(totalObrasSociales === 0) {
+      chartTopObrasInstance = new Chart(ctxTop, {
+        type: 'pie', data: { labels: ['Sin datos'], datasets: [{ data: [1], backgroundColor: ['#e5e7eb'] }] },
+        options: { plugins: { title: { display: true, text: 'Top 4 Obras Sociales', font: {size: 12} } } }
+      });
+    } else {
+      chartTopObrasInstance = new Chart(ctxTop, {
+        type: 'pie',
+        data: {
+          labels: labelsTopObras,
+          datasets: [{
+            data: dataTopObras,
+            backgroundColor: ['#dc2626', '#f59e0b', '#3b82f6', '#10b981', '#6b7280']
+          }]
+        },
+        options: {
+          plugins: { 
+            title: { display: true, text: 'Top 4 Obras Sociales + Otras', font: {size: 12} },
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // 2. Gráfico O.S. vs Particular
+    if (chartOsVsPartInstance) chartOsVsPartInstance.destroy();
+    const ctxVs = document.getElementById('chartOsVsPart').getContext('2d');
+    
+    if(totalObrasSociales === 0 && totalParticular === 0) {
+      chartOsVsPartInstance = new Chart(ctxVs, {
+        type: 'doughnut', data: { labels: ['Sin datos'], datasets: [{ data: [1], backgroundColor: ['#e5e7eb'] }] },
+        options: { plugins: { title: { display: true, text: 'O.S. vs Particular', font: {size: 12} } } }
+      });
+    } else {
+      chartOsVsPartInstance = new Chart(ctxVs, {
+        type: 'doughnut',
+        data: {
+          labels: [`Obras Sociales (${pOS}%)`, `Particular (${pPart}%)`],
+          datasets: [{
+            data: [totalObrasSociales, totalParticular],
+            backgroundColor: ['#3b82f6', '#f43f5e']
+          }]
+        },
+        options: {
+          plugins: { 
+            title: { display: true, text: 'Obras Sociales vs Particular', font: {size: 12} },
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // Preparar lista completa para paginación y renderizado
+    coberturasCache = [...sortedObras];
+    if (totalParticular > 0) {
+      coberturasCache.push(['Particular', totalParticular]);
+      coberturasCache.sort((a,b) => b[1] - a[1]);
+    }
+
+    paginaActualObras = 1;
+    renderizarTablaObrasPaginada();
+  }
+
+  function renderizarTablaObrasPaginada() {
+    const pageSizeSelect = document.getElementById('selectPageSizeObras');
+    const pageSize = pageSizeSelect ? parseInt(pageSizeSelect.value) || 5 : 5;
+    const totalRegistros = coberturasCache.length;
+    const totalPaginas = Math.ceil(totalRegistros / pageSize) || 1;
+    
+    if (paginaActualObras > totalPaginas) paginaActualObras = totalPaginas;
+    if (paginaActualObras < 1) paginaActualObras = 1;
+    
+    const inicio = (paginaActualObras - 1) * pageSize;
+    const fin = inicio + pageSize;
+    const coberturasPagina = coberturasCache.slice(inicio, fin);
+    const totalGeneral = coberturasCache.reduce((acc, curr) => acc + curr[1], 0);
+
+    let tbody = '';
+    coberturasPagina.forEach(item => {
+      const porcentajeItem = totalGeneral > 0 ? ((item[1] / totalGeneral) * 100).toFixed(1) : 0;
+      tbody += `<tr>
+        <td>${item[0]}</td>
+        <td style="text-align:center; font-weight:bold;">${item[1]}</td>
+        <td style="text-align:center; color:var(--red); font-weight:600;">${porcentajeItem}%</td>
+      </tr>`;
+    });
+
+    const inicioMostrado = totalRegistros > 0 ? inicio + 1 : 0;
+    const finMostrado = fin > totalRegistros ? totalRegistros : fin;
+
+    document.getElementById('reporteObrasInnerContainer').innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:13px; font-weight:700; color:var(--text-soft);">Detalle de Coberturas</span>
+        <div class="filter-date-group" style="padding: 2px 8px;">
+          <label>Mostrar:</label>
+          <select id="selectPageSizeObras" onchange="paginaActualObras=1; renderizarTablaObrasPaginada()">
+            <option value="5" ${pageSize===5?'selected':''}>5</option>
+            <option value="10" ${pageSize===10?'selected':''}>10</option>
+            <option value="20" ${pageSize===20?'selected':''}>20</option>
+          </select>
+          <span style="font-size:11px; font-weight:700; color:var(--red);">reg.</span>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" style="margin-top:0;">
+          <thead>
+            <tr>
+              <th>Cobertura</th>
+              <th style="text-align:center;">Cantidad</th>
+              <th style="text-align:center;">Porcentaje</th>
+            </tr>
+          </thead>
+          <tbody>${tbody || '<tr><td colspan="3" style="text-align:center;">Sin consultas</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="pagination-box" id="paginacionObrasContainer">
+        <div>Mostrando ${inicioMostrado} a ${finMostrado} de ${totalRegistros} registros</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button onclick="cambiarPaginaObras(-1)" ${paginaActualObras === 1 ? 'disabled' : ''}>← Anterior</button>
+          <span style="font-weight:700; color:var(--text);">Página ${paginaActualObras} de ${totalPaginas}</span>
+          <button onclick="cambiarPaginaObras(1)" ${paginaActualObras >= totalPaginas ? 'disabled' : ''}>Siguiente →</button>
+        </div>
+      </div>
+      <div class="total-card-box">
+        <span>Total general de consultas</span>
+        <strong>${totalGeneral}</strong>
+      </div>
+    `;
+  }
+
+  function imprimirEstadisticasGenerales() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
+    const ahora = new Date();
+    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
+
+    const contenido = document.getElementById('areaEstadisticasGeneralesInner').innerHTML;
+    const ventana = window.open('', '_blank');
+    
+    let htmlDoc = '<html><head><title>Impresión - Estadísticas Generales</title>';
+    htmlDoc += '<style>';
+    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
+    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
+    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
+    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
+    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
+    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 8px; } ';
+    htmlDoc += 'h3 { color: #dc2626; text-transform: uppercase; font-size: 16px; margin-bottom: 15px; } ';
+    htmlDoc += '.stats-grid-4x2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; } ';
+    htmlDoc += '.stat-card-item { background: #ffffff; border: 1px solid #f5c2c2; border-radius: 12px; padding: 15px; text-align: center; } ';
+    htmlDoc += '.stat-icon-circle { width: 40px; height: 40px; border-radius: 50%; background: #fef2f2; border: 1px solid #fecaca; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 16px; }';
+    htmlDoc += '.stat-icon-circle img { width: 20px; height: 20px; object-fit: contain; }';
+    htmlDoc += '.stat-card-item span { font-size: 11px; font-weight: 700; color: #6b5a5a; text-transform: uppercase; display: block; margin-bottom: 6px; } ';
+    htmlDoc += '.stat-card-item strong { font-size: 20px; font-weight: 800; color: #dc2626; } ';
+    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
+    htmlDoc += '</sty' + 'le></he' + 'ad>';
+    htmlDoc += '<body onload="window.print(); window.close();">';
+    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
+    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div><div><strong>Obra social:</strong> ' + (obraSocialFiltro === 'todas' ? 'Todas' : obraSocialFiltro) + '</div></div>';
+    htmlDoc += '<h3>Estadísticas Generales</h3>';
+    htmlDoc += '<div class="stats-grid-4x2">' + contenido + '</div>';
+    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
+    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
+    ventana.document.write(htmlDoc);
+    ventana.document.close();
+  }
+
+  function imprimirListadoConsultas() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
+    const busqueda = document.getElementById('inputBusquedaConsultas').value.trim();
+    const filtroAsistencia = document.getElementById('selectFiltroAsistencia').value;
+    const turnosFiltrados = obtenerTurnosFiltradosActuales();
+    generarVentanaImpresionTabla("Listado de Consultas", turnosFiltrados, desde, hasta, obraSocialFiltro, busqueda, filtroAsistencia);
+  }
+
+  function imprimirHistorialTurnos() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
+    const busqueda = document.getElementById('inputBusquedaHistorial').value.trim();
+    const filtroAsistencia = document.getElementById('selectFiltroAsistenciaHistorial').value;
+    const turnosFiltrados = obtenerHistorialFiltradosActuales();
+    generarVentanaImpresionTabla("Historial de Turnos", turnosFiltrados, desde, hasta, obraSocialFiltro, busqueda, filtroAsistencia);
+  }
+
+  function generarVentanaImpresionTabla(tituloReporte, turnosFiltrados, desde, hasta, obraSocialFiltro, busqueda, filtroAsistencia) {
+    const ahora = new Date();
+    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
+    const ventana = window.open('', '_blank');
+    let htmlDoc = '<html><head><title>Impresión - ' + tituloReporte + '</title>';
+    htmlDoc += '<style>';
+    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
+    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
+    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
+    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
+    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
+    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 8px; } ';
+    htmlDoc += '.info-filtros { background: #fef2f2; border: 1px solid #fecaca; padding: 10px 12px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #b91c1c; font-weight: 600; } ';
+    htmlDoc += 'table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; font-size: 12px; table-layout: fixed; } ';
+    htmlDoc += 'th, td { padding: 8px 10px; border: 1px solid #f0e5e5; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } ';
+    htmlDoc += 'th { background: #fef2f2; color: #dc2626; font-weight: 700; } ';
+    htmlDoc += 'h3 { color: #dc2626; margin-top: 0; text-transform: uppercase; font-size: 16px; } ';
+    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
+    htmlDoc += '</sty' + 'le></he' + 'ad>';
+    htmlDoc += '<body onload="window.print(); window.close();">';
+    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
+    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div><div><strong>Obra social:</strong> ' + (obraSocialFiltro === 'todas' ? 'Todas' : obraSocialFiltro) + '</div></div>';
+    if (busqueda !== '' || filtroAsistencia !== 'todos') { htmlDoc += '<div class="info-filtros">Filtros aplicados: ' + (busqueda ? 'Búsqueda ("' + busqueda + '") ' : '') + (filtroAsistencia !== 'todos' ? 'Asistencia (' + filtroAsistencia.toUpperCase() + ')' : '') + '</div>'; }
+    htmlDoc += '<h3>' + tituloReporte + '</h3>';
+    htmlDoc += generarHTMLTablaLineal(turnosFiltrados);
+    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
+    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
+    ventana.document.write(htmlDoc);
+    ventana.document.close();
+  }
+
+  function imprimirReporteObras() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    const ahora = new Date();
+    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
+    const img1 = document.getElementById('chartTopObras').toDataURL("image/png");
+    const img2 = document.getElementById('chartOsVsPart').toDataURL("image/png");
+    
+    // Generar tabla completa para impresión sin cortes de paginación
+    const totalGeneral = coberturasCache.reduce((acc, curr) => acc + curr[1], 0);
+    let tbodyPrint = '';
+    coberturasCache.forEach(item => {
+      const porcentajeItem = totalGeneral > 0 ? ((item[1] / totalGeneral) * 100).toFixed(1) : 0;
+      tbodyPrint += `<tr><td>${item[0]}</td><td style="text-align:center; font-weight:bold;">${item[1]}</td><td style="text-align:center; color:#dc2626; font-weight:600;">${porcentajeItem}%</td></tr>`;
+    });
+    const tablaPrintHtml = `<table class="data-table"><thead><tr><th>Cobertura</th><th style="text-align:center;">Cantidad</th><th style="text-align:center;">Porcentaje</th></tr></thead><tbody>${tbodyPrint}</tbody></table><div style="margin-top:10px; font-weight:bold; font-size:14px; text-align:right;">Total de consultas: <span style="color:#dc2626;">${totalGeneral}</span></div>`;
+
+    const ventana = window.open('', '_blank');
+    let htmlDoc = '<html><head><title>Impresión - Obras Sociales</title>';
+    htmlDoc += '<style>';
+    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
+    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
+    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
+    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
+    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
+    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 13px; } ';
+    htmlDoc += 'h3 { color: #dc2626; text-transform: uppercase; font-size: 16px; margin-bottom: 15px; } ';
+    htmlDoc += '.print-layout { display: flex; gap: 20px; align-items: flex-start; }';
+    htmlDoc += '.print-charts { display: flex; flex-direction: column; gap: 15px; width: 220px; flex-shrink: 0; text-align: center; }';
+    htmlDoc += '.print-charts img { width: 100%; height: auto; }';
+    htmlDoc += '.print-table { flex: 1; }';
+    htmlDoc += 'table { width: 100%; border-collapse: collapse; font-size: 12px; } ';
+    htmlDoc += 'th, td { border: 1px solid #f0e5e5; padding: 8px; text-align: left; } th { background: #fef2f2; color: #dc2626; }';
+    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
+    htmlDoc += '</sty' + 'le></he' + 'ad>';
+    htmlDoc += '<body onload="setTimeout(function(){ window.print(); window.close(); }, 500);">';
+    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
+    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div></div>';
+    htmlDoc += '<h3>Estadísticas: Obra Social / Particular</h3>';
+    htmlDoc += '<div class="print-layout">';
+    htmlDoc += '<div class="print-charts"><img src="' + img1 + '"><img src="' + img2 + '"></div>';
+    htmlDoc += '<div class="print-table">' + tablaPrintHtml + '</div>';
+    htmlDoc += '</div>';
+    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
+    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
+    ventana.document.write(htmlDoc);
+    ventana.document.close();
+  }
+
+  function descargarPDFEstadisticasGenerales() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirEstadisticasGenerales(); }, 500); }
+  function descargarPDFListadoConsultas() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirListadoConsultas(); }, 500); }
+  function descargarPDFHistorialTurnos() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirHistorialTurnos(); }, 500); }
+  function descargarPDFObras() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirReporteObras(); }, 500); }
+
+  function enviarPorMailGeneral() {
+    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
+    const asunto = encodeURIComponent(`Estadísticas Generales - Medi-Turnos`);
+    let tc = `ESTADÍSTICAS GENERALES\nPeríodo: ${desde} al ${hasta}\n========================\n\n`;
+    tc += `Revise el sistema para consultar los datos completos.\n`;
+    window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(tc)}`;
+  }
+
+  function enviarPorMailListadoConsultas() {
+    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
+    const turnosFiltrados = obtenerTurnosFiltradosActuales();
+    const asunto = encodeURIComponent(`Listado de Consultas - Medi-Turnos (${desde} al ${hasta})`);
+    let textoCuerpo = `LISTADO DE CONSULTAS - MEDI-TURNOS\nPeríodo: ${desde} al ${hasta} | Total: ${turnosFiltrados.length} registros\n==================================================\n\n`;
+    turnosFiltrados.forEach((t) => {
+      let estTxt = 'NO'; const est = t.estado.toLowerCase();
+      if (est === 'atendido' || est === 'finalizado') estTxt = 'SÍ'; else if (est === 'cancelado') estTxt = 'CANCELADO';
+      textoCuerpo += `🗓️ FECHA: ${formatearFechaDDMMAA(t.fecha)} | 🏥 O.S: ${t.obra || 'Particular'}\n`;
+      textoCuerpo += `👤 PACIENTE: ${t.paciente} (Edad: ${t.edad || '-'})\n`;
+      textoCuerpo += `📌 SOLICITUD: ${t.medioSolicitud || '-'} | ✔️ ASISTIÓ: ${estTxt}\n`;
+      textoCuerpo += `--------------------------------------------------\n`;
+    });
+    textoCuerpo += `\nGenerado por Medi-Turnos | By Binario Software`;
+    window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
+  }
+
+  function enviarPorMailHistorialTurnos() {
+    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
+    const turnosFiltrados = obtenerHistorialFiltradosActuales();
+    const asunto = encodeURIComponent(`Historial de Turnos - Medi-Turnos (${desde} al ${hasta})`);
+    let textoCuerpo = `HISTORIAL DE TURNOS - MEDI-TURNOS\nPeríodo: ${desde} al ${hasta} | Total: ${turnosFiltrados.length} registros\n==================================================\n\n`;
+    turnosFiltrados.forEach((t) => {
+      let estTxt = 'NO'; const est = t.estado.toLowerCase();
+      if (est === 'atendido' || est === 'finalizado') estTxt = 'SÍ'; else if (est === 'cancelado') estTxt = 'CANCELADO';
+      textoCuerpo += `🗓️ FECHA: ${formatearFechaDDMMAA(t.fecha)} | 🏥 O.S: ${t.obra || 'Particular'}\n`;
+      textoCuerpo += `👤 PACIENTE: ${t.paciente} (Edad: ${t.edad || '-'})\n`;
+      textoCuerpo += `📌 SOLICITUD: ${t.medioSolicitud || '-'} | ✔️ ASISTIÓ: ${estTxt}\n`;
+      textoCuerpo += `--------------------------------------------------\n`;
+    });
+    textoCuerpo += `\nGenerado por Medi-Turnos | By Binario Software`;
+    window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
+  }
+
+  function enviarPorMailObras() {
+    const desde = document.getElementById('filtroDesde').value;
+    const hasta = document.getElementById('filtroHasta').value;
+    let turnos = window.listaTurnosGeneral.filter(t => t.fecha >= desde && t.fecha <= hasta);
+
+    const conteoObras = {};
+    turnos.forEach(t => {
+      let os = t.obra || 'Particular';
+      conteoObras[os] = (conteoObras[os] || 0) + 1;
+    });
+
+    const asunto = encodeURIComponent(`Consultas por Obra Social - Medi-Turnos (${desde} al ${hasta})`);
+    
+    let textoCuerpo = `CONSULTAS POR OBRA SOCIAL / PARTICULAR\n`;
+    textoCuerpo += `Período: ${desde} al ${hasta}\n`;
+    textoCuerpo += `==================================================\n\n`;
+    
+    let total = 0;
+    for (let os in conteoObras) {
+      textoCuerpo += `🏥 ${os}: ${conteoObras[os]} consultas\n`;
+      total += conteoObras[os];
+    }
+    
+    textoCuerpo += `\n--------------------------------------------------\n`;
+    textoCuerpo += `👉 TOTAL CONSULTAS: ${total}\n\n`;
+    textoCuerpo += `Generado por Medi-Turnos | By Binario Software`;
+
+    window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
+  }
+</script>
+</body>
+</html>
