@@ -145,11 +145,9 @@ body, html {
 .btn-finish { background: #d1fae5; color: #065f46; }
 .btn-modificar { background: #fef3c7; color: #92400e; }
 
-/* Estilos para agrupar por fecha en Listado de Consultas */
 .fecha-grupo-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.02); }
 .fecha-grupo-header { background: var(--red-light); color: var(--red); padding: 10px 15px; font-weight: 700; font-size: 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 
-/* Estilos para Obras Sociales */
 .obras-main-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 15px; }
 .charts-column { display: flex; flex-direction: column; gap: 15px; width: 300px; flex-shrink: 0; }
 .chart-box-small { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; justify-content: center; align-items: center; }
@@ -184,7 +182,6 @@ body, html {
 </header>
 
 <main class="container">
-  <!-- BARRA DE FILTRO DE FECHAS Y OBRA SOCIAL GLOBAL -->
   <div class="hc-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding: 15px 20px;">
     <div class="filter-date-group">
       <label>Período:</label>
@@ -201,7 +198,7 @@ body, html {
       </select>
     </div>
     <div style="font-size:13px; color:var(--text-soft); font-weight:600;">
-      📅 Actualización automática
+      📅 Sincronizado con Base de Datos
     </div>
   </div>
 
@@ -211,8 +208,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0; letter-spacing:0.5px; font-size:16px; text-transform:uppercase;">ESTADÍSTICAS GENERALES</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="imprimirEstadisticasGenerales()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="descargarPDFEstadisticasGenerales()">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailGeneral()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -223,8 +220,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0; font-size:16px; text-transform:uppercase;">Listado de Consultas Agrupadas por Fecha</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="imprimirListadoConsultas()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="descargarPDFListadoConsultas()">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailListadoConsultas()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -271,8 +268,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0;">Reporte Completo de Turnos</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="imprimirHistorialTurnos()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="descargarPDFHistorialTurnos()">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailHistorialTurnos()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -320,8 +317,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0;" id="tituloObrasHeader">Estadísticas: Obra Social / Particular</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="imprimirReporteObras()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="descargarPDFObras()">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailObras()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -342,30 +339,7 @@ body, html {
 </main>
 
 <script>
-  const hoyStr = new Date().toISOString().split('T')[0];
-  const dAyer = new Date(); dAyer.setDate(dAyer.getDate() - 1); const ayerStr = dAyer.toISOString().split('T')[0];
-  const dAnt = new Date(); dAnt.setDate(dAnt.getDate() - 5); const antStr = dAnt.toISOString().split('T')[0];
-
-  window.listaTurnosGeneral = [
-    { id: 1213, fecha: hoyStr, hora: '09:00', paciente: 'Perez Juan', tipoDoc: 'DNI', dni: '11223456', edad: 12, obra: 'Osde', motivo: 'Acne', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1214, fecha: hoyStr, hora: '09:15', paciente: 'Diaz Pedro', tipoDoc: 'DNI', dni: '11222342', edad: 14, obra: 'Particular', motivo: '-', estado: 'Pendiente', medioSolicitud: 'What' },
-    { id: 1215, fecha: hoyStr, hora: '10:00', paciente: 'Gomez Maria', tipoDoc: 'DNI', dni: '33445566', edad: 29, obra: 'Osde', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'App' },
-    { id: 1216, fecha: hoyStr, hora: '10:30', paciente: 'Lopez Ana', tipoDoc: 'DNI', dni: '44556677', edad: 35, obra: 'Swiss Medical', motivo: 'Revision', estado: 'Atendido', medioSolicitud: 'What' },
-    { id: 1217, fecha: hoyStr, hora: '11:00', paciente: 'Benitez Carlos', tipoDoc: 'DNI', dni: '55667788', edad: 45, obra: 'Particular', motivo: 'Dolor', estado: 'Pendiente', medioSolicitud: 'Telefono' },
-    { id: 1218, fecha: ayerStr, hora: '08:30', paciente: 'Ramirez Sofia', tipoDoc: 'DNI', dni: '22334455', edad: 22, obra: 'Osde', motivo: 'Alergia', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1219, fecha: ayerStr, hora: '09:30', paciente: 'Martinezt Lucas', tipoDoc: 'DNI', dni: '33445567', edad: 31, obra: 'Swiss Medical', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'What' },
-    { id: 1220, fecha: ayerStr, hora: '10:15', paciente: 'Fernandez Elena', tipoDoc: 'DNI', dni: '44556688', edad: 50, obra: 'Particular', motivo: 'Manchas', estado: 'Pendiente', medioSolicitud: 'Telefono' },
-    { id: 1221, fecha: ayerStr, hora: '11:00', paciente: 'Gimenez Roberto', tipoDoc: 'DNI', dni: '55667799', edad: 40, obra: 'Osde', motivo: 'Lunares', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1222, fecha: antStr, hora: '14:00', paciente: 'Suarez Claudia', tipoDoc: 'DNI', dni: '66778899', edad: 27, obra: 'Particular', motivo: 'Cosmética', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1223, fecha: antStr, hora: '15:00', paciente: 'Acosta Martin', tipoDoc: 'DNI', dni: '77889900', edad: 38, obra: 'Swiss Medical', motivo: 'Control', estado: 'Cancelado', medioSolicitud: 'What' },
-    { id: 1224, fecha: antStr, hora: '16:00', paciente: 'Rios Valeria', tipoDoc: 'DNI', dni: '88990011', edad: 25, obra: 'Osde', motivo: 'Urgencia', estado: 'Atendido', medioSolicitud: 'Telefono' },
-    { id: 1300, fecha: hoyStr, hora: '12:00', paciente: 'Torres Luis', tipoDoc: 'DNI', dni: '12312312', edad: 55, obra: 'Galeno', motivo: 'Consulta', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1301, fecha: hoyStr, hora: '12:30', paciente: 'Ruiz Marta', tipoDoc: 'DNI', dni: '32132132', edad: 60, obra: 'PAMI', motivo: 'Receta', estado: 'Atendido', medioSolicitud: 'Telefono' },
-    { id: 1302, fecha: ayerStr, hora: '13:00', paciente: 'Sosa Javier', tipoDoc: 'DNI', dni: '45645645', edad: 40, obra: 'Medife', motivo: 'Control', estado: 'Pendiente', medioSolicitud: 'What' },
-    { id: 1303, fecha: antStr, hora: '13:30', paciente: 'Paz Florencia', tipoDoc: 'DNI', dni: '78978978', edad: 28, obra: 'IOMA', motivo: 'Estética', estado: 'Atendido', medioSolicitud: 'App' },
-    { id: 1304, fecha: antStr, hora: '14:00', paciente: 'Guzman Hugo', tipoDoc: 'DNI', dni: '14714714', edad: 42, obra: 'Sancor Salud', motivo: 'Consulta', estado: 'Atendido', medioSolicitud: 'What' },
-    { id: 1305, fecha: hoyStr, hora: '14:30', paciente: 'Herrera Ana', tipoDoc: 'DNI', dni: '96385274', edad: 33, obra: 'Galeno', motivo: 'Control', estado: 'Pendiente', medioSolicitud: 'App' }
-  ];
+  window.listaTurnosGeneral = [];
 
   let paginaActual = 1;
   let paginaActualHistorial = 1;
@@ -376,13 +350,30 @@ body, html {
   let chartTopObrasInstance = null;
   let chartOsVsPartInstance = null;
 
+  async function cargarDatosServidor() {
+    try {
+      const response = await fetch('http://localhost:3000/api/datos');
+      const data = await response.json();
+      window.listaTurnosGeneral = data.turnos || [];
+
+      const hoy = new Date();
+      const haceUnMes = new Date();
+      haceUnMes.setMonth(hoy.getMonth() - 1);
+      
+      if (!document.getElementById('filtroDesde').value) {
+        document.getElementById('filtroDesde').value = haceUnMes.toISOString().split('T')[0];
+      }
+      if (!document.getElementById('filtroHasta').value) {
+        document.getElementById('filtroHasta').value = hoy.toISOString().split('T')[0];
+      }
+      actualizarDatos();
+    } catch (error) {
+      console.error("Error al conectar con el servidor backend:", error);
+    }
+  }
+
   window.onload = () => {
-    const hoy = new Date();
-    const haceUnMes = new Date();
-    haceUnMes.setMonth(hoy.getMonth() - 1);
-    document.getElementById('filtroDesde').value = haceUnMes.toISOString().split('T')[0];
-    document.getElementById('filtroHasta').value = hoy.toISOString().split('T')[0];
-    actualizarDatos();
+    cargarDatosServidor();
   };
 
   function cambiarSeccion(seccionId, btnElement) {
@@ -508,16 +499,16 @@ body, html {
       const obraTxt = (t.obra || '').toLowerCase();
       const canalTxt = (t.medioSolicitud || '').toLowerCase();
       const coincideTexto = !busqueda || (pacienteTxt.includes(busqueda) || obraTxt.includes(busqueda) || canalTxt.includes(busqueda));
-      const est = t.estado.toLowerCase();
+      const est = (t.estado || '').toLowerCase();
       let coincideAsistencia = true;
-      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado');
+      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado' || est === 'confirmado');
       else if (filtroAsistencia === 'no') coincideAsistencia = (est === 'pendiente');
       else if (filtroAsistencia === 'cancelado') coincideAsistencia = (est === 'cancelado');
       return coincideTexto && coincideAsistencia;
     });
     resultado.sort((a, b) => {
-      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return a.hora.localeCompare(b.hora); } 
-      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return b.hora.localeCompare(a.hora); }
+      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return (a.hora || '').localeCompare(b.hora || ''); } 
+      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return (b.hora || '').localeCompare(a.hora || ''); }
       return 0;
     });
     return resultado;
@@ -532,16 +523,16 @@ body, html {
       const obraTxt = (t.obra || '').toLowerCase();
       const canalTxt = (t.medioSolicitud || '').toLowerCase();
       const coincideTexto = !busqueda || (pacienteTxt.includes(busqueda) || obraTxt.includes(busqueda) || canalTxt.includes(busqueda));
-      const est = t.estado.toLowerCase();
+      const est = (t.estado || '').toLowerCase();
       let coincideAsistencia = true;
-      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado');
+      if (filtroAsistencia === 'si') coincideAsistencia = (est === 'atendido' || est === 'finalizado' || est === 'confirmado');
       else if (filtroAsistencia === 'no') coincideAsistencia = (est === 'pendiente');
       else if (filtroAsistencia === 'cancelado') coincideAsistencia = (est === 'cancelado');
       return coincideTexto && coincideAsistencia;
     });
     resultado.sort((a, b) => {
-      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return a.hora.localeCompare(b.hora); } 
-      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return b.hora.localeCompare(b.hora); }
+      if (ordenamiento === 'fecha_asc') { if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha); return (a.hora || '').localeCompare(b.hora || ''); } 
+      else if (ordenamiento === 'fecha_desc') { if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha); return (b.hora || '').localeCompare(a.hora || ''); }
       return 0;
     });
     return resultado;
@@ -555,7 +546,6 @@ body, html {
       return;
     }
 
-    // Agrupar turnos por fecha completa
     const agrupadosPorFecha = {};
     turnosFiltrados.forEach(t => {
       if(!agrupadosPorFecha[t.fecha]) {
@@ -571,7 +561,6 @@ body, html {
 
     const pageSize = parseInt(document.getElementById('selectPageSize').value) || 10;
     
-    // Construir lista plana de turnos respetando el límite de registros por página
     let turnosAcumulados = [];
     diasArray.forEach(fecha => {
       agrupadosPorFecha[fecha].forEach(t => {
@@ -588,7 +577,6 @@ body, html {
     const fin = inicio + pageSize;
     const turnosPagina = turnosAcumulados.slice(inicio, fin);
 
-    // Reagrupar solo los turnos que pertenecen a la página actual para mostrarlos ordenados por fecha
     const diasPaginaAgrupados = {};
     turnosPagina.forEach(t => {
       if(!diasPaginaAgrupados[t.fecha]) diasPaginaAgrupados[t.fecha] = [];
@@ -621,8 +609,8 @@ body, html {
         html += `
           <tr>
             <td><strong>#${t.id}</strong></td>
-            <td>${t.hora}</td>
-            <td>${t.paciente}</td>
+            <td>${t.hora || '-'}</td>
+            <td>${t.paciente || t.motivo || '-'}</td>
             <td>${t.edad || '-'}</td>
             <td>${t.obra || 'Particular'}</td>
             <td>${t.medioSolicitud || '-'}</td>
@@ -679,12 +667,12 @@ body, html {
     let html = `<div style="width:100%; overflow:hidden;"><table class="data-table" style="width:100%;">
       <thead><tr><th>Fecha</th><th>Paciente</th><th>Edad</th><th>O.S / part</th><th>Solic.</th><th>Asist.</th></tr></thead><tbody>`;
     turnos.forEach(t => {
-      const est = t.estado.toLowerCase();
+      const est = (t.estado || '').toLowerCase();
       let badgeAsist = '';
-      if (est === 'atendido' || est === 'finalizado') badgeAsist = '<span style="background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">SI</span>';
+      if (est === 'atendido' || est === 'finalizado' || est === 'confirmado') badgeAsist = '<span style="background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">SI</span>';
       else if (est === 'cancelado') badgeAsist = '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">CANCELADO</span>';
       else badgeAsist = '<span style="background:#fee2e2; color:#991b1b; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">NO</span>';
-      html += `<tr><td>${formatearFechaDDMMAA(t.fecha)}</td><td>${t.paciente || '-'}</td><td>${t.edad || '-'}</td><td>${t.obra || 'Particular'}</td><td>${t.medioSolicitud || '-'}</td><td>${badgeAsist}</td></tr>`;
+      html += `<tr><td>${formatearFechaDDMMAA(t.fecha)}</td><td>${t.paciente || t.motivo || '-'}</td><td>${t.edad || '-'}</td><td>${t.obra || 'Particular'}</td><td>${t.medioSolicitud || '-'}</td><td>${badgeAsist}</td></tr>`;
     });
     html += `</tbody></table></div>`;
     return html;
@@ -869,216 +857,41 @@ body, html {
     `;
   }
 
-  function imprimirEstadisticasGenerales() {
-    const desde = document.getElementById('filtroDesde').value;
-    const hasta = document.getElementById('filtroHasta').value;
-    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
-    const ahora = new Date();
-    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
-
-    const contenido = document.getElementById('areaEstadisticasGeneralesInner').innerHTML;
-    const ventana = window.open('', '_blank');
-    
-    let htmlDoc = '<html><head><title>Impresión - Estadísticas Generales</title>';
-    htmlDoc += '<style>';
-    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
-    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
-    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
-    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
-    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
-    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 8px; } ';
-    htmlDoc += 'h3 { color: #dc2626; text-transform: uppercase; font-size: 16px; margin-bottom: 15px; } ';
-    htmlDoc += '.stats-grid-4x2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; } ';
-    htmlDoc += '.stat-card-item { background: #ffffff; border: 1px solid #f5c2c2; border-radius: 12px; padding: 15px; text-align: center; } ';
-    htmlDoc += '.stat-icon-circle { width: 40px; height: 40px; border-radius: 50%; background: #fef2f2; border: 1px solid #fecaca; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 16px; }';
-    htmlDoc += '.stat-icon-circle img { width: 20px; height: 20px; object-fit: contain; }';
-    htmlDoc += '.stat-card-item span { font-size: 11px; font-weight: 700; color: #6b5a5a; text-transform: uppercase; display: block; margin-bottom: 6px; } ';
-    htmlDoc += '.stat-card-item strong { font-size: 20px; font-weight: 800; color: #dc2626; } ';
-    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
-    htmlDoc += '</sty' + 'le></he' + 'ad>';
-    htmlDoc += '<body onload="window.print(); window.close();">';
-    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
-    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div><div><strong>Obra social:</strong> ' + (obraSocialFiltro === 'todas' ? 'Todas' : obraSocialFiltro) + '</div></div>';
-    htmlDoc += '<h3>Estadísticas Generales</h3>';
-    htmlDoc += '<div class="stats-grid-4x2">' + contenido + '</div>';
-    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
-    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
-    ventana.document.write(htmlDoc);
-    ventana.document.close();
-  }
-
-  function imprimirListadoConsultas() {
-    const desde = document.getElementById('filtroDesde').value;
-    const hasta = document.getElementById('filtroHasta').value;
-    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
-    const turnosFiltrados = obtenerTurnosFiltradosActuales();
-
-    const ahora = new Date();
-    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
-    const ventana = window.open('', '_blank');
-
-    let htmlAgrupadoPrint = '';
-    const agrupados = {};
-    turnosFiltrados.forEach(t => {
-      if(!agrupados[t.fecha]) agrupados[t.fecha] = [];
-      agrupados[t.fecha].push(t);
-    });
-
-    for(const [fecha, lista] of Object.entries(agrupados)) {
-      htmlAgrupadoPrint += `<div style="margin-bottom:15px; border:1px solid #fecaca; border-radius:8px; overflow:hidden;"><div style="background:#fef2f2; color:#dc2626; padding:8px 12px; font-weight:bold; font-size:13px;">Fecha: ${formatearFechaDDMMAA(fecha)} (${fecha})</div><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">ID</th><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">Hora</th><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">Paciente</th><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">Edad</th><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">Obra Social</th><th style="border:1px solid #f0e5e5; padding:6px; background:#fafafa;">Solicitud</th></tr></thead><tbody>`;
-      lista.forEach(t => {
-        htmlAgrupadoPrint += `<tr><td style="border:1px solid #f0e5e5; padding:6px;">#${t.id}</td><td style="border:1px solid #f0e5e5; padding:6px;">${t.hora}</td><td style="border:1px solid #f0e5e5; padding:6px;">${t.paciente}</td><td style="border:1px solid #f0e5e5; padding:6px;">${t.edad||'-'}</td><td style="border:1px solid #f0e5e5; padding:6px;">${t.obra||'Particular'}</td><td style="border:1px solid #f0e5e5; padding:6px;">${t.medioSolicitud||'-'}</td></tr>`;
-      });
-      htmlAgrupadoPrint += `</tbody></table></div>`;
-    }
-
-    let htmlDoc = '<html><head><title>Impresión - Listado de Consultas Agrupadas</title>';
-    htmlDoc += '<style>';
-    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
-    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
-    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
-    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
-    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
-    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 8px; } ';
-    htmlDoc += 'h3 { color: #dc2626; margin-top: 0; text-transform: uppercase; font-size: 16px; } ';
-    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
-    htmlDoc += '</sty' + 'le></he' + 'ad>';
-    htmlDoc += '<body onload="window.print(); window.close();">';
-    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
-    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div><div><strong>Obra social:</strong> ' + (obraSocialFiltro === 'todas' ? 'Todas' : obraSocialFiltro) + '</div></div>';
-    htmlDoc += '<h3>Listado de Consultas Agrupadas por Fecha</h3>';
-    htmlDoc += htmlAgrupadoPrint;
-    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
-    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
-    ventana.document.write(htmlDoc);
-    ventana.document.close();
-  }
-
-  function imprimirHistorialTurnos() {
-    const desde = document.getElementById('filtroDesde').value;
-    const hasta = document.getElementById('filtroHasta').value;
-    const obraSocialFiltro = document.getElementById('selectFiltroObraSocial').value;
-    const turnosFiltrados = obtenerHistorialFiltradosActuales();
-
-    const ahora = new Date();
-    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
-    const ventana = window.open('', '_blank');
-    
-    let htmlDoc = '<html><head><title>Impresión - Historial de Turnos</title>';
-    htmlDoc += '<style>';
-    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
-    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
-    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
-    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
-    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
-    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 8px; } ';
-    htmlDoc += 'table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; font-size: 12px; table-layout: fixed; } ';
-    htmlDoc += 'th, td { padding: 8px 10px; border: 1px solid #f0e5e5; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } ';
-    htmlDoc += 'th { background: #fef2f2; color: #dc2626; font-weight: 700; } ';
-    htmlDoc += 'h3 { color: #dc2626; margin-top: 0; text-transform: uppercase; font-size: 16px; } ';
-    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
-    htmlDoc += '</sty' + 'le></he' + 'ad>';
-    htmlDoc += '<body onload="window.print(); window.close();">';
-    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
-    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div><div><strong>Obra social:</strong> ' + (obraSocialFiltro === 'todas' ? 'Todas' : obraSocialFiltro) + '</div></div>';
-    htmlDoc += '<h3>Historial de Turnos</h3>';
-    htmlDoc += generarHTMLTablaLineal(turnosFiltrados);
-    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
-    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
-    ventana.document.write(htmlDoc);
-    ventana.document.close();
-  }
-
-  function imprimirReporteObras() {
-    const desde = document.getElementById('filtroDesde').value;
-    const hasta = document.getElementById('filtroHasta').value;
-    const ahora = new Date();
-    const fechaFormateada = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'});
-    const img1 = document.getElementById('chartTopObras').toDataURL("image/png");
-    const img2 = document.getElementById('chartOsVsPart').toDataURL("image/png");
-    
-    const totalGeneral = coberturasCache.reduce((acc, curr) => acc + curr[1], 0);
-    let tbodyPrint = '';
-    coberturasCache.forEach(item => {
-      const porcentajeItem = totalGeneral > 0 ? ((item[1] / totalGeneral) * 100).toFixed(1) : 0;
-      tbodyPrint += `<tr><td>${item[0]}</td><td style="text-align:center; font-weight:bold;">${item[1]}</td><td style="text-align:center; color:#dc2626; font-weight:600;">${porcentajeItem}%</td></tr>`;
-    });
-    const tablaPrintHtml = `<table class="data-table"><thead><tr><th>Cobertura</th><th style="text-align:center;">Cantidad</th><th style="text-align:center;">Porcentaje</th></tr></thead><tbody>${tbodyPrint}</tbody></table><div style="margin-top:10px; font-weight:bold; font-size:14px; text-align:right;">Total de consultas: <span style="color:#dc2626;">${totalGeneral}</span></div>`;
-
-    const ventana = window.open('', '_blank');
-    let htmlDoc = '<html><head><title>Impresión - Obras Sociales</title>';
-    htmlDoc += '<style>';
-    htmlDoc += 'body { font-family: system-ui, sans-serif; color: #1a1a1a; padding: 25px; background: #fff; width: 100%; box-sizing: border-box; } ';
-    htmlDoc += '.print-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-bottom: 20px; } ';
-    htmlDoc += '.brand-box { display: flex; align-items: center; gap: 10px; } ';
-    htmlDoc += '.brand-box img { height: 35px; object-fit: contain; } ';
-    htmlDoc += '.brand-title { font-size: 20px; font-weight: 800; color: #dc2626; text-decoration: none; } ';
-    htmlDoc += '.info-prof { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 13px; } ';
-    htmlDoc += 'h3 { color: #dc2626; text-transform: uppercase; font-size: 16px; margin-bottom: 15px; } ';
-    htmlDoc += '.print-layout { display: flex; gap: 20px; align-items: flex-start; }';
-    htmlDoc += '.print-charts { display: flex; flex-direction: column; gap: 15px; width: 220px; flex-shrink: 0; text-align: center; }';
-    htmlDoc += '.print-charts img { width: 100%; height: auto; }';
-    htmlDoc += '.print-table { flex: 1; }';
-    htmlDoc += 'table { width: 100%; border-collapse: collapse; font-size: 12px; } ';
-    htmlDoc += 'th, td { border: 1px solid #f0e5e5; padding: 8px; text-align: left; } th { background: #fef2f2; color: #dc2626; }';
-    htmlDoc += '.footer-firma { margin-top: 40px; text-align: center; font-size: 12px; color: #6b5a5a; border-top: 1px solid #eee; padding-top: 12px; }';
-    htmlDoc += '</sty' + 'le></he' + 'ad>';
-    htmlDoc += '<body onload="setTimeout(function(){ window.print(); window.close(); }, 500);">';
-    htmlDoc += '<div class="print-topbar"><div class="brand-box"><img src="assets/Logo-MediTurnos.png" onerror="this.style.display=\'none\'"><span class="brand-title">medi-turnos</span></div><div style="font-size:12px; color:#6b5a5a;">Fecha de impresión: <strong>' + fechaFormateada + '</strong></div></div>';
-    htmlDoc += '<div class="info-prof"><div><strong>Profesional:</strong> Dra. María González</div><div><strong>Especialidad:</strong> Dermatología</div><div><strong>Período:</strong> ' + desde + ' al ' + hasta + '</div></div>';
-    htmlDoc += '<h3>Estadísticas: Obra Social / Particular</h3>';
-    htmlDoc += '<div class="print-layout">';
-    htmlDoc += '<div class="print-charts"><img src="' + img1 + '"><img src="' + img2 + '"></div>';
-    htmlDoc += '<div class="print-table">' + tablaPrintHtml + '</div>';
-    htmlDoc += '</div>';
-    htmlDoc += '<div class="footer-firma">Generado por Medi-Turnos | By Binario Software</div>';
-    htmlDoc += '</bo' + 'dy></ht' + 'ml>';
-    ventana.document.write(htmlDoc);
-    ventana.document.close();
-  }
-
-  function descargarPDFEstadisticasGenerales() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirEstadisticasGenerales(); }, 500); }
-  function descargarPDFListadoConsultas() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirListadoConsultas(); }, 500); }
-  function descargarPDFHistorialTurnos() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirHistorialTurnos(); }, 500); }
-  function descargarPDFObras() { alert('Asegúrate de elegir "Guardar como PDF".'); setTimeout(() => { imprimirReporteObras(); }, 500); }
-
   function enviarPorMailGeneral() {
-    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
-    const asunto = encodeURIComponent(`Estadísticas Generales - Medi-Turnos`);
+    const desde = document.getElementById('filtroDesde').value; 
+    const hasta = document.getElementById('filtroHasta').value;
+    const asunto = encodeURIComponent("Estadísticas Generales - Medi-Turnos");
     let tc = `ESTADÍSTICAS GENERALES\nPeríodo: ${desde} al ${hasta}\n========================\n\n`;
-    tc += `Revise el sistema para consultar los datos completos.\n`;
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(tc)}`;
   }
 
   function enviarPorMailListadoConsultas() {
-    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
+    const desde = document.getElementById('filtroDesde').value; 
+    const hasta = document.getElementById('filtroHasta').value;
     const turnosFiltrados = obtenerTurnosFiltradosActuales();
     const asunto = encodeURIComponent(`Listado de Consultas Agrupadas - Medi-Turnos (${desde} al ${hasta})`);
     let textoCuerpo = `LISTADO DE CONSULTAS AGRUPADAS - MEDI-TURNOS\nPeríodo: ${desde} al ${hasta} | Total: ${turnosFiltrados.length} registros\n==================================================\n\n`;
     turnosFiltrados.forEach((t) => {
-      textoCuerpo += `🗓️ FECHA: ${formatearFechaDDMMAA(t.fecha)} | ⏰ HORA: ${t.hora} | ID: #${t.id}\n`;
-      textoCuerpo += `👤 PACIENTE: ${t.paciente} (Edad: ${t.edad || '-'})\n`;
-      textoCuerpo += `🏥 O.S: ${t.obra || 'Particular'} | 📌 SOLICITUD: ${t.medioSolicitud || '-'}\n`;
+      textoCuerpo += `🗓️ FECHA: ${formatearFechaDDMMAA(t.fecha)} | ⏰ HORA: ${t.hora || '-'} | ID: #${t.id}\n`;
+      textoCuerpo += `👤 PACIENTE: ${t.paciente || t.motivo || '-'}\n`;
       textoCuerpo += `--------------------------------------------------\n`;
     });
-    textoCuerpo += `\nGenerado por Medi-Turnos | By Binario Software`;
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
   }
 
   function enviarPorMailHistorialTurnos() {
-    const desde = document.getElementById('filtroDesde').value; const hasta = document.getElementById('filtroHasta').value;
+    const desde = document.getElementById('filtroDesde').value; 
+    const hasta = document.getElementById('filtroHasta').value;
     const turnosFiltrados = obtenerHistorialFiltradosActuales();
     const asunto = encodeURIComponent(`Historial de Turnos - Medi-Turnos (${desde} al ${hasta})`);
     let textoCuerpo = `HISTORIAL DE TURNOS - MEDI-TURNOS\nPeríodo: ${desde} al ${hasta} | Total: ${turnosFiltrados.length} registros\n==================================================\n\n`;
     turnosFiltrados.forEach((t) => {
-      let estTxt = 'NO'; const est = t.estado.toLowerCase();
-      if (est === 'atendido' || est === 'finalizado') estTxt = 'SÍ'; else if (est === 'cancelado') estTxt = 'CANCELADO';
+      let estTxt = 'NO'; const est = (t.estado || '').toLowerCase();
+      if (est === 'atendido' || est === 'finalizado' || est === 'confirmado') estTxt = 'SÍ'; else if (est === 'cancelado') estTxt = 'CANCELADO';
       textoCuerpo += `🗓️ FECHA: ${formatearFechaDDMMAA(t.fecha)} | 🏥 O.S: ${t.obra || 'Particular'}\n`;
-      textoCuerpo += `👤 PACIENTE: ${t.paciente} (Edad: ${t.edad || '-'})\n`;
-      textoCuerpo += `📌 SOLICITUD: ${t.medioSolicitud || '-'} | ✔️ ASISTIÓ: ${estTxt}\n`;
+      textoCuerpo += `👤 PACIENTE: ${t.paciente || t.motivo || '-'}\n`;
       textoCuerpo += `--------------------------------------------------\n`;
     });
-    textoCuerpo += `\nGenerado por Medi-Turnos | By Binario Software`;
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
   }
 
@@ -1094,21 +907,10 @@ body, html {
     });
 
     const asunto = encodeURIComponent(`Consultas por Obra Social - Medi-Turnos (${desde} al ${hasta})`);
-    
-    let textoCuerpo = `CONSULTAS POR OBRA SOCIAL / PARTICULAR\n`;
-    textoCuerpo += `Período: ${desde} al ${hasta}\n`;
-    textoCuerpo += `==================================================\n\n`;
-    
-    let total = 0;
+    let textoCuerpo = `CONSULTAS POR OBRA SOCIAL / PARTICULAR\nPeríodo: ${desde} al ${hasta}\n==================================================\n\n`;
     for (let os in conteoObras) {
       textoCuerpo += `🏥 ${os}: ${conteoObras[os]} consultas\n`;
-      total += conteoObras[os];
     }
-    
-    textoCuerpo += `\n--------------------------------------------------\n`;
-    textoCuerpo += `👉 TOTAL CONSULTAS: ${total}\n\n`;
-    textoCuerpo += `Generado por Medi-Turnos | By Binario Software`;
-
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
   }
 </script>
