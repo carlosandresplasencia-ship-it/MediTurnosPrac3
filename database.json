@@ -151,7 +151,7 @@
       "fecha": "2026-09-22",
       "hora": "12:00",
       "motivo": "edd",
-      "estado": "Pendiente",
+      "estado": "Cancelado",
       "creado": "2026-09-22T15:25:21.447Z"
     },
     {
@@ -162,6 +162,230 @@
       "paciente": "Juan Pérez",
       "obra": "OSDE",
       "motivo": "Consulta general (Primera consulta)",
+      "estado": "Cancelado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 7,
+      "fecha": "2026-09-25",
+      "hora": "15:30",
+      "horaHasta": "16:00",
+      "paciente": "Juan Pérez",
+      "obra": "OSDE",
+      "motivo": "fe (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 8,
+      "fecha": "2026-09-25",
+      "hora": "16:00",
+      "horaHasta": "16:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsa (Primera consulta)",
+      "estado": "Cancelado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 9,
+      "fecha": "2026-09-25",
+      "hora": "16:30",
+      "horaHasta": "17:00",
+      "paciente": "Aaron",
+      "obra": "osde",
+      "motivo": "dsa (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 10,
+      "fecha": "2026-09-25",
+      "hora": "18:00",
+      "horaHasta": "18:30",
+      "paciente": "Ale",
+      "obra": "osde",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "Cancelado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 11,
+      "fecha": "2026-09-25",
+      "hora": "16:00",
+      "horaHasta": "16:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "ddsad (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 12,
+      "fecha": "2026-09-28",
+      "hora": "07:30",
+      "horaHasta": "12:00",
+      "paciente": "",
+      "obra": "",
+      "motivo": "fe",
+      "estado": "Confirmado",
+      "tipoEvento": "Congreso"
+    },
+    {
+      "id": 13,
+      "fecha": "2026-09-29",
+      "hora": "10:00",
+      "horaHasta": "10:30",
+      "paciente": "",
+      "obra": "",
+      "motivo": "Congreso",
+      "estado": "Confirmado",
+      "tipoEvento": "Congreso"
+    },
+    {
+      "id": 14,
+      "fecha": "2026-09-30",
+      "hora": "10:00",
+      "horaHasta": "16:30",
+      "paciente": "",
+      "obra": "",
+      "motivo": "fe",
+      "estado": "Confirmado",
+      "tipoEvento": "Congreso"
+    },
+    {
+      "id": 15,
+      "fecha": "2026-09-22",
+      "hora": "12:00",
+      "horaHasta": "16:03",
+      "paciente": "",
+      "obra": "",
+      "motivo": "edd",
+      "estado": "Confirmado",
+      "tipoEvento": "Otro"
+    },
+    {
+      "id": 16,
+      "fecha": "2026-09-28",
+      "hora": "18:00",
+      "horaHasta": "18:30",
+      "paciente": "Juan Pérez",
+      "obra": "OSDE",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "Confirmado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 17,
+      "fecha": "2026-09-25",
+      "hora": "18:30",
+      "horaHasta": "19:00",
+      "paciente": "Juan Pérez",
+      "obra": "OSDE",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "En sala de espera",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 20,
+      "fecha": "2026-09-25",
+      "hora": "17:30",
+      "horaHasta": "18:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "ddsad (Primera consulta)",
+      "estado": "En sala de espera",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 21,
+      "fecha": "2026-09-26",
+      "hora": "12:30",
+      "horaHasta": "13:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "ddsad (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 22,
+      "fecha": "2026-09-26",
+      "hora": "13:00",
+      "horaHasta": "13:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadas (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 23,
+      "fecha": "2026-09-26",
+      "hora": "14:00",
+      "horaHasta": "14:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadsadas (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 24,
+      "fecha": "2026-09-26",
+      "hora": "14:30",
+      "horaHasta": "15:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadas (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 25,
+      "fecha": "2026-09-26",
+      "hora": "15:00",
+      "horaHasta": "15:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "ddsad (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 26,
+      "fecha": "2026-09-26",
+      "hora": "15:30",
+      "horaHasta": "16:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadas (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 27,
+      "fecha": "2026-09-26",
+      "hora": "16:00",
+      "horaHasta": "16:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadas (Primera consulta)",
       "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "WhatsApp"
@@ -175,7 +399,7 @@
       "obra": "OSDE",
       "telefono": "11 5555-1234",
       "email": "juan.perez@mail.com",
-      "estado": "Habilitado"
+      "estado": "Deshabilitado"
     },
     {
       "id": 7,
@@ -183,7 +407,7 @@
       "dni": "33456789",
       "obra": "OSDE",
       "telefono": "341223344",
-      "estado": "Habilitado"
+      "estado": "Deshabilitado"
     },
     {
       "id": 8,
@@ -191,7 +415,7 @@
       "dni": "11111",
       "obra": "Particular",
       "telefono": "1111",
-      "estado": "Habilitado"
+      "estado": "Deshabilitado"
     },
     {
       "id": 9,
@@ -207,6 +431,61 @@
       "dni": "1234",
       "obra": "Particular",
       "telefono": "1111",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 11,
+      "legajo": "11",
+      "nombre": "Colo",
+      "tipoDoc": "DNI",
+      "dni": "11222333",
+      "cuil": "11122233344",
+      "correo": "carlosandres.plasencia@gmail.com",
+      "obra": "osde",
+      "direccion": "cada",
+      "telefono": "3412125751",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 12,
+      "legajo": "12",
+      "nombre": "Carlos Plasencia",
+      "tipoDoc": "DNI",
+      "dni": "33826837",
+      "cuil": "20338268379",
+      "correo": "carlosandres.plasencia@gmail.com",
+      "obra": "osde",
+      "direccion": "cada",
+      "telefono": "3412125751",
+      "estado": "Habilitado",
+      "whatsapp": "3412125751"
+    },
+    {
+      "id": 13,
+      "legajo": "13",
+      "nombre": "Aaron",
+      "tipoDoc": "DNI",
+      "dni": "11222333",
+      "cuil": "20112223334",
+      "correo": "aaronamuedo2000@gmail.com",
+      "whatsapp": "3756586866",
+      "obra": "osde",
+      "direccion": "dded 345",
+      "telefono": "3756586866",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 14,
+      "legajo": "14",
+      "nombre": "Ale",
+      "tipoDoc": "DNI",
+      "dni": "22333444",
+      "cuil": "20223334445",
+      "correo": "jesuspablo1003@gmail.com",
+      "whatsapp": "3795194131",
+      "obra": "osde",
+      "direccion": "dded 345",
+      "telefono": "3795194131",
       "estado": "Habilitado"
     }
   ],
@@ -230,6 +509,133 @@
       "estado": "Activa"
     }
   ],
-  "hc": [],
+  "hc": [
+    {
+      "id": 1,
+      "legajo": "12",
+      "paciente": "Carlos Plasencia",
+      "tipoDoc": "DNI",
+      "dni": "33826837",
+      "obra": "osde",
+      "diagnostico": "ddsad",
+      "primeraConsulta": "2026-09-25",
+      "ultimaConsulta": "2026-09-26",
+      "antecedentes": [],
+      "consultas": [
+        {
+          "fecha": "2026-09-25",
+          "motivo": "dsdasdsa",
+          "tratamiento": "dsada",
+          "medicacion": "dsdada",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-23",
+          "motivo": "dsdasdsa",
+          "tratamiento": "321312",
+          "medicacion": "dsadas",
+          "estudios": {
+            "presion": "2132",
+            "fiebre": "34",
+            "pulsaciones": "43",
+            "freqResp": "21",
+            "satO2": "32",
+            "otros": "43"
+          },
+          "notas": "32131"
+        },
+        {
+          "fecha": "2026-09-03",
+          "motivo": "dsdsadas",
+          "tratamiento": "weewqeqw",
+          "medicacion": "dssadas",
+          "estudios": {
+            "presion": "2",
+            "fiebre": "321321",
+            "pulsaciones": "321321",
+            "freqResp": "121",
+            "satO2": "321312",
+            "otros": "321321"
+          },
+          "notas": "ewqewqdsdasdas"
+        },
+        {
+          "fecha": "2026-09-26",
+          "motivo": "dsadsadas",
+          "tratamiento": "dsadsa",
+          "medicacion": "dddseeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "estudios": {
+            "presion": "ew",
+            "fiebre": "32",
+            "pulsaciones": "333333",
+            "freqResp": "321",
+            "satO2": "321",
+            "otros": "321"
+          },
+          "notas": "dwewewew"
+        },
+        {
+          "fecha": "2026-09-26",
+          "motivo": "dsadas",
+          "tratamiento": "wqewqewqew",
+          "medicacion": "ewqeqweqw",
+          "estudios": {
+            "presion": "323",
+            "fiebre": "32323",
+            "pulsaciones": "3232",
+            "freqResp": "32",
+            "satO2": "32",
+            "otros": "32"
+          },
+          "notas": "dsewqewqe"
+        },
+        {
+          "fecha": "2026-09-26",
+          "motivo": "dsadas",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-26",
+          "motivo": "ddsad",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "notas": "-"
+        }
+      ],
+      "tratamientos": [
+        "dsdada",
+        "dsadas",
+        "dssadas",
+        "dddseeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "ewqeqweqw"
+      ]
+    }
+  ],
   "contactos": []
 }
