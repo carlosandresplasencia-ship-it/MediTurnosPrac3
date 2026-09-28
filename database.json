@@ -234,7 +234,7 @@
       "paciente": "",
       "obra": "",
       "motivo": "fe",
-      "estado": "Confirmado",
+      "estado": "Finalizado",
       "tipoEvento": "Congreso"
     },
     {
@@ -278,7 +278,7 @@
       "paciente": "Juan Pérez",
       "obra": "OSDE",
       "motivo": "Consulta general (Primera consulta)",
-      "estado": "Confirmado",
+      "estado": "En sala de espera",
       "tipoEvento": "Consulta",
       "medioSolicitud": "WhatsApp"
     },

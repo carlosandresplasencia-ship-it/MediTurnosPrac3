@@ -9,12 +9,12 @@
 
 <style>
 :root {
-  --red: #dc2626;
-  --red-dark: #b91c1c;
+  --red: #8f3f8b;
+  --red-dark: #863b83;
   --red-light: #fef2f2;
   --red-mid: #fecaca;
   --red-soft: #fff5f5;
-  --border: #f5c2c2;
+  --border: #7a2f5b;
   --text: #1a1a1a;
   --text-soft: #6b5a5a;
 }
@@ -261,7 +261,9 @@ body, html {
     <button class="active-quick" onclick="cambiarSeccion('general', this)">Estadísticas generales</button>
     <button onclick="cambiarSeccion('historial', this)">Historial de turnos</button>
     <button onclick="cambiarSeccion('obras', this)">Est. Obra Social/Particular</button>
-    <button onclick="window.location.href='secretaria.html'">Volver a administración</button>
+    <!-- BOTONES DE RETORNO CONDICIONALES -->
+    <button id="btnVolverAdmin" style="display:none;" onclick="window.location.href='secretaria.html'">Volver a administración</button>
+    <button id="btnVolverProf" style="display:none;" onclick="window.location.href='profesional.html'">Volver a área profesional</button>
   </div>
   <div class="doctor-box">
     <div class="doctor-avatar">SC</div>
@@ -461,6 +463,31 @@ body, html {
   }
 
   window.onload = () => {
+    // Capturar parámetros de la URL o verificar el historial de navegación (referrer)
+    const urlParams = new URLSearchParams(window.location.search);
+    const origen = (urlParams.get('origen') || '').toLowerCase();
+    const referrer = (document.referrer || '').toLowerCase();
+    
+    const btnAdmin = document.getElementById('btnVolverAdmin');
+    const btnProf = document.getElementById('btnVolverProf');
+
+    // Determinar si viene de secretaría (por parámetro o por archivo anterior)
+    const esAdmin = origen === 'admin' || origen === 'secretaria' || referrer.includes('secretaria.html');
+    // Determinar si viene de profesionales
+    const esProf = origen === 'profesional' || origen === 'profesionales' || referrer.includes('profesional.html');
+
+    if (esAdmin) {
+      if (btnAdmin) btnAdmin.style.display = 'inline-block';
+      if (btnProf) btnProf.style.display = 'none';
+    } else if (esProf) {
+      if (btnAdmin) btnAdmin.style.display = 'none';
+      if (btnProf) btnProf.style.display = 'inline-block';
+    } else {
+      // Por defecto (si se abre directo), mostramos el de administración para que no quede vacío
+      if (btnAdmin) btnAdmin.style.display = 'inline-block';
+      if (btnProf) btnProf.style.display = 'none';
+    }
+
     cargarDatosServidor();
   };
 
@@ -1001,7 +1028,8 @@ body, html {
     }
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
   }
-    function fechaImpresionAhora() {
+
+  function fechaImpresionAhora() {
     const d = new Date();
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -1147,7 +1175,6 @@ body, html {
       </tr>`;
     });
 
-    // Clonar canvases actuales como imágenes
     let chartsHtml = '';
     ['chartTopObras', 'chartOsVsPart'].forEach(id => {
       const cv = document.getElementById(id);

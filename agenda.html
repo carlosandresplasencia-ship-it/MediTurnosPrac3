@@ -16,7 +16,6 @@
   --text-soft: #625c6e;
   --bg-main: #f7f4fb;
 }
-}
 body, html {
   height: 100%;
   margin: 0;
@@ -201,9 +200,10 @@ input, select, textarea {
         <div class="eyebrow">GESTIÓN DE AGENDA</div>
       </div>
       
+      <!-- BOTONES DINÁMICOS CON IDS PARA CONTROLAR ORIGEN -->
       <div class="quick-access">
-        <button onclick="window.location.href='profesionales.html'">← VOLVER A PROFESIONAL</button>
-        <button onclick="window.location.href='secretaria.html'">VOLVER A ADMINISTRACIÓN</button>
+        <button id="btnVolverProf" style="display: none;" onclick="window.location.href='profesionales.html'">← VOLVER A PROFESIONAL</button>
+        <button id="btnVolverAdmin" style="display: none;" onclick="window.location.href='secretaria.html'">VOLVER A ADMINISTRACIÓN</button>
       </div>
       
       <div class="doctor-box">
@@ -311,6 +311,27 @@ input, select, textarea {
   const HORA_INICIO = 6; 
   const HORA_FIN = 22; 
   let idTurnoModificar = null;
+
+  // NUEVA FUNCIÓN: Configura qué botón de retorno mostrar según la URL (?origen=admin o ?origen=prof)
+  function configurarBotonesRetorno() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const origen = urlParams.get('origen');
+
+    const btnAdmin = document.getElementById('btnVolverAdmin');
+    const btnProf = document.getElementById('btnVolverProf');
+
+    if (origen === 'admin') {
+      if (btnAdmin) btnAdmin.style.display = 'inline-block';
+      if (btnProf) btnProf.style.display = 'none';
+    } else if (origen === 'prof') {
+      if (btnProf) btnProf.style.display = 'inline-block';
+      if (btnAdmin) btnAdmin.style.display = 'none';
+    } else {
+      // Por defecto si entra sin parámetro, muestra ambos
+      if (btnAdmin) btnAdmin.style.display = 'inline-block';
+      if (btnProf) btnProf.style.display = 'inline-block';
+    }
+  }
 
   async function cargarDatosServidor() {
     try {
@@ -603,7 +624,7 @@ input, select, textarea {
     }
   }
 
-    function abrirDetalleTurno(id) {
+  function abrirDetalleTurno(id) {
     const t = listaTurnosGeneral.find(x => x.id === id);
     if (!t) return;
     
@@ -616,7 +637,7 @@ input, select, textarea {
       <p><strong>Estado:</strong> ${t.estado}</p>
     `;
 
-    const msg = 'Para editar o eliminar un evento debés hacerlo desde Inicio o Turnos General.';
+    const msg = 'Para cancelar o editar un turno debes hacerlo desde inicio o desde turnos general.';
 
     const btnCancel = document.getElementById('btnCancelarTurno');
     const btnEdit = document.getElementById('btnEditarTurno');
@@ -761,6 +782,8 @@ input, select, textarea {
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
+  // Inicializar funciones al cargar la página
+  configurarBotonesRetorno();
   cargarDatosServidor();
 </script>
 </body>
