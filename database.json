@@ -256,7 +256,7 @@
       "paciente": "",
       "obra": "",
       "motivo": "fe",
-      "estado": "Confirmado",
+      "estado": "Cancelado",
       "tipoEvento": "Congreso"
     },
     {
@@ -389,6 +389,18 @@
       "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 28,
+      "fecha": "2026-09-27",
+      "hora": "19:30",
+      "horaHasta": "20:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsadas (Primera consulta)",
+      "estado": "Confirmado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
     }
   ],
   "pacientes": [
@@ -487,6 +499,48 @@
       "direccion": "dded 345",
       "telefono": "3795194131",
       "estado": "Habilitado"
+    },
+    {
+      "id": 15,
+      "legajo": "15",
+      "nombre": "colo2",
+      "tipoDoc": "DNI",
+      "dni": "22333444",
+      "cuil": "2'223334445",
+      "correo": "aaronamuedo2000@gmail.com",
+      "obra": "Particular",
+      "direccion": "dded 345",
+      "telefono": "3756586866",
+      "whatsapp": "3412125751",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 16,
+      "legajo": "16",
+      "nombre": "ewewq",
+      "tipoDoc": "DNI",
+      "dni": "33333333",
+      "cuil": "33333333333",
+      "correo": "321312@c.com",
+      "obra": "tata",
+      "direccion": "dded 345",
+      "telefono": "312312",
+      "whatsapp": "3213123",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 17,
+      "legajo": "17",
+      "nombre": "dsadasda",
+      "tipoDoc": "DNI",
+      "dni": "33333334",
+      "cuil": "33333333344",
+      "correo": "321312@c.com",
+      "obra": "tata",
+      "direccion": "dded 345",
+      "telefono": "312312",
+      "whatsapp": "3213123",
+      "estado": "Habilitado"
     }
   ],
   "obras": [
@@ -507,6 +561,24 @@
       "id": 2,
       "cobertura": "PARTICULAR",
       "estado": "Activa"
+    },
+    {
+      "id": 3,
+      "cobertura": "SM",
+      "estado": "Activa"
+    },
+    {
+      "id": 4,
+      "cobertura": "sm2",
+      "estado": "Activa",
+      "cosGral": "32",
+      "cosEspec": "32",
+      "cosPractica": "32",
+      "cosEstudio": "32",
+      "contacto": "eweq",
+      "telefono": "3232",
+      "email": "dsada",
+      "web": ""
     }
   ],
   "hc": [
@@ -637,5 +709,32 @@
       ]
     }
   ],
-  "contactos": []
+  "contactos": [
+    {
+      "id": 1,
+      "nombre": "dsadas",
+      "rol": "fasdsada",
+      "empresa": "dsadasdas",
+      "telefono": "321312555",
+      "email": "dsadsaxas"
+    },
+    {
+      "id": 2,
+      "nombre": "dsadasda",
+      "rol": "Paciente",
+      "empresa": "tata",
+      "telefono": "312312",
+      "whatsapp": "3213123",
+      "email": "321312@c.com"
+    },
+    {
+      "id": 3,
+      "nombre": "eweq",
+      "rol": "Referente / Obra Social",
+      "empresa": "sm2",
+      "telefono": "3232",
+      "whatsapp": "3232",
+      "email": "dsada"
+    }
+  ]
 }

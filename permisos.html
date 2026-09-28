@@ -447,36 +447,44 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_inicio">
           <div class="toggle-row">
-            <span>Abrir Calendario Interactivo</span>
+            <span>Abrir calendario</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_ver" checked onchange="updatePermiso('sec_inicio_calendario_ver')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Reservar Horarios Libres</span>
+            <span>Reservar horarios libres</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_reservar" checked onchange="updatePermiso('sec_inicio_calendario_reservar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Editar Horarios Ocupados</span>
+            <span>Editar horarios ocupados</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_editar" checked onchange="updatePermiso('sec_inicio_calendario_editar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row" style="background: rgba(255,255,255,0.02); margin-top: 4px; padding-top: 8px; border-top: 1px dashed #4b5563;">
-            <span>Cargar Nueva Consulta (＋)</span>
+            <span>Nuevo turno/evento (＋)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_nueva_consulta" checked onchange="updatePermiso('sec_inicio_nueva_consulta')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Marcar en Espera (🙋‍♂️)</span>
+            <span>Marcar en espera (🙋‍♂️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_en_espera" checked onchange="updatePermiso('sec_inicio_en_espera')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Ver Detalle de Paciente (👁️)</span>
+            <span>Ver estado paciente (👁️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_ver_paciente" checked onchange="updatePermiso('sec_inicio_ver_paciente')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Modificar Turno (✏️)</span>
+            <span>Modificar turno (✏️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_modificar_turno" checked onchange="updatePermiso('sec_inicio_modificar_turno')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Cancelar Turno (⬇️)</span>
+            <span>Cancelar turno (⬇️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_inicio_cancelar_turno" checked onchange="updatePermiso('sec_inicio_cancelar_turno')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Google Calendar (📅)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_google_calendar" checked onchange="updatePermiso('sec_inicio_google_calendar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Atender y registrar consulta (✅)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_atender_consulta" checked onchange="updatePermiso('sec_inicio_atender_consulta')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -627,12 +635,63 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
             <label class="switch-sub"><input type="checkbox" id="sec_hc_consulta" checked onchange="updatePermiso('sec_hc_consulta')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Ver Ficha / Imprimir / Descargar (👁️)</span>
+            <span>Ver Ficha Historial (👁️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_hc_ver" checked onchange="updatePermiso('sec_hc_ver')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row sub-level" id="row_sec_hc_imprimir">
+            <span>↳ Permitir Imprimir (🖨️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_imprimir" checked onchange="updatePermiso('sec_hc_imprimir')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row sub-level" id="row_sec_hc_descargar">
+            <span>↳ Permitir Descargar PDF (📄)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_hc_descargar" checked onchange="updatePermiso('sec_hc_descargar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
             <span>Editar Contacto/Cobertura (✏️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_hc_editar" checked onchange="updatePermiso('sec_hc_editar')"><span class="slider-sub"></span></label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- MÓDULO HACER RECETA (ACCESO DIRECTO) -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Hacer Receta (💊)</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_receta">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_receta" checked onchange="toggleModuloMain('sec_receta')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_receta">
+          <div style="padding: 15px; font-size: 13px; color: #94a3b8; text-align: center; font-style: italic;">
+            Módulo de acceso directo externo.
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTUALIZACIONES Y CONFIGURACIÓN -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Actualizaciones / Configuración</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_actualizaciones">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_actualizaciones" checked onchange="toggleModuloMain('sec_actualizaciones')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_actualizaciones">
+          <div class="toggle-row">
+            <span>Tiempos de Consulta</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_actualizaciones_tiempos" checked onchange="updatePermiso('sec_actualizaciones_tiempos')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Días y Horarios de Atención</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_actualizaciones_agenda" checked onchange="updatePermiso('sec_actualizaciones_agenda')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -709,20 +768,46 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
 const devConfig = JSON.parse(localStorage.getItem('medi_dev_config')) || {};
 
 function syncDependenciaDetalle() {
+  // 1. Dependencia de Obras Sociales
   const chkDetalle = document.getElementById('sec_obras_detalle');
   const chkAuto = document.getElementById('sec_obras_autorizaciones');
   const rowAuto = document.getElementById('row_sec_obras_autorizaciones');
 
-  if (!chkDetalle || !chkAuto || !rowAuto) return;
+  if (chkDetalle && chkAuto && rowAuto) {
+    if (chkDetalle.checked) {
+      rowAuto.classList.remove('disabled-row');
+      chkAuto.disabled = false;
+    } else {
+      rowAuto.classList.add('disabled-row');
+      chkAuto.checked = false;
+      chkAuto.disabled = true;
+      devConfig['sec_obras_autorizaciones'] = false;
+    }
+  }
 
-  if (chkDetalle.checked) {
-    rowAuto.classList.remove('disabled-row');
-    chkAuto.disabled = false;
-  } else {
-    rowAuto.classList.add('disabled-row');
-    chkAuto.checked = false;
-    chkAuto.disabled = true;
-    devConfig['sec_obras_autorizaciones'] = false;
+  // 2. Dependencias de Historial Clínico (Imprimir y Descargar)
+  const chkHcVer = document.getElementById('sec_hc_ver');
+  const chkHcImp = document.getElementById('sec_hc_imprimir');
+  const chkHcDesc = document.getElementById('sec_hc_descargar');
+  const rowHcImp = document.getElementById('row_sec_hc_imprimir');
+  const rowHcDesc = document.getElementById('row_sec_hc_descargar');
+
+  if (chkHcVer && chkHcImp && chkHcDesc && rowHcImp && rowHcDesc) {
+    if (chkHcVer.checked) {
+      rowHcImp.classList.remove('disabled-row');
+      rowHcDesc.classList.remove('disabled-row');
+      chkHcImp.disabled = false;
+      chkHcDesc.disabled = false;
+    } else {
+      rowHcImp.classList.add('disabled-row');
+      rowHcDesc.classList.add('disabled-row');
+      chkHcImp.checked = false;
+      chkHcDesc.checked = false;
+      chkHcImp.disabled = true;
+      chkHcDesc.disabled = true;
+      devConfig['sec_hc_imprimir'] = false;
+      devConfig['sec_hc_descargar'] = false;
+    }
   }
 }
 
@@ -763,6 +848,7 @@ function updatePermiso(key) {
     if (chkVerHC) {
       chkVerHC.checked = chk.checked;
       devConfig['sec_hc_ver'] = chk.checked;
+      syncDependenciaDetalle(); // Actualiza los sub-botones
     }
   } else if (key === 'sec_hc_ver') {
     const chkPacHC = document.getElementById('sec_pacientes_hc');
@@ -770,10 +856,11 @@ function updatePermiso(key) {
       chkPacHC.checked = chk.checked;
       devConfig['sec_pacientes_hc'] = chk.checked;
     }
+    syncDependenciaDetalle(); // Fuerza el bloqueo de Imprimir/Descargar al instante
   }
 
   // Lógica de autorizaciones dependiente
-  if (key === 'sec_obras_detalle') {
+  if (key === 'sec_obras_detalle' || key === 'sec_hc_ver') {
     syncDependenciaDetalle();
   }
 

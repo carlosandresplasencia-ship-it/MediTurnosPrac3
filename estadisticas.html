@@ -158,6 +158,94 @@ body, html {
 }
 .total-card-box span { font-size: 13px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
 .total-card-box strong { font-size: 18px; font-weight: 800; color: var(--red); }
+/* ===== IMPRESIÓN / PDF ===== */
+.print-only { display: none !important; }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html, body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #printRoot,
+  #printRoot * {
+    visibility: visible !important;
+  }
+
+  #printRoot {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .print-header-doc {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #dc2626;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    page-break-inside: avoid;
+  }
+
+  .print-header-doc img {
+    height: 52px !important;
+    object-fit: contain;
+  }
+
+  .print-footer-doc {
+    display: block !important;
+    text-align: center;
+    font-size: 11px;
+    color: #64748b;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 10px;
+    margin-top: 24px;
+    page-break-inside: avoid;
+  }
+
+  .no-print,
+  .topbar-prof,
+  .filter-date-group button,
+  .btn-action,
+  .pagination-box,
+  .quick-access {
+    display: none !important;
+  }
+
+  .data-table {
+    page-break-inside: auto;
+  }
+
+  .fecha-grupo-card,
+  .stat-card-item,
+  .total-card-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -208,8 +296,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0; letter-spacing:0.5px; font-size:16px; text-transform:uppercase;">ESTADÍSTICAS GENERALES</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="imprimirEstadisticasGenerales()">🖨️ Imprimir</button>
+<button class="btn-action btn-ver" onclick="imprimirEstadisticasGenerales()">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailGeneral()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -220,8 +308,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0; font-size:16px; text-transform:uppercase;">Listado de Consultas Agrupadas por Fecha</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
+         <button class="btn-action btn-finish" onclick="imprimirListadoConsultas()">🖨️ Imprimir</button>
+<button class="btn-action btn-ver" onclick="imprimirListadoConsultas()">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailListadoConsultas()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -268,8 +356,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0;">Reporte Completo de Turnos</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
+         <button class="btn-action btn-finish" onclick="imprimirHistorialTurnos()">🖨️ Imprimir</button>
+<button class="btn-action btn-ver" onclick="imprimirHistorialTurnos()">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailHistorialTurnos()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -317,8 +405,8 @@ body, html {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0;" id="tituloObrasHeader">Estadísticas: Obra Social / Particular</h3>
         <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="alert('Seleccione Guardar como PDF en la ventana de impresión.')">📥 Descargar PDF</button>
+          <button class="btn-action btn-finish" onclick="imprimirObrasSociales()">🖨️ Imprimir</button>
+<button class="btn-action btn-ver" onclick="imprimirObrasSociales()">📥 Descargar PDF</button>
           <button class="btn-action btn-modificar" onclick="enviarPorMailObras()">✉️ Enviar por Mail</button>
         </div>
       </div>
@@ -913,6 +1001,208 @@ body, html {
     }
     window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
   }
+    function fechaImpresionAhora() {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mi = String(d.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm}/${yyyy}, ${hh}:${mi}`;
+  }
+
+  function periodoActualTexto() {
+    const desde = document.getElementById('filtroDesde')?.value || '-';
+    const hasta = document.getElementById('filtroHasta')?.value || '-';
+    const obraSel = document.getElementById('selectFiltroObraSocial');
+    const obraValor = obraSel ? obraSel.value : 'todas';
+    let textoObra = 'Obra social: Todas';
+    if (obraValor && obraValor !== 'todas') {
+      const textoOption = obraSel.options[obraSel.selectedIndex]
+        ? obraSel.options[obraSel.selectedIndex].text
+        : obraValor;
+      textoObra = `Obra social: ${textoOption}`;
+    }
+    return `Período: ${desde} al ${hasta} · ${textoObra}`;
+  }
+
+  /** Imprime solo el HTML indicado (Imprimir y Descargar PDF usan lo mismo) */
+  function imprimirBloque(titulo, htmlContenido) {
+    document.getElementById('printTitle').textContent = titulo;
+    document.getElementById('printDate').textContent = fechaImpresionAhora();
+    document.getElementById('printPeriod').textContent = periodoActualTexto();
+    document.getElementById('printBody').innerHTML = htmlContenido;
+
+    // Si hay canvas (gráficos), convertir a imagen para que salgan en el PDF
+    const root = document.getElementById('printBody');
+    root.querySelectorAll('canvas').forEach(cv => {
+      try {
+        const img = document.createElement('img');
+        img.src = cv.toDataURL('image/png');
+        img.style.maxWidth = '260px';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+        img.style.margin = '8px auto';
+        cv.parentNode.replaceChild(img, cv);
+      } catch (e) {}
+    });
+
+    // Quitar botones / controles si vinieron en el clone
+    root.querySelectorAll('.btn-action, .pagination-box, .table-controls, .no-print').forEach(el => el.remove());
+
+    setTimeout(() => window.print(), 80);
+  }
+
+  // --- 1) Estadísticas generales (solo tarjetas) ---
+  function imprimirEstadisticasGenerales() {
+    const inner = document.getElementById('areaEstadisticasGeneralesInner');
+    if (!inner) return;
+    const html = `
+      <div class="stats-grid-4x2" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+        ${inner.innerHTML}
+      </div>`;
+    imprimirBloque('Estadísticas generales', html);
+  }
+
+  // --- 2) Listado de consultas agrupadas por fecha (TODOS los filtrados, no solo la página) ---
+  function imprimirListadoConsultas() {
+    const turnos = obtenerTurnosFiltradosActuales();
+    if (!turnos.length) {
+      alert('No hay consultas para imprimir con los filtros actuales.');
+      return;
+    }
+    const agrupados = {};
+    turnos.forEach(t => {
+      if (!agrupados[t.fecha]) agrupados[t.fecha] = [];
+      agrupados[t.fecha].push(t);
+    });
+    const orden = document.getElementById('selectOrdenamiento')?.value || 'fecha_asc';
+    const fechas = Object.keys(agrupados).sort((a, b) =>
+      orden === 'fecha_desc' ? b.localeCompare(a) : a.localeCompare(b)
+    );
+
+    let html = '';
+    fechas.forEach(fecha => {
+      const lista = agrupados[fecha];
+      html += `
+        <div class="fecha-grupo-card" style="margin-bottom:14px; border:1px solid #f5c2c2; border-radius:8px; overflow:hidden;">
+          <div style="background:#fef2f2; color:#dc2626; padding:8px 12px; font-weight:700; font-size:13px;">
+            📅 Fecha: ${formatearFechaDDMMAA(fecha)} · ${lista.length} turno(s)
+          </div>
+          <table class="data-table" style="width:100%; margin:0;">
+            <thead>
+              <tr>
+                <th>ID</th><th>Hora</th><th>Paciente</th><th>Edad</th><th>Obra Social</th><th>Solicitud</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lista.map(t => `
+                <tr>
+                  <td><strong>#${t.id}</strong></td>
+                  <td>${t.hora || '-'}</td>
+                  <td>${t.paciente || t.motivo || '-'}</td>
+                  <td>${t.edad || '-'}</td>
+                  <td>${t.obra || 'Particular'}</td>
+                  <td>${t.medioSolicitud || '-'}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    });
+    html += `<p style="font-size:12px; color:#64748b; margin-top:8px;">Total de registros: <strong>${turnos.length}</strong></p>`;
+    imprimirBloque('Listado de consultas agrupadas por fecha', html);
+  }
+
+  // --- 3) Historial de turnos (todos los filtrados + resumen) ---
+  function imprimirHistorialTurnos() {
+    const turnos = obtenerHistorialFiltradosActuales();
+    if (!turnos.length) {
+      alert('No hay turnos para imprimir con los filtros actuales.');
+      return;
+    }
+    const resumen = document.getElementById('areaHistorialResumen')?.innerHTML || '';
+    const tabla = generarHTMLTablaLineal(turnos);
+    const html = `
+      <div class="stats-grid-4x1" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;">
+        ${resumen}
+      </div>
+      ${tabla}
+      <p style="font-size:12px; color:#64748b; margin-top:8px;">Total de registros: <strong>${turnos.length}</strong></p>`;
+    imprimirBloque('Historial / reporte completo de turnos', html);
+  }
+
+  // --- 4) Obras sociales (gráficos + tabla completa) ---
+  function imprimirObrasSociales() {
+    const desde = document.getElementById('filtroDesde')?.value || '';
+    const hasta = document.getElementById('filtroHasta')?.value || '';
+    const totalGeneral = coberturasCache.reduce((acc, curr) => acc + curr[1], 0);
+
+    let tbody = '';
+    coberturasCache.forEach(item => {
+      const pct = totalGeneral > 0 ? ((item[1] / totalGeneral) * 100).toFixed(1) : 0;
+      tbody += `<tr>
+        <td>${item[0]}</td>
+        <td style="text-align:center; font-weight:bold;">${item[1]}</td>
+        <td style="text-align:center; color:#dc2626; font-weight:600;">${pct}%</td>
+      </tr>`;
+    });
+
+    // Clonar canvases actuales como imágenes
+    let chartsHtml = '';
+    ['chartTopObras', 'chartOsVsPart'].forEach(id => {
+      const cv = document.getElementById(id);
+      if (cv) {
+        try {
+          chartsHtml += `<img src="${cv.toDataURL('image/png')}" style="max-width:240px; height:auto; margin:8px 12px; display:inline-block;">`;
+        } catch (e) {}
+      }
+    });
+
+    const html = `
+      <p style="font-size:13px; color:#64748b; margin:0 0 12px 0;">Rango: <strong>${desde}</strong> al <strong>${hasta}</strong></p>
+      <div style="text-align:center; margin-bottom:16px;">${chartsHtml}</div>
+      <table class="data-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th>Cobertura</th>
+            <th style="text-align:center;">Cantidad</th>
+            <th style="text-align:center;">Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody>${tbody || '<tr><td colspan="3" style="text-align:center;">Sin consultas</td></tr>'}</tbody>
+      </table>
+      <div class="total-card-box" style="margin-top:12px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between;">
+        <span style="font-weight:700; color:#6b5a5a; text-transform:uppercase; font-size:12px;">Total general de consultas</span>
+        <strong style="color:#dc2626; font-size:18px;">${totalGeneral}</strong>
+      </div>`;
+    imprimirBloque('Estadísticas: Obra Social / Particular', html);
+  }
 </script>
+<!-- Área exclusiva de impresión / PDF -->
+<div id="printRoot" class="print-only">
+  <div class="print-header-doc">
+    <div>
+      <img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos"
+           onerror="this.src='https://via.placeholder.com/160x50?text=Medi-Turnos'">
+      <div style="margin-top:8px; font-size:11px; color:#64748b; font-weight:600;">
+        Medi-Turnos | Área Administrativa
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px; font-weight:800; color:#dc2626; text-transform:uppercase; letter-spacing:0.4px;">
+        Fecha de impresión
+      </div>
+      <div id="printDate" style="font-size:13px; font-weight:700; color:#111;"></div>
+      <div id="printPeriod" style="font-size:12px; color:#64748b; margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <h2 id="printTitle" style="margin:0 0 14px 0; color:#dc2626; font-size:18px; text-transform:uppercase;"></h2>
+  <div id="printBody"></div>
+
+  <div class="print-footer-doc">
+    Gestionado por <strong style="color:#dc2626;">Medi-Turnos</strong> | By Binario Software
+  </div>
+</div>
 </body>
 </html>
