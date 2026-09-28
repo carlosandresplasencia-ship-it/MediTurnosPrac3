@@ -245,7 +245,7 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
 
 <header class="topbar-admin">
   <div class="brand-admin">
-    <img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos">
+    <img src="assets/Logo-MediTurnos.png" alt="Medi-Turnos" onerror="this.src='https://via.placeholder.com/150x40?text=Medi-Turnos'">
     <span>CONSOLA MASTER CONTROL</span>
   </div>
 
@@ -398,6 +398,10 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
             <span>Cargar Turno Manual</span>
             <label class="switch-sub"><input type="checkbox" id="prof_agenda_agregar" checked onchange="updatePermiso('prof_agenda_agregar')"><span class="slider-sub"></span></label>
           </div>
+          <div class="toggle-row">
+            <span>Marcar En Sala (🙋‍♂️)</span>
+            <label class="switch-sub"><input type="checkbox" id="prof_agenda_ensala" checked onchange="updatePermiso('prof_agenda_ensala')"><span class="slider-sub"></span></label>
+          </div>
         </div>
       </div>
 
@@ -429,34 +433,50 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
     <div class="area-card">
       <h2>Área Administrativa</h2>
 
-      <!-- CONTACTOS / ACCESOS (SECRETARÍA) -->
+      <!-- PÁGINA DE INICIO (DASHBOARD & CALENDARIO) -->
       <div class="modulo-card">
         <div class="modulo-header">
-          <span>Contactos / Accesos</span>
+          <span>Página de Inicio (Dashboard)</span>
           <div class="main-switch-container">
-            <span class="status-badge on" id="badge_sec_contactos">ON</span>
+            <span class="status-badge on" id="badge_sec_inicio">ON</span>
             <label class="switch-main">
-              <input type="checkbox" id="main_sec_contactos" checked onchange="toggleModuloMain('sec_contactos')">
+              <input type="checkbox" id="main_sec_inicio" checked onchange="toggleModuloMain('sec_inicio')">
               <span class="slider-main"></span>
             </label>
           </div>
         </div>
-        <div class="dev-console-drawer open" id="drawer_sec_contactos">
+        <div class="dev-console-drawer open" id="drawer_sec_inicio">
           <div class="toggle-row">
-            <span>Ver Contactos</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_contactos_ver" checked onchange="updatePermiso('sec_contactos_ver')"><span class="slider-sub"></span></label>
+            <span>Abrir Calendario Interactivo</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_ver" checked onchange="updatePermiso('sec_inicio_calendario_ver')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Editar Registro</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_contactos_editar" checked onchange="updatePermiso('sec_contactos_editar')"><span class="slider-sub"></span></label>
+            <span>Reservar Horarios Libres</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_reservar" checked onchange="updatePermiso('sec_inicio_calendario_reservar')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Agregar Contacto</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_contactos_agregar" checked onchange="updatePermiso('sec_contactos_agregar')"><span class="slider-sub"></span></label>
+            <span>Editar Horarios Ocupados</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_calendario_editar" checked onchange="updatePermiso('sec_inicio_calendario_editar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row" style="background: rgba(255,255,255,0.02); margin-top: 4px; padding-top: 8px; border-top: 1px dashed #4b5563;">
+            <span>Cargar Nueva Consulta (＋)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_nueva_consulta" checked onchange="updatePermiso('sec_inicio_nueva_consulta')"><span class="slider-sub"></span></label>
           </div>
           <div class="toggle-row">
-            <span>Eliminar Contacto</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_contactos_eliminar" checked onchange="updatePermiso('sec_contactos_eliminar')"><span class="slider-sub"></span></label>
+            <span>Marcar en Espera (🙋‍♂️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_en_espera" checked onchange="updatePermiso('sec_inicio_en_espera')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Ver Detalle de Paciente (👁️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_ver_paciente" checked onchange="updatePermiso('sec_inicio_ver_paciente')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Modificar Turno (✏️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_modificar_turno" checked onchange="updatePermiso('sec_inicio_modificar_turno')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Cancelar Turno (⬇️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_inicio_cancelar_turno" checked onchange="updatePermiso('sec_inicio_cancelar_turno')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -474,7 +494,6 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           </div>
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_pacientes">
-          <!-- NUEVO PERMISO PARA EL BOTÓN VER PACIENTE -->
           <div class="toggle-row">
             <span>Ver Paciente (Ficha Completa 👁️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_ver" checked onchange="updatePermiso('sec_pacientes_ver')"><span class="slider-sub"></span></label>
@@ -506,6 +525,10 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           <div class="toggle-row">
             <span>Hacer Receta (Botón 💊)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_pacientes_receta" checked onchange="updatePermiso('sec_pacientes_receta')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Asignar Turno Rápido (📅)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_pacientes_turnos" checked onchange="updatePermiso('sec_pacientes_turnos')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -560,6 +583,14 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_turnos">
           <div class="toggle-row">
+            <span>Cargar Nuevo Turno (＋)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_agregar" checked onchange="updatePermiso('sec_turnos_agregar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Marcar En Sala (🙋‍♂️)</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_turnos_ensala" checked onchange="updatePermiso('sec_turnos_ensala')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
             <span>Modificar / Editar Turno (✏️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_turnos_editar" checked onchange="updatePermiso('sec_turnos_editar')"><span class="slider-sub"></span></label>
           </div>
@@ -602,6 +633,38 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           <div class="toggle-row">
             <span>Editar Contacto/Cobertura (✏️)</span>
             <label class="switch-sub"><input type="checkbox" id="sec_hc_editar" checked onchange="updatePermiso('sec_hc_editar')"><span class="slider-sub"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACTOS / ACCESOS (SECRETARÍA) -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Contactos / Accesos</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_contactos">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_contactos" checked onchange="toggleModuloMain('sec_contactos')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_contactos">
+          <div class="toggle-row">
+            <span>Ver Contactos</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_ver" checked onchange="updatePermiso('sec_contactos_ver')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Editar Registro</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_editar" checked onchange="updatePermiso('sec_contactos_editar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Agregar Contacto</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_agregar" checked onchange="updatePermiso('sec_contactos_agregar')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Eliminar Contacto</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_contactos_eliminar" checked onchange="updatePermiso('sec_contactos_eliminar')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -694,6 +757,7 @@ function updatePermiso(key) {
   
   devConfig[key] = chk.checked;
 
+  // Lógicas cruzadas de H.C.
   if (key === 'sec_pacientes_hc') {
     const chkVerHC = document.getElementById('sec_hc_ver');
     if (chkVerHC) {
@@ -708,6 +772,7 @@ function updatePermiso(key) {
     }
   }
 
+  // Lógica de autorizaciones dependiente
   if (key === 'sec_obras_detalle') {
     syncDependenciaDetalle();
   }
@@ -760,7 +825,7 @@ function cargarEstadosGuardados() {
   const modulosKeys = [
     'pac_turnos', 'pac_datos',
     'prof_contactos', 'prof_agenda', 'prof_hc',
-    'sec_contactos', 'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
+    'sec_inicio', 'sec_contactos', 'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
   ];
 
   if (saved) {

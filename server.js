@@ -75,7 +75,25 @@ const DEFAULT_USERS = [
 function loadDB() {
   if (fs.existsSync(DB_FILE)) {
     try {
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      // Asegurarnos de que existan todas las estructuras necesarias
+      if (!data.usuarios) data.usuarios = DEFAULT_USERS;
+      if (!data.turnos) data.turnos = [];
+      if (!data.pacientes) data.pacientes = [
+        {
+          id: 1,
+          nombre: 'Juan Pérez',
+          dni: '32456789',
+          obra: 'OSDE',
+          telefono: '11 5555-1234',
+          email: 'juan.perez@mail.com',
+          estado: 'Habilitado'
+        }
+      ];
+      if (!data.obras) data.obras = [];
+      if (!data.hc) data.hc = [];
+      if (!data.contactos) data.contactos = [];
+      return data;
     } catch (e) {
       console.log('Error leyendo DB, se crea nueva...');
     }
@@ -93,7 +111,10 @@ function loadDB() {
         email: 'juan.perez@mail.com',
         estado: 'Habilitado'
       }
-    ]
+    ],
+    obras: [],
+    hc: [],
+    contactos: []
   };
   saveDB(db);
   return db;
@@ -110,7 +131,29 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname)); // sirve los HTML
 
-// ========== RUTAS API ==========
+// ========== RUTAS API DE DATOS (Secretaría y Estadísticas) ==========
+
+// Obtener todos los datos centralizados
+app.get('/api/datos', (req, res) => {
+  db = loadDB();
+  res.json(db);
+});
+
+// Guardar/Actualizar todos los datos centralizados
+app.post('/api/datos', (req, res) => {
+  const { pacientes, turnos, obras, hc, contactos } = req.body;
+  
+  if (pacientes) db.pacientes = pacientes;
+  if (turnos) db.turnos = turnos;
+  if (obras) db.obras = obras;
+  if (hc) db.hc = hc;
+  if (contactos) db.contactos = contactos;
+
+  saveDB(db);
+  res.json({ success: true, message: 'Datos guardados correctamente' });
+});
+
+// ========== RUTAS API TRADICIONALES ==========
 
 // LOGIN
 app.post('/api/login', (req, res) => {
@@ -130,7 +173,6 @@ app.post('/api/login', (req, res) => {
     return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
   }
 
-  // No devolver la contraseña
   const { password: _, ...usuarioSinPass } = user;
   res.json({
     mensaje: 'Login exitoso',
@@ -146,7 +188,6 @@ app.post('/api/pacientes', (req, res) => {
     return res.status(400).json({ mensaje: 'Nombre y DNI son obligatorios' });
   }
 
-  // Verificar si ya existe
   const existe = db.usuarios.find(u => u.dni === dni || u.usuario === dni);
   if (existe) {
     return res.status(400).json({ mensaje: 'Ya existe un paciente con ese DNI' });
@@ -226,7 +267,7 @@ app.get('/api/usuarios', (req, res) => {
   res.json(usuariosSinPass);
 });
 
-// CREAR USUARIO (desde permisos / admin)
+// CREAR USUARIO
 app.post('/api/usuarios', (req, res) => {
   const { usuario, password, rol, nombre } = req.body;
   if (!usuario || !password || !rol) {
@@ -260,10 +301,10 @@ app.listen(PORT, () => {
   console.log('');
   console.log('LOGINS DISPONIBLES (todos con password: 1234)');
   console.log('---------------------------------------------');
-  console.log('  ADMIN      →  usuario: admin');
-  console.log('  SECRETARIA →  usuario: secretaria');
-  console.log('  DOCTORA    →  usuario: doctora   (o profesional)');
-  console.log('  PACIENTE   →  usuario: paciente  (o 32456789)');
+  console.log('   ADMIN      →   usuario: admin');
+  console.log('   SECRETARIA →   usuario: secretaria');
+  console.log('   DOCTORA    →   usuario: doctora   (o profesional)');
+  console.log('   PACIENTE   →   usuario: paciente  (o 32456789)');
   console.log('---------------------------------------------');
   console.log('');
 });
