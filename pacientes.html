@@ -386,6 +386,107 @@
     border-top: 1px solid rgba(26, 122, 76, 0.2);
   }
 
+  /* ===== ESTILOS PARA MODAL OBLIGATORIO DE REGISTRO ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 30, 20, 0.85);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid #1a7a4c;
+  }
+  .modal-header {
+    border-bottom: 2px solid #e8f5ee;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .modal-header h2 {
+    color: #1a7a4c;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .modal-header p {
+    color: #5a6b60;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .modal-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-group.full {
+    grid-column: 1 / -1;
+  }
+  .modal-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a2e22;
+    margin-bottom: 4px;
+  }
+  .modal-group label .req {
+    color: #dc2626;
+  }
+  .modal-group input, 
+  .modal-group select {
+    padding: 9px 12px;
+    border: 1.5px solid #b7d4c4;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fafffe;
+    color: #1a2e22;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .modal-group input:focus, 
+  .modal-group select:focus {
+    border-color: #1a7a4c;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.15);
+  }
+  .modal-actions {
+    margin-top: 24px;
+  }
+  .btn-guardar-modal {
+    background: #1a7a4c;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .btn-guardar-modal:hover {
+    background: #145c3a;
+  }
+
   /* ===== ESTILOS PARA IMPRESIÓN ===== */
   @media print {
     body * {
@@ -416,6 +517,7 @@
     .side-item, .logout-item { border-left: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-top: 0; }
     .action-cards { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
+    .modal-grid { grid-template-columns: 1fr; }
     .datos-turno-box .datos-row { grid-template-columns: 1fr; }
     .main { padding: 16px; }
     .turno-destacado-top { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -423,6 +525,143 @@
 </style>
 </head>
 <body>
+
+<!-- ============================================================ -->
+<!-- MODAL OBLIGATORIO PARA NUEVO PACIENTE -->
+<!-- ============================================================ -->
+<div id="modalRegistroObligatorio" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>📋 Completa tus datos personales</h2>
+      <p>Es obligatorio completar esta información por única vez para poder navegar y solicitar turnos.</p>
+    </div>
+
+    <form id="formRegistroObligatorio" onsubmit="guardarDatosNuevos(event)">
+      <div class="modal-grid">
+        
+        <!-- Datos Personales -->
+        <div class="modal-group">
+          <label>Nombre <span class="req">*</span></label>
+          <input type="text" id="regNombre" required placeholder="Ej: Juan">
+        </div>
+
+        <div class="modal-group">
+          <label>Apellido <span class="req">*</span></label>
+          <input type="text" id="regApellido" required placeholder="Ej: Pérez">
+        </div>
+
+        <div class="modal-group">
+          <label>Tipo de Documento <span class="req">*</span></label>
+          <select id="regTipoDoc" required>
+            <option value="">Seleccionar...</option>
+            <option value="DNI">DNI</option>
+            <option value="LC">LC</option>
+            <option value="LE">LE</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Número de Documento <span class="req">*</span></label>
+          <input type="text" id="regNumDoc" required placeholder="Sin puntos (Ej: 32456789)">
+        </div>
+
+        <div class="modal-group">
+          <label>CUIL <span class="req">*</span></label>
+          <input type="text" id="regCuil" required placeholder="Ej: 20-32456789-8">
+        </div>
+
+        <div class="modal-group">
+          <label>Sexo <span class="req">*</span></label>
+          <select id="regSexo" required>
+            <option value="">Seleccionar...</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="X">X / No binario</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Fecha de Nacimiento <span class="req">*</span></label>
+          <input type="date" id="regFechaNac" required>
+        </div>
+
+        <div class="modal-group">
+          <label>Correo Electrónico <span class="req">*</span></label>
+          <input type="email" id="regEmail" required placeholder="tu@email.com">
+        </div>
+
+        <!-- Cobertura Médica -->
+        <div class="modal-group">
+          <label>Obra Social / Prepaga <span class="req">*</span></label>
+          <select id="regObraSocial" required>
+            <option value="">Seleccionar...</option>
+            <option value="Particular">Particular</option>
+            <option value="OSDE">OSDE</option>
+            <option value="Swiss Medical">Swiss Medical</option>
+            <option value="Galeno">Galeno</option>
+            <option value="Medicus">Medicus</option>
+            <option value="PAMI">PAMI</option>
+            <option value="IOMA">IOMA</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+
+        <div class="modal-group">
+          <label>Plan / S <span class="req">*</span></label>
+          <input type="text" id="regPlan" required placeholder="Ej: 210 / Clásico">
+        </div>
+
+        <div class="modal-group">
+          <label>Número de Afiliado <span class="req">*</span></label>
+          <input type="text" id="regNumAfiliado" required placeholder="Nº de carnet">
+        </div>
+
+        <!-- Contacto -->
+        <div class="modal-group">
+          <label>Teléfono <span class="req">*</span></label>
+          <input type="tel" id="regTelefono" required placeholder="Ej: 11 4567-8900">
+        </div>
+
+        <div class="modal-group">
+          <label>WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="regWhatsapp" required placeholder="Ej: 11 5555-1234">
+        </div>
+
+        <!-- Domicilio -->
+        <div class="modal-group full">
+          <label>Dirección (Calle y Número) <span class="req">*</span></label>
+          <input type="text" id="regDireccion" required placeholder="Ej: Av. Santa Fe 1234, Piso 2 A">
+        </div>
+
+        <div class="modal-group">
+          <label>Código Postal (CP) <span class="req">*</span></label>
+          <input type="text" id="regCp" required placeholder="Ej: C1059">
+        </div>
+
+        <div class="modal-group">
+          <label>Ciudad / Localidad <span class="req">*</span></label>
+          <input type="text" id="regCiudad" required placeholder="Ej: CABA">
+        </div>
+
+        <div class="modal-group">
+          <label>Provincia <span class="req">*</span></label>
+          <input type="text" id="regProvincia" required placeholder="Ej: Buenos Aires">
+        </div>
+
+        <div class="modal-group">
+          <label>País <span class="req">*</span></label>
+          <input type="text" id="regPais" required value="Argentina">
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn-guardar-modal">Guardar y Continuar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <header class="header">
   <div class="header-left">
@@ -575,7 +814,7 @@
           </div>
           <div class="datos-actions">
             <button type="button" class="btn btn-primary" onclick="confirmarDatosOk()">Confirmar</button>
-            <button type="button" class="btn btn-outline" onclick="mostrarSeccion('datos')">Modificar datos</button>
+            <button type="button" class="btn btn-outline" onclick="mostrarSeccion('datos')">Ver datos completos</button>
             <span class="datos-ok-badge" id="datosOkBadge">✓ Datos confirmados</span>
           </div>
         </div>
@@ -638,52 +877,99 @@
     <div id="seccion-datos" class="seccion">
       <div class="seccion-header">
         <h3>Datos personales</h3>
-        <p>Actualizá tu información de contacto y cobertura</p>
+        <p>Información registrada en tu ficha de paciente</p>
       </div>
 
       <div class="info-box" style="margin-top:0; margin-bottom:18px;">
-        Estos datos se usan al solicitar un turno. El <strong>nombre</strong> y el <strong>DNI</strong> 
-        no se pueden modificar desde aquí (si necesitás corregirlos, contactá al consultorio).
+        Estos son los datos ingresados al registrarte. Se encuentran en modo lectura. Para modificarlos, ponete en contacto con el consultorio.
       </div>
 
-      <form id="formDatos" onsubmit="guardarDatos(event)">
+      <form id="formDatos">
         <div class="form-grid">
+          
+          <!-- Datos Personales -->
           <div class="form-group">
-            <label>Nombre completo</label>
-            <input type="text" id="datoNombre" value="Juan Pérez" readonly>
+            <label>Nombre</label>
+            <input type="text" id="datoNombre" readonly>
           </div>
           <div class="form-group">
-            <label>DNI</label>
-            <input type="text" id="datoDni" value="32.456.789" readonly>
+            <label>Apellido</label>
+            <input type="text" id="datoApellido" readonly>
           </div>
           <div class="form-group">
-            <label>Teléfono de contacto <span class="req">*</span></label>
-            <input type="tel" id="datoTelefono" value="11 5555-1234" required>
-            <div class="form-hint">Para confirmar turnos o avisarte cambios</div>
+            <label>Tipo de Documento</label>
+            <input type="text" id="datoTipoDoc" readonly>
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="datoEmail" value="juan.perez@email.com" placeholder="tu@email.com">
+            <label>Número de Documento</label>
+            <input type="text" id="datoNumDoc" readonly>
           </div>
           <div class="form-group">
-            <label>Obra social / Cobertura <span class="req">*</span></label>
-            <select id="datoObra" required>
-              <option value="">Seleccioná...</option>
-              <option>Particular</option>
-              <option selected>OSDE</option>
-              <option>Swiss Medical</option>
-              <option>Galeno</option>
-              <option>Medicus</option>
-              <option>Otra</option>
-            </select>
+            <label>CUIL</label>
+            <input type="text" id="datoCuil" readonly>
           </div>
           <div class="form-group">
-            <label>Nº de afiliado (opcional)</label>
-            <input type="text" id="datoAfiliado" placeholder="Ej: 123456789">
+            <label>Sexo</label>
+            <input type="text" id="datoSexo" readonly>
           </div>
+          <div class="form-group">
+            <label>Fecha de Nacimiento</label>
+            <input type="text" id="datoFechaNac" readonly>
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="datoEmail" readonly>
+          </div>
+
+          <!-- Cobertura -->
+          <div class="form-group">
+            <label>Obra Social / Prepaga</label>
+            <input type="text" id="datoObra" readonly>
+          </div>
+          <div class="form-group">
+            <label>Plan / S</label>
+            <input type="text" id="datoPlan" readonly>
+          </div>
+          <div class="form-group">
+            <label>Número de Afiliado</label>
+            <input type="text" id="datoAfiliado" readonly>
+          </div>
+
+          <!-- Contacto -->
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" id="datoTelefono" readonly>
+          </div>
+          <div class="form-group">
+            <label>WhatsApp</label>
+            <input type="tel" id="datoWhatsapp" readonly>
+          </div>
+
+          <!-- Domicilio -->
+          <div class="form-group full">
+            <label>Dirección</label>
+            <input type="text" id="datoDireccion" readonly>
+          </div>
+          <div class="form-group">
+            <label>Código Postal (CP)</label>
+            <input type="text" id="datoCp" readonly>
+          </div>
+          <div class="form-group">
+            <label>Ciudad / Localidad</label>
+            <input type="text" id="datoCiudad" readonly>
+          </div>
+          <div class="form-group">
+            <label>Provincia</label>
+            <input type="text" id="datoProvincia" readonly>
+          </div>
+          <div class="form-group">
+            <label>País</label>
+            <input type="text" id="datoPais" readonly>
+          </div>
+
         </div>
+
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Guardar datos</button>
           <button type="button" class="btn btn-outline" onclick="mostrarSeccion('inicio')">Volver al inicio</button>
         </div>
       </form>
@@ -759,6 +1045,81 @@
     { date: '20/08/2026', time: '11:00', type: 'Control dermatológico', status: 'Atendido', cls: 'attended' },
     { date: '05/08/2026', time: '09:30', type: 'Primera consulta', status: 'Atendido', cls: 'attended' }
   ];
+
+  // ============================================================
+  // COMPROBACIÓN DE PRIMER INGRESO (MODAL OBLIGATORIO)
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    verificarPrimerIngreso();
+  });
+
+  function verificarPrimerIngreso() {
+    const yaRegistrado = localStorage.getItem('pacienteRegistrado');
+
+    if (!yaRegistrado) {
+      document.getElementById('modalRegistroObligatorio').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
+      if (datosGuardados) {
+        paciente.nombre = `${datosGuardados.nombre} ${datosGuardados.apellido}`;
+        paciente.dni = datosGuardados.numDoc;
+        paciente.telefono = datosGuardados.telefono;
+        paciente.obra = datosGuardados.obraSocial;
+        actualizarVistaDatos();
+      }
+    }
+  }
+
+  async function guardarDatosNuevos(event) {
+    event.preventDefault();
+
+    const datosPaciente = {
+      nombre: document.getElementById('regNombre').value.trim(),
+      apellido: document.getElementById('regApellido').value.trim(),
+      tipoDoc: document.getElementById('regTipoDoc').value,
+      numDoc: document.getElementById('regNumDoc').value.trim(),
+      cuil: document.getElementById('regCuil').value.trim(),
+      sexo: document.getElementById('regSexo').value,
+      fechaNacimiento: document.getElementById('regFechaNac').value,
+      email: document.getElementById('regEmail').value.trim(),
+      obraSocial: document.getElementById('regObraSocial').value,
+      plan: document.getElementById('regPlan').value.trim(),
+      numAfiliado: document.getElementById('regNumAfiliado').value.trim(),
+      telefono: document.getElementById('regTelefono').value.trim(),
+      whatsapp: document.getElementById('regWhatsapp').value.trim(),
+      direccion: document.getElementById('regDireccion').value.trim(),
+      cp: document.getElementById('regCp').value.trim(),
+      ciudad: document.getElementById('regCiudad').value.trim(),
+      provincia: document.getElementById('regProvincia').value.trim(),
+      pais: document.getElementById('regPais').value.trim()
+    };
+
+    try {
+      await fetch('http://localhost:3000/api/pacientes/registro-completo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosPaciente)
+      }).catch(err => console.log('Guardando datos de manera local...'));
+
+      localStorage.setItem('pacienteRegistrado', 'true');
+      localStorage.setItem('datosPacienteObligatorios', JSON.stringify(datosPaciente));
+
+      paciente.nombre = `${datosPaciente.nombre} ${datosPaciente.apellido}`;
+      paciente.dni = datosPaciente.numDoc;
+      paciente.telefono = datosPaciente.telefono;
+      paciente.obra = datosPaciente.obraSocial;
+      
+      actualizarVistaDatos();
+
+      document.getElementById('modalRegistroObligatorio').classList.remove('active');
+      document.body.style.overflow = 'auto';
+
+      showToast('¡Datos registrados con éxito! Ya podés solicitar tu turno.');
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+    }
+  }
 
   // ============================================================
   // PAGINACIÓN DEL HISTORIAL DE TURNOS
@@ -1223,14 +1584,46 @@
   }
 
   // ============================================================
-  // DATOS PERSONALES
+  // DATOS PERSONALES (DESDE LOCALSTORAGE O PACIENTE)
   // ============================================================
   function actualizarVistaDatos() {
+    // Actualizar encabezados y cajas dinámicas rápidas
     document.getElementById('vistaNombre').textContent = paciente.nombre;
     document.getElementById('vistaDni').textContent = paciente.dni;
     document.getElementById('vistaTelefono').textContent = paciente.telefono;
     document.getElementById('vistaObra').textContent = paciente.obra;
     document.getElementById('chipNombre').textContent = paciente.nombre;
+
+    // Cargar datos completos en la pestaña "Datos Personales"
+    const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
+
+    if (datosGuardados) {
+      document.getElementById('datoNombre').value = datosGuardados.nombre || '';
+      document.getElementById('datoApellido').value = datosGuardados.apellido || '';
+      document.getElementById('datoTipoDoc').value = datosGuardados.tipoDoc || 'DNI';
+      document.getElementById('datoNumDoc').value = datosGuardados.numDoc || '';
+      document.getElementById('datoCuil').value = datosGuardados.cuil || '';
+      document.getElementById('datoSexo').value = datosGuardados.sexo || '';
+      document.getElementById('datoFechaNac').value = datosGuardados.fechaNacimiento || '';
+      document.getElementById('datoEmail').value = datosGuardados.email || '';
+      document.getElementById('datoObra').value = datosGuardados.obraSocial || '';
+      document.getElementById('datoPlan').value = datosGuardados.plan || '';
+      document.getElementById('datoAfiliado').value = datosGuardados.numAfiliado || '';
+      document.getElementById('datoTelefono').value = datosGuardados.telefono || '';
+      document.getElementById('datoWhatsapp').value = datosGuardados.whatsapp || '';
+      document.getElementById('datoDireccion').value = datosGuardados.direccion || '';
+      document.getElementById('datoCp').value = datosGuardados.cp || '';
+      document.getElementById('datoCiudad').value = datosGuardados.ciudad || '';
+      document.getElementById('datoProvincia').value = datosGuardados.provincia || '';
+      document.getElementById('datoPais').value = datosGuardados.pais || '';
+    } else {
+      document.getElementById('datoNombre').value = 'Juan';
+      document.getElementById('datoApellido').value = 'Pérez';
+      document.getElementById('datoNumDoc').value = '32.456.789';
+      document.getElementById('datoTelefono').value = '11 5555-1234';
+      document.getElementById('datoEmail').value = 'juan.perez@email.com';
+      document.getElementById('datoObra').value = 'OSDE';
+    }
   }
 
   function confirmarDatosOk() {
@@ -1238,17 +1631,6 @@
     datosConfirmados = true;
     document.getElementById('datosOkBadge').classList.add('show');
     showToast('Datos confirmados. Ya podés solicitar el turno.');
-  }
-
-  function guardarDatos(e) {
-    e.preventDefault();
-    paciente.telefono = document.getElementById('datoTelefono').value.trim();
-    paciente.email = document.getElementById('datoEmail').value.trim();
-    paciente.obra = document.getElementById('datoObra').value;
-    actualizarVistaDatos();
-    datosConfirmados = false;
-    document.getElementById('datosOkBadge').classList.remove('show');
-    showToast('Datos guardados correctamente');
   }
 
   // ============================================================
