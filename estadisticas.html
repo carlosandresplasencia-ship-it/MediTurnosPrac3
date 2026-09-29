@@ -258,9 +258,10 @@ body, html {
     <h1 class="admin-title">Estadísticas</h1>
   </div>
   <div class="quick-access">
-    <button class="active-quick" onclick="cambiarSeccion('general', this)">Estadísticas generales</button>
-    <button onclick="cambiarSeccion('historial', this)">Historial de turnos</button>
-    <button onclick="cambiarSeccion('obras', this)">Est. Obra Social/Particular</button>
+    <button class="active-quick" onclick="cambiarSeccion('general', this)">Est.Generales</button>
+    <button onclick="cambiarSeccion('historial', this)">Hist.Turnos</button>
+    <button onclick="cambiarSeccion('obras', this)">O.Sociales</button>
+    <button onclick="cambiarSeccion('motivos', this)">Motivos Consulta</button>
     <!-- BOTONES DE RETORNO CONDICIONALES -->
     <button id="btnVolverAdmin" style="display:none;" onclick="window.location.href='secretaria.html'">Volver a administración</button>
     <button id="btnVolverProf" style="display:none;" onclick="window.location.href='profesional.html'">Volver a área profesional</button>
@@ -279,7 +280,16 @@ body, html {
       <span>a</span>
       <input type="date" id="filtroHasta" onchange="actualizarDatos()">
 
-      <label style="margin-left:12px;">Obra Social:</label>
+      <label style="margin-left:8px;">Estación:</label>
+      <select id="selectFiltroEstacion" onchange="cambiarEstacionAnio(this.value)">
+        <option value="personalizado">Personalizado</option>
+        <option value="verano">Verano (Dic - Feb)</option>
+        <option value="otonio">Otoño (Mar - May)</option>
+        <option value="invierno">Invierno (Jun - Ago)</option>
+        <option value="primavera">Primavera (Sep - Nov)</option>
+      </select>
+
+      <label style="margin-left:8px;">Obra Social:</label>
       <select id="selectFiltroObraSocial" onchange="actualizarDatos()">
         <option value="todas">Todas</option>
         <option value="Osde">Osde</option>
@@ -426,6 +436,39 @@ body, html {
       </div>
     </div>
   </section>
+
+  <!-- SECCIÓN 4: ESTADÍSTICAS POR MOTIVO DE CONSULTA -->
+  <section id="sec-motivos" class="seccion-contenido" style="display:none;">
+    <div class="hc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="color:var(--red); margin:0;" id="tituloMotivosHeader">Estadísticas por Motivo de Consulta</h3>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action btn-finish" onclick="imprimirMotivosConsulta()">🖨️ Imprimir</button>
+          <button class="btn-action btn-ver" onclick="imprimirMotivosConsulta()">📥 Descargar PDF</button>
+          <button class="btn-action btn-modificar" onclick="enviarPorMailMotivos()">✉️ Enviar por Mail</button>
+        </div>
+      </div>
+
+      <!-- Distribución general en Torta (Top 4 + Otros) -->
+      <div style="display:grid; grid-template-columns: 320px 1fr; gap:20px; align-items:center; margin-bottom:25px; background:var(--red-soft); padding:15px; border-radius:10px; border:1px solid var(--red-mid);">
+        <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:center;">
+          <canvas id="chartMotivosTorta" width="220" height="220"></canvas>
+        </div>
+        <div>
+          <h4 style="color:var(--red); margin-top:0; font-size:15px;">Resumen Global de Motivos</h4>
+          <p style="font-size:13px; color:var(--text-soft); line-height:1.4;">
+            Este gráfico de torta refleja la proporción de los 4 motivos de consulta más frecuentes en el período seleccionado, agrupando el resto bajo la categoría "Otros". A continuación, el detalle evolutivo individual.
+          </p>
+          <div id="resumenMotivosTextos" style="font-size:13px; font-weight:600; color:var(--text);"></div>
+        </div>
+      </div>
+
+      <!-- Contenedor dinámico para los gráficos de línea por cada motivo -->
+      <div id="contenedorGraficosMotivosLineas" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap:20px;">
+        <!-- Se inyectan dinámicamente con JS -->
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -528,6 +571,7 @@ body, html {
     turnosHistorialFiltradosCache = turnos;
     renderizarTablaHistorialPaginada();
     renderReporteObrasYGraficos(turnos, desde, hasta);
+    renderReporteMotivosConsulta(turnos, desde, hasta);
   }
 
   function renderGeneralStats4x2(turnos) {
@@ -1039,6 +1083,36 @@ body, html {
     return `${dd}/${mm}/${yyyy}, ${hh}:${mi}`;
   }
 
+  function cambiarEstacionAnio(estacion) {
+    if (estacion === 'personalizado') return;
+    const anioActual = new Date().getFullYear();
+    let desdeStr = '', hastaStr = '';
+
+    if (estacion === 'verano') {
+      // Verano: Del 21 de diciembre (del año anterior) al 20 de marzo (del año actual)
+      desdeStr = `${anioActual - 1}-12-21`;
+      hastaStr = `${anioActual}-03-20`;
+    } else if (estacion === 'otonio') {
+      // Otoño: Del 21 de marzo al 20 de junio
+      desdeStr = `${anioActual}-03-21`;
+      hastaStr = `${anioActual}-06-20`;
+    } else if (estacion === 'invierno') {
+      // Invierno: Del 21 de junio al 20 de septiembre
+      desdeStr = `${anioActual}-06-21`;
+      hastaStr = `${anioActual}-09-20`;
+    } else if (estacion === 'primavera') {
+      // Primavera: Del 21 de septiembre al 20 de diciembre
+      desdeStr = `${anioActual}-09-21`;
+      hastaStr = `${anioActual}-12-20`;
+    }
+
+    if (desdeStr && hastaStr) {
+      document.getElementById('filtroDesde').value = desdeStr;
+      document.getElementById('filtroHasta').value = hastaStr;
+      actualizarDatos();
+    }
+  }
+
   function periodoActualTexto() {
     const desde = document.getElementById('filtroDesde')?.value || '-';
     const hasta = document.getElementById('filtroHasta')?.value || '-';
@@ -1203,6 +1277,254 @@ body, html {
         <strong style="color:#dc2626; font-size:18px;">${totalGeneral}</strong>
       </div>`;
     imprimirBloque('Estadísticas: Obra Social / Particular', html);
+  }
+  let chartMotivosTortaInstance = null;
+  let graficosLineasMotivosInstancias = [];
+
+  async function obtenerConsultasClinicasMotivos() {
+    try {
+      const response = await fetch('http://localhost:3000/api/datos');
+      const data = await response.json();
+      
+      // Obtenemos los motivos configurados en el sistema de manera dinámica
+      let motivosValidos = Array.isArray(data.configMotivos) ? [...data.configMotivos] : [];
+      let consultasConsolidadas = [];
+      
+      // 1. Recorremos las historias clínicas
+      if (data.hc && Array.isArray(data.hc)) {
+        data.hc.forEach(paciente => {
+          if (paciente.consultas && Array.isArray(paciente.consultas)) {
+            paciente.consultas.forEach(c => {
+              const motivoElegido = (c.motivoPredeterminado || c.motivo || '').trim();
+              
+              if (motivoElegido) {
+                // Si el motivo existe (nuevo o viejo), lo integramos dinámicamente
+                if (!motivosValidos.includes(motivoElegido)) {
+                  motivosValidos.push(motivoElegido);
+                }
+                
+                consultasConsolidadas.push({
+                  fecha: c.fecha,
+                  motivo: motivoElegido,
+                  paciente: paciente.paciente
+                });
+              }
+            });
+          }
+        });
+      }
+      
+      // 2. Revisamos los turnos atendidos o finalizados como respaldo
+      if (data.turnos && Array.isArray(data.turnos)) {
+        data.turnos.forEach(t => {
+          const est = (t.estado || '').toLowerCase();
+          if (est === 'atendido' || est === 'finalizado') {
+            const motivoElegido = (t.motivoPredeterminado || t.motivo || '').trim();
+            if (motivoElegido) {
+              if (!motivosValidos.includes(motivoElegido)) {
+                motivosValidos.push(motivoElegido);
+              }
+              
+              // Evitamos duplicar registros idénticos
+              const yaExiste = consultasConsolidadas.some(c => c.fecha === t.fecha && c.paciente === t.paciente && c.motivo === motivoElegido);
+              if (!yaExiste) {
+                consultasConsolidadas.push({
+                  fecha: t.fecha,
+                  motivo: motivoElegido,
+                  paciente: t.paciente
+                });
+              }
+            }
+          }
+        });
+      }
+      
+      return consultasConsolidadas;
+    } catch (e) {
+      console.error("Error al obtener motivos:", e);
+      return [];
+    }
+  }
+
+  async function renderReporteMotivosConsulta(turnosPeriodo, desde, hasta) {
+    document.getElementById('tituloMotivosHeader').textContent = `Estadísticas por Motivo de Consulta (${desde} al ${hasta})`;
+    
+    const todasConsultas = await obtenerConsultasClinicasMotivos();
+    
+    // Filtrar consultas por el rango de fechas actual
+    const consultasFiltradas = todasConsultas.filter(c => c.fecha >= desde && c.fecha <= hasta);
+
+    // Contabilizar frecuencias por motivo
+    const conteoMotivos = {};
+    consultasFiltradas.forEach(c => {
+      let mot = (c.motivo || 'No especificado').trim();
+      conteoMotivos[mot] = (conteoMotivos[mot] || 0) + 1;
+    });
+
+    const motivosOrdenados = Object.entries(conteoMotivos).sort((a, b) => b[1] - a[1]);
+    const totalConsultasMotivo = consultasFiltradas.length;
+
+    // --- 1. Gráfico de Torta (Top 4 + Otros) ---
+    const top4 = motivosOrdenados.slice(0, 4);
+    const otrosCount = motivosOrdenados.slice(4).reduce((acc, curr) => acc + curr[1], 0);
+
+    let labelsTorta = top4.map(m => m[0]);
+    let dataTorta = top4.map(m => m[1]);
+    if (otrosCount > 0) {
+      labelsTorta.push('Otros');
+      dataTorta.push(otrosCount);
+    }
+
+    if (chartMotivosTortaInstance) chartMotivosTortaInstance.destroy();
+    const ctxTorta = document.getElementById('chartMotivosTorta').getContext('2d');
+
+    if (totalConsultasMotivo === 0) {
+      chartMotivosTortaInstance = new Chart(ctxTorta, {
+        type: 'doughnut',
+        data: { labels: ['Sin registros'], datasets: [{ data: [1], backgroundColor: ['#e5e7eb'] }] },
+        options: { plugins: { title: { display: true, text: 'Distribución de Motivos', font: {size: 12} } } }
+      });
+      document.getElementById('resumenMotivosTextos').innerHTML = 'No se registran consultas en este período para agrupar por motivo.';
+    } else {
+      chartMotivosTortaInstance = new Chart(ctxTorta, {
+        type: 'doughnut',
+        data: {
+          labels: labelsTorta,
+          datasets: [{
+            data: dataTorta,
+            backgroundColor: ['#8f3f8b', '#3b82f6', '#10b981', '#f59e0b', '#6b7280']
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          }
+        }
+      });
+
+      let htmlResumen = '<ul>';
+      top4.forEach(m => {
+        let p = ((m[1] / totalConsultasMotivo) * 100).toFixed(1);
+        htmlResumen += `<li><strong>${m[0]}:</strong> ${m[1]} consultas (${p}%)</li>`;
+      });
+      if (otrosCount > 0) {
+        let pOtr = ((otrosCount / totalConsultasMotivo) * 100).toFixed(1);
+        htmlResumen += `<li><strong>Otros motivos:</strong> ${otrosCount} consultas (${pOtr}%)</li>`;
+      }
+      htmlResumen += '</ul>';
+      document.getElementById('resumenMotivosTextos').innerHTML = htmlResumen;
+    }
+
+    // --- 2. Gráficos de Línea Adaptativos por cada Motivo ---
+    // Agrupar fechas según amplitud del período (si es un mes o verano, agrupamos por semana o día)
+    const contenedorLineas = document.getElementById('contenedorGraficosMotivosLineas');
+    contenedorLineas.innerHTML = '';
+
+    graficosLineasMotivosInstancias.forEach(chart => chart.destroy());
+    graficosLineasMotivosInstancias = [];
+
+    if (motivosOrdenados.length === 0) {
+      contenedorLineas.innerHTML = '<p style="color:var(--text-soft); grid-column:1/-1; text-align:center;">No hay datos suficientes para mostrar evolución temporal por motivo.</p>';
+      return;
+    }
+
+    // Tomamos los motivos principales para generar su evolución temporal
+    motivosOrdenados.forEach(([motivoNombre, cantidadTotal], index) => {
+      const cardId = `canvas_motivo_${index}`;
+      
+      // Crear contenedor visual para el gráfico del motivo
+      const divCard = document.createElement('div');
+      divCard.className = 'hc-card';
+      divCard.style.margin = '0';
+      divCard.style.padding = '15px';
+      divCard.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h4 style="color:var(--red); margin:0; font-size:14px; text-transform:uppercase;">Evolución: ${motivoNombre}</h4>
+          <span style="font-size:12px; font-weight:700; background:var(--red-light); color:var(--red); padding:3px 8px; border-radius:10px;">Total: ${cantidadTotal}</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-soft); margin-bottom:10px;">
+          Gráfico de tendencia temporal adaptado al intervalo seleccionado (${desde} al ${hasta}). Muestra la frecuencia de consultas registradas bajo este motivo clínico.
+        </p>
+        <div style="height:180px; position:relative;">
+          <canvas id="${cardId}"></canvas>
+        </div>
+      `;
+      contenedorLineas.appendChild(divCard);
+
+      // Extraer las fechas y ocurrencias para este motivo específico
+      const consultasDelMotivo = consultasFiltradas.filter(c => (c.motivo || '').trim() === motivoNombre);
+      
+      // Agrupar por fecha exacta dentro del rango
+      const frecuenciaPorFecha = {};
+      consultasDelMotivo.forEach(c => {
+        frecuenciaPorFecha[c.fecha] = (frecuenciaPorFecha[c.fecha] || 0) + 1;
+      });
+
+      const fechasOrdenadas = Object.keys(frecuenciaPorFecha).sort();
+      const datosFrecuencia = fechasOrdenadas.map(f => frecuenciaPorFecha[f]);
+
+      const ctxLine = document.getElementById(cardId).getContext('2d');
+      const newChart = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: fechasOrdenadas.map(f => formatearFechaDDMMAA(f)),
+          datasets: [{
+            label: `Consultas de ${motivoNombre}`,
+            data: datosFrecuencia,
+            borderColor: '#8f3f8b',
+            backgroundColor: 'rgba(143, 63, 139, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0, font: { size: 10 } } },
+            x: { ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+      graficosLineasMotivosInstancias.push(newChart);
+    });
+  }
+
+  function enviarPorMailMotivos() {
+    const desde = document.getElementById('filtroDesde').value; 
+    const hasta = document.getElementById('filtroHasta').value;
+    const asunto = encodeURIComponent(`Estadísticas por Motivo de Consulta - Medi-Turnos (${desde} al ${hasta})`);
+    let textoCuerpo = `ESTADÍSTICAS POR MOTIVO DE CONSULTA\nPeríodo: ${desde} al ${hasta}\n==================================================\n\n`;
+    textoCuerpo += `Reporte detallado de frecuencia y evolución de motivos clínicos.\n`;
+    window.location.href = `mailto:?subject=${asunto}&body=${encodeURIComponent(textoCuerpo)}`;
+  }
+
+  function imprimirMotivosConsulta() {
+    const desde = document.getElementById('filtroDesde')?.value || '';
+    const hasta = document.getElementById('filtroHasta')?.value || '';
+    const tortaCv = document.getElementById('chartMotivosTorta');
+    
+    let tortaImgHtml = '';
+    if (tortaCv) {
+      try {
+        tortaImgHtml = `<div style="text-align:center; margin-bottom:15px;"><img src="${tortaCv.toDataURL('image/png')}" style="max-width:240px; height:auto;"></div>`;
+      } catch(e) {}
+    }
+
+    const resumenTxt = document.getElementById('resumenMotivosTextos')?.innerHTML || '';
+    
+    let html = `
+      <p style="font-size:13px; color:#64748b; margin:0 0 12px 0;">Período: <strong>${desde}</strong> al <strong>${hasta}</strong></p>
+      ${tortaImgHtml}
+      <div style="background:#fef2f2; padding:12px; border-radius:8px; margin-bottom:15px;">
+        <h4 style="color:#dc2626; margin:0 0 8px 0; font-size:14px;">Resumen General de Distribución</h4>
+        ${resumenTxt}
+      </div>
+      <p style="font-size:12px; color:#64748b;">Los gráficos de evolución temporal detallados se encuentran disponibles en la plataforma interactiva web.</p>
+    `;
+    imprimirBloque('Estadísticas por Motivo de Consulta', html);
   }
 </script>
 <!-- Área exclusiva de impresión / PDF -->

@@ -245,7 +245,7 @@
       "paciente": "",
       "obra": "",
       "motivo": "Congreso",
-      "estado": "Confirmado",
+      "estado": "Finalizado",
       "tipoEvento": "Congreso"
     },
     {
@@ -278,7 +278,7 @@
       "paciente": "Juan Pérez",
       "obra": "OSDE",
       "motivo": "Consulta general (Primera consulta)",
-      "estado": "En sala de espera",
+      "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "WhatsApp"
     },
@@ -401,6 +401,186 @@
       "estado": "Confirmado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "Web"
+    },
+    {
+      "id": 29,
+      "fecha": "2026-09-28",
+      "hora": "20:30",
+      "horaHasta": "21:00",
+      "paciente": "Carlos Luis",
+      "obra": "Particular",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "Cancelado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 30,
+      "fecha": "2026-09-30",
+      "hora": "09:30",
+      "horaHasta": "10:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dsa (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 31,
+      "fecha": "2026-09-29",
+      "hora": "11:00",
+      "horaHasta": "11:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "dss (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 32,
+      "fecha": "2026-09-29",
+      "hora": "11:30",
+      "horaHasta": "12:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "deee (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 33,
+      "fecha": "2026-09-29",
+      "hora": "12:00",
+      "horaHasta": "12:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "deee (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 34,
+      "fecha": "2026-09-29",
+      "hora": "12:30",
+      "horaHasta": "13:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "derr (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 35,
+      "fecha": "2026-09-29",
+      "hora": "15:00",
+      "horaHasta": "15:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "ferer (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 36,
+      "fecha": "2026-09-29",
+      "hora": "15:30",
+      "horaHasta": "16:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 37,
+      "fecha": "2026-09-29",
+      "hora": "16:00",
+      "horaHasta": "16:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Consulta general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 38,
+      "fecha": "2026-09-29",
+      "hora": "17:00",
+      "horaHasta": "17:30",
+      "paciente": "Juan Pérez",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Personalmente"
+    },
+    {
+      "id": 39,
+      "fecha": "2026-09-29",
+      "hora": "17:30",
+      "horaHasta": "18:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Correo electrónico"
+    },
+    {
+      "id": 40,
+      "fecha": "2026-09-29",
+      "hora": "18:30",
+      "horaHasta": "19:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 41,
+      "fecha": "2026-09-29",
+      "hora": "18:00",
+      "horaHasta": "18:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 42,
+      "fecha": "2026-09-29",
+      "hora": "19:00",
+      "horaHasta": "19:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 43,
+      "fecha": "2026-09-29",
+      "hora": "20:00",
+      "horaHasta": "20:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "osde",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Personalmente"
     }
   ],
   "pacientes": [
@@ -541,6 +721,92 @@
       "telefono": "312312",
       "whatsapp": "3213123",
       "estado": "Habilitado"
+    },
+    {
+      "id": 18,
+      "legajo": "18",
+      "nombre": "Carlos Luis",
+      "tipoDoc": "DNI",
+      "dni": "44555666",
+      "cuil": "203445556660",
+      "correo": "dasdsa",
+      "obra": "Particular",
+      "direccion": "-",
+      "telefono": "-",
+      "whatsapp": "3795696077",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 19,
+      "legajo": "19",
+      "nombre": "Carlos Luis",
+      "tipoDoc": "DNI",
+      "dni": "445556",
+      "cuil": "203445556660",
+      "correo": "dasdsa",
+      "obra": "Particular",
+      "direccion": "-",
+      "telefono": "-",
+      "whatsapp": "3795696077",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 20,
+      "legajo": "20",
+      "nombre": "Carlos Luis",
+      "tipoDoc": "DNI",
+      "dni": "4455",
+      "cuil": "203445556660",
+      "correo": "dasdsa",
+      "obra": "Particular",
+      "direccion": "-",
+      "telefono": "-",
+      "whatsapp": "3795696077",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 21,
+      "legajo": "21",
+      "nombre": "Carlos Luis",
+      "tipoDoc": "DNI",
+      "dni": "44555668",
+      "cuil": "20334445569",
+      "genero": "F",
+      "fechaNac": "2026-09-16",
+      "edad": 0,
+      "correo": "dasdsa@c.com",
+      "primeraConsulta": "2026-09-28",
+      "peso": "",
+      "altura": "",
+      "obra": "Particular",
+      "planObra": "-",
+      "afiliado": "-",
+      "direccion": "-",
+      "telefono": "-",
+      "whatsapp": "3795696077",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 22,
+      "legajo": "22",
+      "nombre": "mati",
+      "tipoDoc": "DNI",
+      "dni": "77888999",
+      "cuil": "20778889990",
+      "genero": "M",
+      "fechaNac": "2026-09-16",
+      "edad": 0,
+      "correo": "ge@com.com",
+      "primeraConsulta": "2026-09-29",
+      "peso": "",
+      "altura": "",
+      "obra": "Particular",
+      "planObra": "-",
+      "afiliado": "-",
+      "direccion": "-",
+      "telefono": "-",
+      "whatsapp": "3412123232",
+      "estado": "Habilitado"
     }
   ],
   "obras": [
@@ -548,14 +814,14 @@
       "id": 1,
       "cobertura": "OSDE",
       "estado": "Activa",
-      "cosGral": "$0",
-      "cosEspec": "$1000",
-      "cosPractica": "$2000",
-      "cosEstudio": "$3500",
-      "contacto": "Lic. Juan Valdez",
-      "telefono": "0800-555-6733",
-      "email": "convenios@osde.com.ar",
-      "web": "https://www.osde.com.ar"
+      "cosGral": "43",
+      "cosEspec": "43",
+      "cosPractica": "43",
+      "cosEstudio": "43",
+      "contacto": "fer",
+      "telefono": "45333",
+      "email": "4342@c.com",
+      "web": "https://www.osde.com.ar/"
     },
     {
       "id": 2,
@@ -579,6 +845,32 @@
       "telefono": "3232",
       "email": "dsada",
       "web": ""
+    },
+    {
+      "id": 5,
+      "cobertura": "tete",
+      "estado": "Activa",
+      "cosGral": "32",
+      "cosEspec": "32",
+      "cosPractica": "32",
+      "cosEstudio": "32",
+      "contacto": "carlos perez",
+      "telefono": "4555766",
+      "email": "sada",
+      "web": ""
+    },
+    {
+      "id": 6,
+      "cobertura": "fefe",
+      "estado": "Activa",
+      "cosGral": "43",
+      "cosEspec": "43",
+      "cosPractica": "43",
+      "cosEstudio": "43",
+      "contacto": "fer",
+      "telefono": "45333",
+      "email": "4342@c.com",
+      "web": ""
     }
   ],
   "hc": [
@@ -589,9 +881,9 @@
       "tipoDoc": "DNI",
       "dni": "33826837",
       "obra": "osde",
-      "diagnostico": "ddsad",
+      "diagnostico": "Control general",
       "primeraConsulta": "2026-09-25",
-      "ultimaConsulta": "2026-09-26",
+      "ultimaConsulta": "2026-09-29",
       "antecedentes": [],
       "consultas": [
         {
@@ -698,6 +990,196 @@
             "otros": "-"
           },
           "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivo": "deee",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "laboratorio",
+            "fecha": "2026-09-29",
+            "resultados": "todo normal"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivo": "deee",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "radiografia",
+            "fecha": "2026-09-22",
+            "resultados": "dewewewewcassdsa dsadasewqq das dasdsadwq dqw wd wqdwqdqw dw  wdwd qwd qwdwqd assd qdsad sa  dwqeewwq eqwe qd sadas das qw dwqewqe wewqewesdsad dsadsadsdeteterew  ereqr efdfd df aadsadsadsadasdsdadadasdsad"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivo": "derr",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "electrocardiograma",
+            "fecha": "2026-09-22",
+            "resultados": "todo ok, fasdsadasdewewewqrwqrfdfdsvcdsvdfg df df df ds ds dsf dsfdsfewrer dfdsf gregregfdsvsfd dsfdsfdsfdfrttefdsfdsf dsf dffdsfdsf dsf ds dsf dsfdsfdsf dsfdsf sdf sdfdfds dsf dsfdsfdsfdsfdsfdsfdsfdsfds dsfds"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivo": "ferer",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "laboratorio",
+            "fecha": "2026-09-22",
+            "resultados": "dsadsawewqewqewqewqewqewq"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "acne",
+          "motivo": "Consulta general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "acne",
+          "motivo": "hola todos",
+          "tratamiento": "chau",
+          "medicacion": "bueno",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "jajaja"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "hongos",
+          "motivo": "Control general",
+          "tratamiento": "de",
+          "medicacion": "da",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "hongos",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "hongos",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "electrocardiograma",
+            "fecha": "2026-09-28",
+            "resultados": "dsadsadsa"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-29",
+          "motivoPredeterminado": "acne",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "laboratorio",
+            "fecha": "2026-09-22",
+            "resultados": "-"
+          },
+          "notas": "-"
         }
       ],
       "tratamientos": [
@@ -705,8 +1187,38 @@
         "dsadas",
         "dssadas",
         "dddseeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        "ewqeqweqw"
+        "ewqeqweqw",
+        "bueno",
+        "da"
       ]
+    },
+    {
+      "id": 2,
+      "paciente": "Juan Pérez",
+      "dni": "32456789",
+      "obra": "OSDE",
+      "diagnostico": "Consulta general",
+      "primeraConsulta": "2026-09-28",
+      "ultimaConsulta": "2026-09-28",
+      "antecedentes": [],
+      "consultas": [
+        {
+          "fecha": "2026-09-28",
+          "motivo": "Consulta general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "notas": "-"
+        }
+      ],
+      "tratamientos": []
     }
   ],
   "contactos": [
@@ -735,6 +1247,42 @@
       "telefono": "3232",
       "whatsapp": "3232",
       "email": "dsada"
+    },
+    {
+      "id": 4,
+      "nombre": "Carlos Luis",
+      "rol": "Paciente",
+      "empresa": "Particular",
+      "telefono": "-",
+      "whatsapp": "3795696077",
+      "email": "dasdsa@c.com"
+    },
+    {
+      "id": 5,
+      "nombre": "mati",
+      "rol": "Paciente",
+      "empresa": "Particular",
+      "telefono": "-",
+      "whatsapp": "3412123232",
+      "email": "ge@com.com"
+    },
+    {
+      "id": 6,
+      "nombre": "carlos perez",
+      "rol": "Referente / Obra Social",
+      "empresa": "tete",
+      "telefono": "4555766",
+      "whatsapp": "4555766",
+      "email": "sada"
+    },
+    {
+      "id": 7,
+      "nombre": "fer",
+      "rol": "Referente / Obra Social",
+      "empresa": "OSDE",
+      "telefono": "45333",
+      "whatsapp": "45333",
+      "email": "4342@c.com"
     }
   ]
 }

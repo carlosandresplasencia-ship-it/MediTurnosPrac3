@@ -261,6 +261,14 @@ app.put('/api/turnos/:id', (req, res) => {
   res.json(turno);
 });
 
+// RUTA NUEVA: Limpiar todas las historias clínicas
+app.delete('/api/hc/limpiar-todas', (req, res) => {
+  db = loadDB();
+  db.hc = [];
+  saveDB(db);
+  res.json({ success: true, message: 'Todas las historias clínicas fueron eliminadas.' });
+});
+
 // LISTAR USUARIOS (solo admin)
 app.get('/api/usuarios', (req, res) => {
   const usuariosSinPass = db.usuarios.map(({ password, ...u }) => u);
