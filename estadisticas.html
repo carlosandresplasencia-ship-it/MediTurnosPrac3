@@ -1286,23 +1286,24 @@ body, html {
       const response = await fetch('http://localhost:3000/api/datos');
       const data = await response.json();
       
-      // Obtenemos los motivos configurados en el sistema de manera dinámica
-      let motivosValidos = Array.isArray(data.configMotivos) ? [...data.configMotivos] : [];
+      // 1) Motivos configurados en Actualizaciones (servidor). Fallback a lista por defecto.
+      let motivosConfigurados = Array.isArray(data.configMotivos) && data.configMotivos.length > 0
+        ? [...data.configMotivos]
+        : ['Control general', 'Primera vez', 'Urgencia', 'Receta', 'Otro'];
+
       let consultasConsolidadas = [];
       
-      // 1. Recorremos las historias clínicas
+      // 2) Historias clínicas: fuente principal de motivos de consulta
       if (data.hc && Array.isArray(data.hc)) {
         data.hc.forEach(paciente => {
           if (paciente.consultas && Array.isArray(paciente.consultas)) {
             paciente.consultas.forEach(c => {
               const motivoElegido = (c.motivoPredeterminado || c.motivo || '').trim();
-              
               if (motivoElegido) {
-                // Si el motivo existe (nuevo o viejo), lo integramos dinámicamente
-                if (!motivosValidos.includes(motivoElegido)) {
-                  motivosValidos.push(motivoElegido);
+                // Si aparece un motivo nuevo en HC (no está en config), lo agregamos para que se vea
+                if (!motivosConfigurados.includes(motivoElegido)) {
+                  motivosConfigurados.push(motivoElegido);
                 }
-                
                 consultasConsolidadas.push({
                   fecha: c.fecha,
                   motivo: motivoElegido,
@@ -1314,19 +1315,19 @@ body, html {
         });
       }
       
-      // 2. Revisamos los turnos atendidos o finalizados como respaldo
+      // 3) Turnos atendidos/finalizados como respaldo (sin duplicar)
       if (data.turnos && Array.isArray(data.turnos)) {
         data.turnos.forEach(t => {
           const est = (t.estado || '').toLowerCase();
           if (est === 'atendido' || est === 'finalizado') {
             const motivoElegido = (t.motivoPredeterminado || t.motivo || '').trim();
             if (motivoElegido) {
-              if (!motivosValidos.includes(motivoElegido)) {
-                motivosValidos.push(motivoElegido);
+              if (!motivosConfigurados.includes(motivoElegido)) {
+                motivosConfigurados.push(motivoElegido);
               }
-              
-              // Evitamos duplicar registros idénticos
-              const yaExiste = consultasConsolidadas.some(c => c.fecha === t.fecha && c.paciente === t.paciente && c.motivo === motivoElegido);
+              const yaExiste = consultasConsolidadas.some(c =>
+                c.fecha === t.fecha && c.paciente === t.paciente && c.motivo === motivoElegido
+              );
               if (!yaExiste) {
                 consultasConsolidadas.push({
                   fecha: t.fecha,
@@ -1339,28 +1340,30 @@ body, html {
         });
       }
       
-      return consultasConsolidadas;
+      return { consultas: consultasConsolidadas, motivosConfigurados };
     } catch (e) {
       console.error("Error al obtener motivos:", e);
-      return [];
+      return { consultas: [], motivosConfigurados: ['Control general', 'Primera vez', 'Urgencia', 'Receta', 'Otro'] };
     }
   }
 
   async function renderReporteMotivosConsulta(turnosPeriodo, desde, hasta) {
     document.getElementById('tituloMotivosHeader').textContent = `Estadísticas por Motivo de Consulta (${desde} al ${hasta})`;
     
-    const todasConsultas = await obtenerConsultasClinicasMotivos();
+    const { consultas: todasConsultas, motivosConfigurados } = await obtenerConsultasClinicasMotivos();
     
     // Filtrar consultas por el rango de fechas actual
     const consultasFiltradas = todasConsultas.filter(c => c.fecha >= desde && c.fecha <= hasta);
 
-    // Contabilizar frecuencias por motivo
+    // Contabilizar frecuencias: incluir TODOS los motivos de Actualizaciones (aunque den 0)
     const conteoMotivos = {};
+    motivosConfigurados.forEach(m => { conteoMotivos[m] = 0; });
     consultasFiltradas.forEach(c => {
       let mot = (c.motivo || 'No especificado').trim();
       conteoMotivos[mot] = (conteoMotivos[mot] || 0) + 1;
     });
 
+    // Ordenar por cantidad (mayor a menor); los de 0 quedan al final
     const motivosOrdenados = Object.entries(conteoMotivos).sort((a, b) => b[1] - a[1]);
     const totalConsultasMotivo = consultasFiltradas.length;
 
@@ -1509,11 +1512,37 @@ body, html {
     let tortaImgHtml = '';
     if (tortaCv) {
       try {
-        tortaImgHtml = `<div style="text-align:center; margin-bottom:15px;"><img src="${tortaCv.toDataURL('image/png')}" style="max-width:240px; height:auto;"></div>`;
+        tortaImgHtml = `<div style="text-align:center; margin-bottom:15px;"><img src="${tortaCv.toDataURL('image/png')}" style="max-width:260px; height:auto;"></div>`;
       } catch(e) {}
     }
 
     const resumenTxt = document.getElementById('resumenMotivosTextos')?.innerHTML || '';
+
+    // Incluir TODOS los gráficos de línea (evolución por motivo)
+    let lineasHtml = '';
+    const contenedorLineas = document.getElementById('contenedorGraficosMotivosLineas');
+    if (contenedorLineas) {
+      const cards = contenedorLineas.querySelectorAll('.hc-card');
+      cards.forEach((card, idx) => {
+        const titulo = card.querySelector('h4')?.textContent || `Motivo ${idx + 1}`;
+        const totalSpan = card.querySelector('span')?.textContent || '';
+        const canvas = card.querySelector('canvas');
+        let imgHtml = '';
+        if (canvas) {
+          try {
+            imgHtml = `<img src="${canvas.toDataURL('image/png')}" style="max-width:100%; height:auto; display:block; margin:8px auto;">`;
+          } catch (e) {}
+        }
+        lineasHtml += `
+          <div style="border:1px solid #f5c2c2; border-radius:8px; padding:12px; margin-bottom:14px; page-break-inside:avoid;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="color:#dc2626; font-size:13px;">${titulo}</strong>
+              <span style="font-size:11px; font-weight:700; color:#6b5a5a;">${totalSpan}</span>
+            </div>
+            ${imgHtml}
+          </div>`;
+      });
+    }
     
     let html = `
       <p style="font-size:13px; color:#64748b; margin:0 0 12px 0;">Período: <strong>${desde}</strong> al <strong>${hasta}</strong></p>
@@ -1522,7 +1551,8 @@ body, html {
         <h4 style="color:#dc2626; margin:0 0 8px 0; font-size:14px;">Resumen General de Distribución</h4>
         ${resumenTxt}
       </div>
-      <p style="font-size:12px; color:#64748b;">Los gráficos de evolución temporal detallados se encuentran disponibles en la plataforma interactiva web.</p>
+      <h4 style="color:#dc2626; font-size:14px; margin:16px 0 10px 0;">Evolución temporal por motivo</h4>
+      ${lineasHtml || '<p style="font-size:12px; color:#64748b;">No hay gráficos de evolución para mostrar en este período.</p>'}
     `;
     imprimirBloque('Estadísticas por Motivo de Consulta', html);
   }

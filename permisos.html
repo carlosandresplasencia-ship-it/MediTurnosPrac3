@@ -255,6 +255,7 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
     </div>
 
     <button class="btn btn-green" onclick="abrirModalUsuario()">＋ Nuevo Usuario</button>
+    <button class="btn btn-green" style="background:#0284c7; border-color:#0284c7;" onclick="abrirModalCargarObras()">📂 Cargar Obras Sociales</button>
 
     <select class="nav-select" onchange="if(this.value) location.href=this.value;">
       <option value="">🔍 Inspeccionar Vista...</option>
@@ -541,7 +542,7 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
         </div>
       </div>
 
-      <!-- OBRAS SOCIALES -->
+ <!-- OBRAS SOCIALES -->
       <div class="modulo-card">
         <div class="modulo-header">
           <span>Obras Sociales</span>
@@ -554,26 +555,47 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           </div>
         </div>
         <div class="dev-console-drawer open" id="drawer_sec_obras">
+          
           <div class="toggle-row">
-            <span>Ver Detalle Ficha (Modal 📋)</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_obras_detalle" checked onchange="updatePermiso('sec_obras_detalle')"><span class="slider-sub"></span></label>
+            <span>Ver Detalle de Obra Social</span>
+            <label class="switch-sub">
+              <input type="checkbox" id="sec_obras_detalle" checked onchange="updatePermiso('sec_obras_detalle')">
+              <span class="slider-sub"></span>
+            </label>
           </div>
+          
           <div class="toggle-row sub-level" id="row_sec_obras_autorizaciones">
-            <span>↳ Permitir Clic en Autorizaciones (Portal Web)</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_obras_autorizaciones" checked onchange="updatePermiso('sec_obras_autorizaciones')"><span class="slider-sub"></span></label>
+            <span>↳ Permitir Autorización</span>
+            <label class="switch-sub">
+              <input type="checkbox" id="sec_obras_autorizaciones" checked onchange="updatePermiso('sec_obras_autorizaciones')">
+              <span class="slider-sub" id="slider_autorizar"></span>
+            </label>
           </div>
+          
           <div class="toggle-row">
             <span>Agregar Obra Social</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_obras_agregar" checked onchange="updatePermiso('sec_obras_agregar')"><span class="slider-sub"></span></label>
+            <label class="switch-sub">
+              <input type="checkbox" id="sec_obras_agregar" checked onchange="updatePermiso('sec_obras_agregar')">
+              <span class="slider-sub"></span>
+            </label>
           </div>
+          
           <div class="toggle-row">
             <span>Editar Obra Social</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_obras_editar" checked onchange="updatePermiso('sec_obras_editar')"><span class="slider-sub"></span></label>
+            <label class="switch-sub">
+              <input type="checkbox" id="sec_obras_editar" checked onchange="updatePermiso('sec_obras_editar')">
+              <span class="slider-sub"></span>
+            </label>
           </div>
+          
           <div class="toggle-row">
-            <span>Eliminar Obra Social</span>
-            <label class="switch-sub"><input type="checkbox" id="sec_obras_eliminar" checked onchange="updatePermiso('sec_obras_eliminar')"><span class="slider-sub"></span></label>
+            <span>Activar o Desactivar Obra Social</span>
+            <label class="switch-sub">
+              <input type="checkbox" id="sec_obras_estado" checked onchange="updatePermiso('sec_obras_estado')">
+              <span class="slider-sub"></span>
+            </label>
           </div>
+
         </div>
       </div>
 
@@ -671,6 +693,44 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           </div>
         </div>
       </div>
+
+      <!-- MÓDULO AGENDA (ACCESO DIRECTO) -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Agenda (📅)</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_agenda_directo">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_agenda_directo" checked onchange="toggleModuloMain('sec_agenda_directo')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_agenda_directo">
+          <div style="padding: 15px; font-size: 13px; color: #94a3b8; text-align: center; font-style: italic;">
+            Módulo de acceso directo externo a Agenda.
+          </div>
+        </div>
+      </div>
+
+      <!-- MÓDULO ESTADÍSTICAS (ACCESO DIRECTO) -->
+      <div class="modulo-card">
+        <div class="modulo-header">
+          <span>Estadísticas (📊)</span>
+          <div class="main-switch-container">
+            <span class="status-badge on" id="badge_sec_estadisticas">ON</span>
+            <label class="switch-main">
+              <input type="checkbox" id="main_sec_estadisticas" checked onchange="toggleModuloMain('sec_estadisticas')">
+              <span class="slider-main"></span>
+            </label>
+          </div>
+        </div>
+        <div class="dev-console-drawer open" id="drawer_sec_estadisticas">
+          <div style="padding: 15px; font-size: 13px; color: #94a3b8; text-align: center; font-style: italic;">
+            Módulo de acceso directo externo a Estadísticas.
+          </div>
+        </div>
+      </div>
       
       <!-- ACTUALIZACIONES Y CONFIGURACIÓN -->
       <div class="modulo-card">
@@ -692,6 +752,10 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
           <div class="toggle-row">
             <span>Días y Horarios de Atención</span>
             <label class="switch-sub"><input type="checkbox" id="sec_actualizaciones_agenda" checked onchange="updatePermiso('sec_actualizaciones_agenda')"><span class="slider-sub"></span></label>
+          </div>
+          <div class="toggle-row">
+            <span>Motivos de Consulta</span>
+            <label class="switch-sub"><input type="checkbox" id="sec_actualizaciones_motivos" checked onchange="updatePermiso('sec_actualizaciones_motivos')"><span class="slider-sub"></span></label>
           </div>
         </div>
       </div>
@@ -757,6 +821,25 @@ input:checked + .slider-sub:before { transform: translateX(16px); }
       <div style="display:flex; gap:8px; margin-top:20px;">
         <button class="btn btn-green" style="flex:1;" onclick="guardarNuevoUsuario()">Guardar Usuario</button>
         <button class="btn btn-light" style="border:1px solid #b7d4c4;" onclick="cerrarModalUsuario()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARA CARGAR OBRAS SOCIALES DESDE CSV/TXT -->
+<div class="modal-backdrop" id="modalCargarObras">
+  <div class="modal-box">
+    <h3>Cargar Obras Sociales (CSV/TXT)</h3>
+    <p style="font-size:12px; color:#5a6b60;">El archivo debe contener las columnas separadas por comas (o punto y coma) estrictamente en este orden:<br>
+    <strong>Obra social, Estado, Nombre de contacto, Teléfono, Email, Link de autorizaciones</strong></p>
+    
+    <div class="modal-form">
+      <label>Seleccionar Archivo</label>
+      <input type="file" id="archivoObras" accept=".csv, .txt">
+      
+      <div style="display:flex; gap:8px; margin-top:20px;">
+        <button class="btn btn-green" style="flex:1;" onclick="procesarArchivoObras()">Cargar y Guardar</button>
+        <button class="btn btn-light" style="border:1px solid #b7d4c4;" onclick="cerrarModalCargarObras()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -896,6 +979,129 @@ function guardarNuevoUsuario() {
   cerrarModalUsuario();
 }
 
+function abrirModalCargarObras() {
+  document.getElementById('archivoObras').value = '';
+  document.getElementById('modalCargarObras').classList.add('show');
+}
+
+function cerrarModalCargarObras() {
+  document.getElementById('modalCargarObras').classList.remove('show');
+}
+
+async function procesarArchivoObras() {
+  const input = document.getElementById('archivoObras');
+  if (!input.files || input.files.length === 0) {
+    showToast('Por favor, seleccioná un archivo CSV o TXT.');
+    return;
+  }
+
+  const file = input.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async function(e) {
+    const text = e.target.result;
+    const lines = text.split('\n').filter(line => line.trim() !== '');
+    
+    if (lines.length === 0) {
+      showToast('El archivo está vacío.');
+      return;
+    }
+
+    let nuevasObras = [];
+    let startIndex = 0;
+    
+    // Ignorar la primera fila si detectamos que son los encabezados
+    if (lines[0].toLowerCase().includes('obra social') || lines[0].toLowerCase().includes('estado')) {
+      startIndex = 1;
+    }
+
+    for (let i = startIndex; i < lines.length; i++) {
+      // Permite procesar archivos delimitados por coma o punto y coma
+      let separador = lines[i].includes(';') ? ';' : ',';
+      let columnas = lines[i].split(separador).map(c => c.trim().replace(/^"|"$/g, '')); // Quita comillas si existen
+      
+      if (columnas.length >= 1) {
+        let cobertura = columnas[0];
+        let estado = columnas[1] || 'Activa';
+        let contacto = columnas[2] || '';
+        let telefono = columnas[3] || '';
+        let email = columnas[4] || '';
+        let web = columnas[5] || '';
+
+        if (cobertura) {
+          nuevasObras.push({
+            cobertura: cobertura,
+            estado: estado,
+            contacto: contacto,
+            telefono: telefono,
+            email: email,
+            web: web,
+            cosGral: '$0',
+            cosEspec: '$0',
+            cosPractica: '$0',
+            cosEstudio: '$0'
+          });
+        }
+      }
+    }
+
+    if (nuevasObras.length === 0) {
+      showToast('No se encontraron obras válidas para cargar.');
+      return;
+    }
+
+    try {
+      showToast('Sincronizando con el servidor...');
+      // 1. Descargamos la base de datos actual para no pisar nada
+      const response = await fetch('http://localhost:3000/api/datos');
+      const data = await response.json();
+      
+      let listaObras = data.obras || [];
+      let listaContactos = data.contactos || [];
+
+      let maxId = listaObras.length > 0 ? Math.max(...listaObras.map(o => Number(o.id) || 0)) : 0;
+      let maxContactoId = listaContactos.length > 0 ? Math.max(...listaContactos.map(c => Number(c.id) || 0)) : 0;
+
+      nuevasObras.forEach(no => {
+        maxId++;
+        listaObras.push({ id: maxId, ...no });
+
+        // 2. Guardamos automáticamente el registro en la agenda de contactos (tal cual lo hace secretaría)
+        let nombreContactoFinal = no.contacto || no.cobertura;
+        maxContactoId++;
+        listaContactos.push({
+          id: maxContactoId,
+          nombre: nombreContactoFinal,
+          rol: no.contacto ? 'Referente / Obra Social' : 'Obra Social',
+          empresa: no.cobertura,
+          telefono: no.telefono || '-',
+          whatsapp: no.telefono || '-',
+          email: no.email || '-'
+        });
+      });
+
+      data.obras = listaObras;
+      data.contactos = listaContactos;
+
+      // 3. Subimos los datos integrados nuevamente al JSON central
+      await fetch('http://localhost:3000/api/datos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      showToast(`¡Éxito! Se cargaron ${nuevasObras.length} obras sociales.`);
+      cerrarModalCargarObras();
+
+    } catch (error) {
+      console.error(error);
+      showToast('Error al comunicar con el servidor Node.js (Puerto 3000).');
+    }
+  };
+  
+  reader.readAsText(file);
+}
+
 function sincronizarDevConfig() {
   localStorage.setItem('medi_dev_config', JSON.stringify(devConfig));
   showToast('Sincronizado con backend y vistas');
@@ -909,10 +1115,12 @@ function resetearConfiguracion() {
 function cargarEstadosGuardados() {
   const saved = JSON.parse(localStorage.getItem('medi_dev_config'));
 
+  // Se agregaron receta, actualizaciones, agenda y estadísticas para que persista su estado
   const modulosKeys = [
     'pac_turnos', 'pac_datos',
     'prof_contactos', 'prof_agenda', 'prof_hc',
-    'sec_inicio', 'sec_contactos', 'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc'
+    'sec_inicio', 'sec_contactos', 'sec_pacientes', 'sec_obras', 'sec_turnos', 'sec_hc',
+    'sec_receta', 'sec_actualizaciones', 'sec_agenda_directo', 'sec_estadisticas'
   ];
 
   if (saved) {
