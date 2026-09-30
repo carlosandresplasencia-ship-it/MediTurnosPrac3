@@ -148,7 +148,103 @@
       "paciente": "José Argento",
       "obra": "Particular",
       "motivo": "Control general (Primera consulta)",
-      "estado": "Confirmado",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 5,
+      "fecha": "2026-09-30",
+      "hora": "19:30",
+      "horaHasta": "20:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lepra (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 6,
+      "fecha": "2026-09-30",
+      "hora": "20:00",
+      "horaHasta": "20:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lepra (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Personalmente"
+    },
+    {
+      "id": 7,
+      "fecha": "2026-09-30",
+      "hora": "20:30",
+      "horaHasta": "21:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lunares (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 8,
+      "fecha": "2026-09-30",
+      "hora": "21:00",
+      "horaHasta": "21:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lepra (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 9,
+      "fecha": "2026-09-30",
+      "hora": "21:30",
+      "horaHasta": "22:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Personalmente"
+    },
+    {
+      "id": 10,
+      "fecha": "2026-09-30",
+      "hora": "22:00",
+      "horaHasta": "22:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Acne (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 11,
+      "fecha": "2026-09-30",
+      "hora": "22:30",
+      "horaHasta": "23:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Caída del cabello (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 12,
+      "fecha": "2026-09-30",
+      "hora": "23:00",
+      "horaHasta": "23:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Caída del cabello (Control)",
+      "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "Web"
     }
@@ -323,7 +419,7 @@
       "tipoDoc": "DNI",
       "dni": "33826837",
       "obra": "OSDE",
-      "diagnostico": "Lunares",
+      "diagnostico": "Acne",
       "primeraConsulta": "2026-09-30",
       "ultimaConsulta": "2026-09-30",
       "antecedentes": [],
@@ -382,11 +478,126 @@
           },
           "estudioComplementario": null,
           "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Lepra",
+          "tratamiento": "la lepra no tiene cura",
+          "medicacion": "Leprosil",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "Radiografia",
+            "fecha": "2026-09-17",
+            "resultados": "Se ve todo OK"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Lepra",
+          "tratamiento": "la lepra no tiene cura",
+          "medicacion": "Leprosil",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "radiografia",
+            "fecha": "2026-09-24",
+            "resultados": "todo ok"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Lunares",
+          "motivo": "Lunares",
+          "tratamiento": "lunares",
+          "medicacion": "radio pie",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Lepra",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Control general",
+          "tratamiento": "la lepra no tiene cura",
+          "medicacion": "Leprosil",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "radiografia",
+            "fecha": "2026-09-24",
+            "resultados": "-"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-09-30",
+          "motivoPredeterminado": "Acne",
+          "motivo": "Acne",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
         }
       ],
       "tratamientos": [
         "anti-acne 2.0",
-        "Leprosil"
+        "Leprosil",
+        "radio pie"
       ]
     },
     {
@@ -436,6 +647,20 @@
           "notas": "-"
         }
       ],
+      "tratamientos": []
+    },
+    {
+      "id": 3,
+      "legajo": "3",
+      "paciente": "José Argento",
+      "tipoDoc": "DNI",
+      "dni": "11222333",
+      "obra": "Particular",
+      "diagnostico": "Sin consultas previas",
+      "primeraConsulta": "2026-09-30",
+      "ultimaConsulta": "-",
+      "antecedentes": [],
+      "consultas": [],
       "tratamientos": []
     }
   ],
