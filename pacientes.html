@@ -237,14 +237,35 @@
   .form-group input, .form-group select, .form-group textarea {
     width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
     border-radius: 10px; font-size: 14px; background: #fafffe; color: var(--text);
+    transition: all 0.2s;
   }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     outline: none; border-color: var(--green); background: white;
   }
-  .form-group input[readonly] { background: #f1f5f4; color: var(--text-soft); }
+  .form-group input[readonly] { background: #f1f5f4; color: var(--text-soft); cursor: not-allowed; }
   .form-group textarea { resize: vertical; min-height: 70px; }
   .form-hint { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
   .form-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+
+  /* Botón Inteligente WhatsApp */
+  .btn-copiar-telefono {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-dark);
+    background: var(--green-light);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copiar-telefono:hover {
+    background: var(--green-mid);
+  }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -468,6 +489,12 @@
     background: #ffffff;
     box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.15);
   }
+  .modal-group input:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+  }
   .modal-actions {
     margin-top: 24px;
   }
@@ -562,13 +589,13 @@
         </div>
 
         <div class="modal-group">
-          <label>Número de Documento <span class="req">*</span></label>
-          <input type="text" id="regNumDoc" required placeholder="Sin puntos (Ej: 32456789)">
+          <label>Número de Documento (8 dígitos) <span class="req">*</span></label>
+          <input type="text" id="regNumDoc" required placeholder="Ej: 32456789" maxlength="8" pattern="[0-9]{8}" title="Debe contener exactamente 8 números" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
 
         <div class="modal-group">
-          <label>CUIL <span class="req">*</span></label>
-          <input type="text" id="regCuil" required placeholder="Ej: 20-32456789-8">
+          <label>CUIL (11 dígitos sin guiones) <span class="req">*</span></label>
+          <input type="text" id="regCuil" required placeholder="Ej: 20324567898" maxlength="11" pattern="[0-9]{11}" title="Debe contener exactamente 11 números" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
 
         <div class="modal-group">
@@ -587,14 +614,14 @@
         </div>
 
         <div class="modal-group">
-          <label>Correo Electrónico <span class="req">*</span></label>
-          <input type="email" id="regEmail" required placeholder="tu@email.com">
+          <label>Correo Electrónico (Debe incluir @ y .com) <span class="req">*</span></label>
+          <input type="email" id="regEmail" required placeholder="ejemplo@correo.com">
         </div>
 
         <!-- Cobertura Médica -->
         <div class="modal-group">
           <label>Obra Social / Prepaga <span class="req">*</span></label>
-          <select id="regObraSocial" required>
+          <select id="regObraSocial" required onchange="evaluarObraSocialModal()">
             <option value="">Seleccionar...</option>
             <option value="Particular">Particular</option>
             <option value="OSDE">OSDE</option>
@@ -608,24 +635,27 @@
         </div>
 
         <div class="modal-group">
-          <label>Plan / S <span class="req">*</span></label>
+          <label>Plan / S <span class="req" id="reqPlan">*</span></label>
           <input type="text" id="regPlan" required placeholder="Ej: 210 / Clásico">
         </div>
 
         <div class="modal-group">
-          <label>Número de Afiliado <span class="req">*</span></label>
+          <label>Número de Afiliado <span class="req" id="reqAfiliado">*</span></label>
           <input type="text" id="regNumAfiliado" required placeholder="Nº de carnet">
         </div>
 
         <!-- Contacto -->
         <div class="modal-group">
           <label>Teléfono <span class="req">*</span></label>
-          <input type="tel" id="regTelefono" required placeholder="Ej: 11 4567-8900">
+          <input type="tel" id="regTelefono" required placeholder="Ej: 11 4567-8900" oninput="sincronizarTelefonoModal()">
         </div>
 
         <div class="modal-group">
           <label>WhatsApp <span class="req">*</span></label>
           <input type="tel" id="regWhatsapp" required placeholder="Ej: 11 5555-1234">
+          <button type="button" class="btn-copiar-telefono" onclick="copiarTelefonoAWhatsappModal()">
+            <input type="checkbox" id="checkMismoTelModal" style="width: auto; margin:0;" onchange="copiarTelefonoAWhatsappModal()"> Usar mi número de teléfono
+          </button>
         </div>
 
         <!-- Domicilio -->
@@ -640,18 +670,24 @@
         </div>
 
         <div class="modal-group">
-          <label>Ciudad / Localidad <span class="req">*</span></label>
-          <input type="text" id="regCiudad" required placeholder="Ej: CABA">
+          <label>País <span class="req">*</span></label>
+          <select id="regPais" required>
+            <option value="Argentina" selected>Argentina</option>
+          </select>
         </div>
 
         <div class="modal-group">
           <label>Provincia <span class="req">*</span></label>
-          <input type="text" id="regProvincia" required placeholder="Ej: Buenos Aires">
+          <select id="regProvincia" required onchange="cargarLocalidadesModal(this.value)">
+            <option value="">Seleccionar Provincia...</option>
+          </select>
         </div>
 
         <div class="modal-group">
-          <label>País <span class="req">*</span></label>
-          <input type="text" id="regPais" required value="Argentina">
+          <label>Ciudad / Localidad / Pueblo <span class="req">*</span></label>
+          <select id="regCiudad" required>
+            <option value="">Seleccionar Provincia primero...</option>
+          </select>
         </div>
 
       </div>
@@ -877,99 +913,123 @@
     <div id="seccion-datos" class="seccion">
       <div class="seccion-header">
         <h3>Datos personales</h3>
-        <p>Información registrada en tu ficha de paciente</p>
+        <p>Podés modificar tus datos de contacto y cobertura médica cuando lo necesites.</p>
       </div>
 
       <div class="info-box" style="margin-top:0; margin-bottom:18px;">
-        Estos son los datos ingresados al registrarte. Se encuentran en modo lectura. Para modificarlos, ponete en contacto con el consultorio.
+        <strong>Atención:</strong> Los campos de identidad (DNI, Tipo de Doc. y CUIL) están protegidos. Si requerís cambiarlos, contactá a la administración.
       </div>
 
-      <form id="formDatos">
+      <form id="formDatos" onsubmit="guardarModificacionDatos(event)">
         <div class="form-grid">
           
           <!-- Datos Personales -->
           <div class="form-group">
-            <label>Nombre</label>
-            <input type="text" id="datoNombre" readonly>
+            <label>Nombre <span class="req">*</span></label>
+            <input type="text" id="datoNombre" required>
           </div>
           <div class="form-group">
-            <label>Apellido</label>
-            <input type="text" id="datoApellido" readonly>
+            <label>Apellido <span class="req">*</span></label>
+            <input type="text" id="datoApellido" required>
           </div>
           <div class="form-group">
             <label>Tipo de Documento</label>
-            <input type="text" id="datoTipoDoc" readonly>
+            <input type="text" id="datoTipoDoc" readonly title="No modificable">
           </div>
           <div class="form-group">
             <label>Número de Documento</label>
-            <input type="text" id="datoNumDoc" readonly>
+            <input type="text" id="datoNumDoc" readonly title="No modificable">
           </div>
           <div class="form-group">
             <label>CUIL</label>
-            <input type="text" id="datoCuil" readonly>
+            <input type="text" id="datoCuil" readonly title="No modificable">
           </div>
           <div class="form-group">
-            <label>Sexo</label>
-            <input type="text" id="datoSexo" readonly>
+            <label>Sexo <span class="req">*</span></label>
+            <select id="datoSexo" required>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="X">X / No binario</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>Fecha de Nacimiento</label>
-            <input type="text" id="datoFechaNac" readonly>
+            <label>Fecha de Nacimiento <span class="req">*</span></label>
+            <input type="date" id="datoFechaNac" required>
           </div>
           <div class="form-group">
-            <label>Correo Electrónico</label>
-            <input type="email" id="datoEmail" readonly>
+            <label>Correo Electrónico (@ y .com) <span class="req">*</span></label>
+            <input type="email" id="datoEmail" required placeholder="ejemplo@correo.com">
           </div>
 
           <!-- Cobertura -->
           <div class="form-group">
-            <label>Obra Social / Prepaga</label>
-            <input type="text" id="datoObra" readonly>
+            <label>Obra Social / Prepaga <span class="req">*</span></label>
+            <select id="datoObra" required onchange="evaluarObraSocialVista()">
+              <option value="Particular">Particular</option>
+              <option value="OSDE">OSDE</option>
+              <option value="Swiss Medical">Swiss Medical</option>
+              <option value="Galeno">Galeno</option>
+              <option value="Medicus">Medicus</option>
+              <option value="PAMI">PAMI</option>
+              <option value="IOMA">IOMA</option>
+              <option value="Otra">Otra</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>Plan / S</label>
-            <input type="text" id="datoPlan" readonly>
+            <label>Plan / S <span class="req" id="datoReqPlan">*</span></label>
+            <input type="text" id="datoPlan" required placeholder="Ej: 210">
           </div>
           <div class="form-group">
-            <label>Número de Afiliado</label>
-            <input type="text" id="datoAfiliado" readonly>
+            <label>Número de Afiliado <span class="req" id="datoReqAfiliado">*</span></label>
+            <input type="text" id="datoAfiliado" required placeholder="Nº de carnet">
           </div>
 
           <!-- Contacto -->
           <div class="form-group">
-            <label>Teléfono</label>
-            <input type="tel" id="datoTelefono" readonly>
+            <label>Teléfono <span class="req">*</span></label>
+            <input type="tel" id="datoTelefono" required oninput="sincronizarTelefonoVista()">
           </div>
           <div class="form-group">
-            <label>WhatsApp</label>
-            <input type="tel" id="datoWhatsapp" readonly>
+            <label>WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="datoWhatsapp" required>
+            <button type="button" class="btn-copiar-telefono" onclick="copiarTelefonoAWhatsappVista()">
+              <input type="checkbox" id="checkMismoTelVista" style="width: auto; margin:0;" onchange="copiarTelefonoAWhatsappVista()"> Usar mi número de teléfono
+            </button>
           </div>
 
           <!-- Domicilio -->
           <div class="form-group full">
-            <label>Dirección</label>
-            <input type="text" id="datoDireccion" readonly>
+            <label>Dirección <span class="req">*</span></label>
+            <input type="text" id="datoDireccion" required>
           </div>
           <div class="form-group">
-            <label>Código Postal (CP)</label>
-            <input type="text" id="datoCp" readonly>
+            <label>Código Postal (CP) <span class="req">*</span></label>
+            <input type="text" id="datoCp" required>
           </div>
           <div class="form-group">
-            <label>Ciudad / Localidad</label>
-            <input type="text" id="datoCiudad" readonly>
+            <label>País <span class="req">*</span></label>
+            <select id="datoPais" required>
+              <option value="Argentina" selected>Argentina</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>Provincia</label>
-            <input type="text" id="datoProvincia" readonly>
+            <label>Provincia <span class="req">*</span></label>
+            <select id="datoProvincia" required onchange="cargarLocalidadesVista(this.value)">
+              <option value="">Seleccionar Provincia...</option>
+            </select>
           </div>
           <div class="form-group">
-            <label>País</label>
-            <input type="text" id="datoPais" readonly>
+            <label>Ciudad / Localidad / Pueblo <span class="req">*</span></label>
+            <select id="datoCiudad" required>
+              <option value="">Seleccionar Provincia primero...</option>
+            </select>
           </div>
 
         </div>
 
         <div class="form-actions">
+          <button type="submit" class="btn btn-primary">💾 Guardar cambios</button>
+          <button type="button" class="btn btn-outline" onclick="actualizarVistaDatos()">Deshacer cambios</button>
           <button type="button" class="btn btn-outline" onclick="mostrarSeccion('inicio')">Volver al inicio</button>
         </div>
       </form>
@@ -1004,7 +1064,7 @@
           <a href="https://wa.me/5491145678900" target="_blank">Enviar mensaje</a>
         </div>
         <div class="contact-card">
-          <div class="icon">✉️</div>
+          <div class="icon">✉️️</div>
           <strong>Email</strong>
           <a href="mailto:turnos@mediturnos.com">turnos@mediturnos.com</a>
         </div>
@@ -1027,11 +1087,102 @@
 
 <script>
   // ============================================================
+  // CONSUMO DE API OFICIAL DE PROVINCIAS Y LOCALIDADES (GEOREF AR)
+  // ============================================================
+  let cacheProvincias = [];
+
+  async function inicializarProvinciasGeoref() {
+    const regProv = document.getElementById('regProvincia');
+    const datoProv = document.getElementById('datoProvincia');
+
+    if (regProv) regProv.innerHTML = '<option value="">Cargando provincias...</option>';
+    if (datoProv) datoProv.innerHTML = '<option value="">Cargando provincias...</option>';
+
+    try {
+      const res = await fetch('https://apis.datos.gob.ar/georef/api/provincias?campos=id,nombre');
+      const data = await res.json();
+      
+      cacheProvincias = data.provincias.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+      let optionsHtml = '<option value="">Seleccionar Provincia...</option>';
+      cacheProvincias.forEach(p => {
+        optionsHtml += `<option value="${p.nombre}">${p.nombre}</option>`;
+      });
+
+      if (regProv) regProv.innerHTML = optionsHtml;
+      if (datoProv) datoProv.innerHTML = optionsHtml;
+    } catch (error) {
+      console.error('Error al obtener provincias oficiales:', error);
+      const fallbackError = '<option value="">Error al cargar provincias</option>';
+      if (regProv) regProv.innerHTML = fallbackError;
+      if (datoProv) datoProv.innerHTML = fallbackError;
+    }
+  }
+
+  async function cargarLocalidadesModal(nombreProvincia, localidadPreseleccionada = '') {
+    const regCiudad = document.getElementById('regCiudad');
+    if (!nombreProvincia) {
+      regCiudad.innerHTML = '<option value="">Seleccionar Provincia primero...</option>';
+      return;
+    }
+
+    regCiudad.innerHTML = '<option value="">Cargando pueblos y ciudades...</option>';
+
+    try {
+      const url = `https://apis.datos.gob.ar/georef/api/localidades?provincia=${encodeURIComponent(nombreProvincia)}&max=1000&campos=id,nombre`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const localidades = data.localidades.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+      let html = '<option value="">Seleccionar Localidad / Pueblo...</option>';
+      localidades.forEach(loc => {
+        const selected = loc.nombre === localidadPreseleccionada ? 'selected' : '';
+        html += `<option value="${loc.nombre}" ${selected}>${loc.nombre}</option>`;
+      });
+
+      regCiudad.innerHTML = html;
+    } catch (error) {
+      console.error('Error al cargar localidades:', error);
+      regCiudad.innerHTML = '<option value="">Error al cargar localidades</option>';
+    }
+  }
+
+  async function cargarLocalidadesVista(nombreProvincia, localidadPreseleccionada = '') {
+    const datoCiudad = document.getElementById('datoCiudad');
+    if (!nombreProvincia) {
+      datoCiudad.innerHTML = '<option value="">Seleccionar Provincia primero...</option>';
+      return;
+    }
+
+    datoCiudad.innerHTML = '<option value="">Cargando pueblos y ciudades...</option>';
+
+    try {
+      const url = `https://apis.datos.gob.ar/georef/api/localidades?provincia=${encodeURIComponent(nombreProvincia)}&max=1000&campos=id,nombre`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const localidades = data.localidades.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+      let html = '<option value="">Seleccionar Localidad / Pueblo...</option>';
+      localidades.forEach(loc => {
+        const selected = loc.nombre === localidadPreseleccionada ? 'selected' : '';
+        html += `<option value="${loc.nombre}" ${selected}>${loc.nombre}</option>`;
+      });
+
+      datoCiudad.innerHTML = html;
+    } catch (error) {
+      console.error('Error al cargar localidades:', error);
+      datoCiudad.innerHTML = '<option value="">Error al cargar localidades</option>';
+    }
+  }
+
+  // ============================================================
   // DATOS DEL PACIENTE
   // ============================================================
   let paciente = {
     nombre: 'Juan Pérez',
-    dni: '32.456.789',
+    dni: '32456789',
     telefono: '11 5555-1234',
     email: 'juan.perez@email.com',
     obra: 'OSDE',
@@ -1047,9 +1198,119 @@
   ];
 
   // ============================================================
+  // COPIAR TELÉFONO A WHATSAPP
+  // ============================================================
+  function copiarTelefonoAWhatsappModal() {
+    const check = document.getElementById('checkMismoTelModal');
+    const tel = document.getElementById('regTelefono').value;
+    const whatsappInput = document.getElementById('regWhatsapp');
+
+    if (check.checked) {
+      whatsappInput.value = tel;
+    }
+  }
+
+  function sincronizarTelefonoModal() {
+    const check = document.getElementById('checkMismoTelModal');
+    if (check && check.checked) {
+      copiarTelefonoAWhatsappModal();
+    }
+  }
+
+  function copiarTelefonoAWhatsappVista() {
+    const check = document.getElementById('checkMismoTelVista');
+    const tel = document.getElementById('datoTelefono').value;
+    const whatsappInput = document.getElementById('datoWhatsapp');
+
+    if (check.checked) {
+      whatsappInput.value = tel;
+    }
+  }
+
+  function sincronizarTelefonoVista() {
+    const check = document.getElementById('checkMismoTelVista');
+    if (check && check.checked) {
+      copiarTelefonoAWhatsappVista();
+    }
+  }
+
+  // ============================================================
+  // EVALUAR OBRA SOCIAL (MODAL Y VISTA)
+  // ============================================================
+  function evaluarObraSocialModal() {
+    const obraSelect = document.getElementById('regObraSocial');
+    const inputPlan = document.getElementById('regPlan');
+    const inputAfiliado = document.getElementById('regNumAfiliado');
+    const reqPlan = document.getElementById('reqPlan');
+    const reqAfiliado = document.getElementById('reqAfiliado');
+
+    if (obraSelect.value === 'Particular') {
+      inputPlan.value = 'N/A';
+      inputPlan.disabled = true;
+      inputPlan.required = false;
+      if (reqPlan) reqPlan.style.display = 'none';
+
+      inputAfiliado.value = 'N/A';
+      inputAfiliado.disabled = true;
+      inputAfiliado.required = false;
+      if (reqAfiliado) reqAfiliado.style.display = 'none';
+    } else {
+      if (inputPlan.disabled) {
+        inputPlan.value = '';
+        inputPlan.disabled = false;
+      }
+      inputPlan.required = true;
+      if (reqPlan) reqPlan.style.display = 'inline';
+
+      if (inputAfiliado.disabled) {
+        inputAfiliado.value = '';
+        inputAfiliado.disabled = false;
+      }
+      inputAfiliado.required = true;
+      if (reqAfiliado) reqAfiliado.style.display = 'inline';
+    }
+  }
+
+  function evaluarObraSocialVista() {
+    const obraSelect = document.getElementById('datoObra');
+    const inputPlan = document.getElementById('datoPlan');
+    const inputAfiliado = document.getElementById('datoAfiliado');
+    const reqPlan = document.getElementById('datoReqPlan');
+    const reqAfiliado = document.getElementById('datoReqAfiliado');
+
+    if (obraSelect.value === 'Particular') {
+      inputPlan.value = 'N/A';
+      inputPlan.disabled = true;
+      inputPlan.required = false;
+      if (reqPlan) reqPlan.style.display = 'none';
+
+      inputAfiliado.value = 'N/A';
+      inputAfiliado.disabled = true;
+      inputAfiliado.required = false;
+      if (reqAfiliado) reqAfiliado.style.display = 'none';
+    } else {
+      if (inputPlan.disabled) {
+        inputPlan.value = '';
+        inputPlan.disabled = false;
+      }
+      inputPlan.required = true;
+      if (reqPlan) reqPlan.style.display = 'inline';
+
+      if (inputAfiliado.disabled) {
+        inputAfiliado.value = '';
+        inputAfiliado.disabled = false;
+      }
+      inputAfiliado.required = true;
+      if (reqAfiliado) reqAfiliado.style.display = 'inline';
+    }
+  }
+
+  // ============================================================
   // COMPROBACIÓN DE PRIMER INGRESO (MODAL OBLIGATORIO)
   // ============================================================
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', async function() {
+    await inicializarProvinciasGeoref();
+    localStorage.clear();
     verificarPrimerIngreso();
   });
 
@@ -1060,19 +1321,22 @@
       document.getElementById('modalRegistroObligatorio').classList.add('active');
       document.body.style.overflow = 'hidden';
     } else {
-      const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
-      if (datosGuardados) {
-        paciente.nombre = `${datosGuardados.nombre} ${datosGuardados.apellido}`;
-        paciente.dni = datosGuardados.numDoc;
-        paciente.telefono = datosGuardados.telefono;
-        paciente.obra = datosGuardados.obraSocial;
-        actualizarVistaDatos();
-      }
+      actualizarVistaDatos();
     }
   }
 
   async function guardarDatosNuevos(event) {
     event.preventDefault();
+
+    const emailInput = document.getElementById('regEmail').value.trim();
+
+    // Validar de forma estricta que contenga '@' y termine exactamente en '.com'
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
+    if (!regexEmail.test(emailInput)) {
+      alert('Por favor ingresá un correo electrónico válido que incluya "@" y termine en ".com" (Ej: ejemplo@correo.com)');
+      document.getElementById('regEmail').focus();
+      return;
+    }
 
     const datosPaciente = {
       nombre: document.getElementById('regNombre').value.trim(),
@@ -1082,7 +1346,7 @@
       cuil: document.getElementById('regCuil').value.trim(),
       sexo: document.getElementById('regSexo').value,
       fechaNacimiento: document.getElementById('regFechaNac').value,
-      email: document.getElementById('regEmail').value.trim(),
+      email: emailInput,
       obraSocial: document.getElementById('regObraSocial').value,
       plan: document.getElementById('regPlan').value.trim(),
       numAfiliado: document.getElementById('regNumAfiliado').value.trim(),
@@ -1090,9 +1354,9 @@
       whatsapp: document.getElementById('regWhatsapp').value.trim(),
       direccion: document.getElementById('regDireccion').value.trim(),
       cp: document.getElementById('regCp').value.trim(),
-      ciudad: document.getElementById('regCiudad').value.trim(),
-      provincia: document.getElementById('regProvincia').value.trim(),
-      pais: document.getElementById('regPais').value.trim()
+      ciudad: document.getElementById('regCiudad').value,
+      provincia: document.getElementById('regProvincia').value,
+      pais: document.getElementById('regPais').value
     };
 
     try {
@@ -1105,11 +1369,6 @@
       localStorage.setItem('pacienteRegistrado', 'true');
       localStorage.setItem('datosPacienteObligatorios', JSON.stringify(datosPaciente));
 
-      paciente.nombre = `${datosPaciente.nombre} ${datosPaciente.apellido}`;
-      paciente.dni = datosPaciente.numDoc;
-      paciente.telefono = datosPaciente.telefono;
-      paciente.obra = datosPaciente.obraSocial;
-      
       actualizarVistaDatos();
 
       document.getElementById('modalRegistroObligatorio').classList.remove('active');
@@ -1119,6 +1378,126 @@
     } catch (error) {
       console.error('Error al guardar datos:', error);
     }
+  }
+
+  // ============================================================
+  // MODIFICACIÓN Y GUARDADO DE DATOS PERSONALES DESDE LA VISTA
+  // ============================================================
+  async function guardarModificacionDatos(event) {
+    event.preventDefault();
+
+    const emailInput = document.getElementById('datoEmail').value.trim();
+
+    // Validar correo
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
+    if (!regexEmail.test(emailInput)) {
+      alert('Por favor ingresá un correo electrónico válido que incluya "@" y termine en ".com"');
+      document.getElementById('datoEmail').focus();
+      return;
+    }
+
+    const datosActualizados = {
+      nombre: document.getElementById('datoNombre').value.trim(),
+      apellido: document.getElementById('datoApellido').value.trim(),
+      tipoDoc: document.getElementById('datoTipoDoc').value,
+      numDoc: document.getElementById('datoNumDoc').value,
+      cuil: document.getElementById('datoCuil').value,
+      sexo: document.getElementById('datoSexo').value,
+      fechaNacimiento: document.getElementById('datoFechaNac').value,
+      email: emailInput,
+      obraSocial: document.getElementById('datoObra').value,
+      plan: document.getElementById('datoPlan').value.trim(),
+      numAfiliado: document.getElementById('datoAfiliado').value.trim(),
+      telefono: document.getElementById('datoTelefono').value.trim(),
+      whatsapp: document.getElementById('datoWhatsapp').value.trim(),
+      direccion: document.getElementById('datoDireccion').value.trim(),
+      cp: document.getElementById('datoCp').value.trim(),
+      ciudad: document.getElementById('datoCiudad').value,
+      provincia: document.getElementById('datoProvincia').value,
+      pais: document.getElementById('datoPais').value
+    };
+
+    try {
+      await fetch('http://localhost:3000/api/pacientes/modificar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosActualizados)
+      }).catch(err => console.log('Sincronizando modificaciones de manera local...'));
+
+      localStorage.setItem('datosPacienteObligatorios', JSON.stringify(datosActualizados));
+
+      actualizarVistaDatos();
+      showToast('¡Tus datos personales fueron actualizados correctamente!');
+    } catch (error) {
+      console.error('Error al actualizar datos:', error);
+      showToast('Error al intentar guardar los datos.');
+    }
+  }
+
+  // ============================================================
+  // ACTUALIZAR VISTA DE DATOS PERSONALES
+  // ============================================================
+  async function actualizarVistaDatos() {
+    const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
+
+    if (datosGuardados) {
+      paciente.nombre = `${datosGuardados.nombre} ${datosGuardados.apellido}`;
+      paciente.dni = datosGuardados.numDoc;
+      paciente.telefono = datosGuardados.telefono;
+      paciente.obra = datosGuardados.obraSocial;
+
+      document.getElementById('datoNombre').value = datosGuardados.nombre || '';
+      document.getElementById('datoApellido').value = datosGuardados.apellido || '';
+      document.getElementById('datoTipoDoc').value = datosGuardados.tipoDoc || 'DNI';
+      document.getElementById('datoNumDoc').value = datosGuardados.numDoc || '';
+      document.getElementById('datoCuil').value = datosGuardados.cuil || '';
+      document.getElementById('datoSexo').value = datosGuardados.sexo || 'Femenino';
+      document.getElementById('datoFechaNac').value = datosGuardados.fechaNacimiento || '';
+      document.getElementById('datoEmail').value = datosGuardados.email || '';
+      document.getElementById('datoObra').value = datosGuardados.obraSocial || 'Particular';
+      document.getElementById('datoPlan').value = datosGuardados.plan || '';
+      document.getElementById('datoAfiliado').value = datosGuardados.numAfiliado || '';
+      document.getElementById('datoTelefono').value = datosGuardados.telefono || '';
+      document.getElementById('datoWhatsapp').value = datosGuardados.whatsapp || '';
+      document.getElementById('datoDireccion').value = datosGuardados.direccion || '';
+      document.getElementById('datoCp').value = datosGuardados.cp || '';
+
+      // Cargar geografía
+      const prov = datosGuardados.provincia || 'Buenos Aires';
+      const ciudad = datosGuardados.ciudad || '';
+
+      document.getElementById('datoProvincia').value = prov;
+      if (prov) {
+        await cargarLocalidadesVista(prov, ciudad);
+      }
+    } else {
+      document.getElementById('datoNombre').value = 'Juan';
+      document.getElementById('datoApellido').value = 'Pérez';
+      document.getElementById('datoTipoDoc').value = 'DNI';
+      document.getElementById('datoNumDoc').value = '32456789';
+      document.getElementById('datoCuil').value = '20324567898';
+      document.getElementById('datoTelefono').value = '11 5555-1234';
+      document.getElementById('datoEmail').value = 'juan.perez@email.com';
+      document.getElementById('datoObra').value = 'OSDE';
+
+      document.getElementById('datoProvincia').value = 'Buenos Aires';
+      await cargarLocalidadesVista('Buenos Aires');
+    }
+
+    evaluarObraSocialVista();
+
+    document.getElementById('vistaNombre').textContent = paciente.nombre;
+    document.getElementById('vistaDni').textContent = paciente.dni;
+    document.getElementById('vistaTelefono').textContent = paciente.telefono;
+    document.getElementById('vistaObra').textContent = paciente.obra;
+    document.getElementById('chipNombre').textContent = paciente.nombre;
+  }
+
+  function confirmarDatosOk() {
+    actualizarVistaDatos();
+    datosConfirmados = true;
+    document.getElementById('datosOkBadge').classList.add('show');
+    showToast('Datos confirmados. Ya podés solicitar el turno.');
   }
 
   // ============================================================
@@ -1439,7 +1818,7 @@
           <div class="turno-actions-row">
             <button type="button" class="btn btn-outline" onclick="modificarTurno(0)" style="padding:6px 12px; font-size:12px; background:white;">✏️ Modificar / Trasladar</button>
             <button type="button" class="btn btn-danger" onclick="cancelarTurno(0)" style="padding:6px 12px; font-size:12px;">🚫 Cancelar turno</button>
-            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px; background:white;">🖨️ Imprimir</button>
+            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px; background:white;">🖨️️ Imprimir</button>
             <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()" style="padding:6px 12px; font-size:12px; background:white;">📄 Descargar PDF</button>
           </div>
         </div>
@@ -1561,7 +1940,7 @@
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:18px;">
           <button type="button" class="btn btn-primary" onclick="confirmarAsistenciaBackend()">✓ Confirmar asistencia</button>
-          <button type="button" class="btn btn-outline" onclick="modificarTurno(0)">✏️ Modificar / Trasladar</button>
+          <button type="button" class="btn btn-outline" onclick="modificarTurno(0)">✏️️ Modificar / Trasladar</button>
           <button type="button" class="btn btn-danger" onclick="cancelarTurno(0)">🚫 Cancelar turno</button>
           <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()">🖨️ Imprimir comprobante</button>
           <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()">📄 Descargar PDF</button>
@@ -1581,56 +1960,6 @@
     renderMisTurnos();
     renderConfirmarTurno();
     renderProximoTurnoAbajo();
-  }
-
-  // ============================================================
-  // DATOS PERSONALES (DESDE LOCALSTORAGE O PACIENTE)
-  // ============================================================
-  function actualizarVistaDatos() {
-    // Actualizar encabezados y cajas dinámicas rápidas
-    document.getElementById('vistaNombre').textContent = paciente.nombre;
-    document.getElementById('vistaDni').textContent = paciente.dni;
-    document.getElementById('vistaTelefono').textContent = paciente.telefono;
-    document.getElementById('vistaObra').textContent = paciente.obra;
-    document.getElementById('chipNombre').textContent = paciente.nombre;
-
-    // Cargar datos completos en la pestaña "Datos Personales"
-    const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
-
-    if (datosGuardados) {
-      document.getElementById('datoNombre').value = datosGuardados.nombre || '';
-      document.getElementById('datoApellido').value = datosGuardados.apellido || '';
-      document.getElementById('datoTipoDoc').value = datosGuardados.tipoDoc || 'DNI';
-      document.getElementById('datoNumDoc').value = datosGuardados.numDoc || '';
-      document.getElementById('datoCuil').value = datosGuardados.cuil || '';
-      document.getElementById('datoSexo').value = datosGuardados.sexo || '';
-      document.getElementById('datoFechaNac').value = datosGuardados.fechaNacimiento || '';
-      document.getElementById('datoEmail').value = datosGuardados.email || '';
-      document.getElementById('datoObra').value = datosGuardados.obraSocial || '';
-      document.getElementById('datoPlan').value = datosGuardados.plan || '';
-      document.getElementById('datoAfiliado').value = datosGuardados.numAfiliado || '';
-      document.getElementById('datoTelefono').value = datosGuardados.telefono || '';
-      document.getElementById('datoWhatsapp').value = datosGuardados.whatsapp || '';
-      document.getElementById('datoDireccion').value = datosGuardados.direccion || '';
-      document.getElementById('datoCp').value = datosGuardados.cp || '';
-      document.getElementById('datoCiudad').value = datosGuardados.ciudad || '';
-      document.getElementById('datoProvincia').value = datosGuardados.provincia || '';
-      document.getElementById('datoPais').value = datosGuardados.pais || '';
-    } else {
-      document.getElementById('datoNombre').value = 'Juan';
-      document.getElementById('datoApellido').value = 'Pérez';
-      document.getElementById('datoNumDoc').value = '32.456.789';
-      document.getElementById('datoTelefono').value = '11 5555-1234';
-      document.getElementById('datoEmail').value = 'juan.perez@email.com';
-      document.getElementById('datoObra').value = 'OSDE';
-    }
-  }
-
-  function confirmarDatosOk() {
-    actualizarVistaDatos();
-    datosConfirmados = true;
-    document.getElementById('datosOkBadge').classList.add('show');
-    showToast('Datos confirmados. Ya podés solicitar el turno.');
   }
 
   // ============================================================
@@ -1788,7 +2117,6 @@
   // ============================================================
   // INICIALIZACIÓN
   // ============================================================
-  actualizarVistaDatos();
   cargarTurnosDesdeBackend();
   renderCalendar();
 </script>
