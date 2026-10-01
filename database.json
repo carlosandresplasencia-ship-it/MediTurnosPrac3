@@ -101,6 +101,17 @@
       "obra": "Particular",
       "telefono": "1111",
       "email": ""
+    },
+    {
+      "id": 11,
+      "usuario": "334567893",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Carlos Luis Fernando",
+      "dni": "334567893",
+      "obra": "OSDE",
+      "telefono": "1111",
+      "email": ""
     }
   ],
   "turnos": [
@@ -247,6 +258,54 @@
       "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "Web"
+    },
+    {
+      "id": 13,
+      "fecha": "2026-10-01",
+      "hora": "09:00",
+      "horaHasta": "09:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lepra (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 14,
+      "fecha": "2026-10-01",
+      "hora": "09:30",
+      "horaHasta": "10:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 15,
+      "fecha": "2026-10-01",
+      "hora": "10:00",
+      "horaHasta": "10:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 16,
+      "fecha": "2026-10-01",
+      "hora": "10:30",
+      "horaHasta": "11:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Control)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
     }
   ],
   "pacientes": [
@@ -279,11 +338,11 @@
       "tipoDoc": "DNI",
       "dni": "33826837",
       "cuil": "20338268379",
-      "genero": "M",
-      "fechaNac": "1988-06-14",
-      "edad": 38,
+      "genero": "F",
+      "fechaNac": "",
+      "edad": "-",
       "correo": "carlosandres.plasencia@gmail.com",
-      "primeraConsulta": "2026-09-30",
+      "primeraConsulta": "",
       "peso": "",
       "altura": "",
       "obra": "OSDE",
@@ -292,7 +351,11 @@
       "direccion": "Alcorta 1234",
       "telefono": "3412125751",
       "whatsapp": "3412125751",
-      "estado": "Habilitado"
+      "estado": "Habilitado",
+      "contactoNombre": "Colo2",
+      "contactoParentesco": "Padre",
+      "contactoTel": "3231321312412431",
+      "contactoEmail": ""
     },
     {
       "id": 3,
@@ -336,6 +399,14 @@
       "direccion": "av siempre viva 123",
       "telefono": "3416667788",
       "whatsapp": "3416667788",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 11,
+      "nombre": "Carlos Luis Fernando",
+      "dni": "334567893",
+      "obra": "OSDE",
+      "telefono": "1111",
       "estado": "Habilitado"
     }
   ],
@@ -419,9 +490,9 @@
       "tipoDoc": "DNI",
       "dni": "33826837",
       "obra": "OSDE",
-      "diagnostico": "Acne",
+      "diagnostico": "Control general",
       "primeraConsulta": "2026-09-30",
-      "ultimaConsulta": "2026-09-30",
+      "ultimaConsulta": "2026-10-01",
       "antecedentes": [],
       "consultas": [
         {
@@ -592,6 +663,29 @@
           },
           "estudioComplementario": null,
           "notas": "-"
+        },
+        {
+          "fecha": "2026-10-01",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "Radiografia",
+            "fecha": "2026-09-30",
+            "resultados": "-",
+            "archivoId": "hc1_1790813677218_radiografia-scaled2.jpg",
+            "nombreArchivo": "radiografia-scaled2.jpg"
+          },
+          "notas": "-"
         }
       ],
       "tratamientos": [
@@ -726,6 +820,15 @@
       "empresa": "Sancor Salud",
       "telefono": "-",
       "whatsapp": "-",
+      "email": "-"
+    },
+    {
+      "id": 8,
+      "nombre": "Colo2",
+      "rol": "Contacto / Padre",
+      "empresa": "Paciente: Carlos Plasencia",
+      "telefono": "3231321312412431",
+      "whatsapp": "3231321312412431",
       "email": "-"
     }
   ]
