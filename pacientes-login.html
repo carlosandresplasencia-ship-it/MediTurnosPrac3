@@ -215,7 +215,7 @@
         <label>Usuario o DNI</label>
         <div class="input-wrapper">
           <span class="input-icon">👤</span>
-          <input type="text" id="loginUsuario" placeholder="Ej: juan.perez o 32456789" required>
+          <input type="text" id="loginUsuario" placeholder="Ej: 43064423" required>
         </div>
       </div>
 
@@ -244,7 +244,7 @@
         <label>DNI / Documento</label>
         <div class="input-wrapper">
           <span class="input-icon">🪪</span>
-          <input type="text" id="regDni" placeholder="Ej: 32456789" required>
+          <input type="text" id="regDni" placeholder="Ej: 43064423" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
       </div>
 
@@ -329,7 +329,7 @@
     const password = document.getElementById('loginPass').value;
 
     try {
-      const res = await fetch('http://localhost:3000/api/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario, password, rol: 'paciente' })
@@ -337,21 +337,21 @@
 
       const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify(data.usuario));
+      if (res.ok && data.usuario) {
+        localStorage.setItem('usuario_activo', JSON.stringify({
+          nombre: data.usuario.nombre || data.usuario.usuario,
+          dni: data.usuario.dni || data.usuario.usuario,
+          rol: 'paciente'
+        }));
+
         mostrarMensaje('¡Bienvenido/a! Redirigiendo...', 'success');
         setTimeout(() => window.location.href = 'pacientes.html', 800);
       } else {
-        mostrarMensaje(data.mensaje || 'Credenciales incorrectas', 'error');
+        mostrarMensaje(data.mensaje || 'DNI o contraseña incorrectos', 'error');
       }
     } catch (err) {
-      if ((usuario === 'paciente' || usuario === '32456789') && password === '1234') {
-        localStorage.setItem('usuario_activo', JSON.stringify({ nombre: 'Juan Pérez', dni: '32456789', obra: 'OSDE', rol: 'paciente' }));
-        mostrarMensaje('¡Bienvenido! (Modo Local)', 'success');
-        setTimeout(() => window.location.href = 'pacientes.html', 800);
-      } else {
-        mostrarMensaje('Error de conexión con el backend en http://localhost:3000', 'error');
-      }
+      console.error(err);
+      mostrarMensaje('Error de conexión con el servidor backend.', 'error');
     }
   });
 
@@ -364,18 +364,26 @@
     const dni = document.getElementById('regDni').value.trim();
     const obra = document.getElementById('regObra').value;
     const telefono = document.getElementById('regTel').value.trim();
+    const password = document.getElementById('regPass').value;
 
     try {
-     const res = await fetch('http://127.0.0.1:3000/api/pacientes', {   
+      const res = await fetch('/api/pacientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, dni, obra, telefono })
+        body: JSON.stringify({ nombre, dni, obra, telefono, password })
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify({ nombre, dni, obra, telefono, rol: 'paciente' }));
+        localStorage.setItem('usuario_activo', JSON.stringify({
+          nombre: nombre,
+          dni: dni,
+          obra: obra,
+          telefono: telefono,
+          rol: 'paciente'
+        }));
+
         mostrarMensaje('¡Cuenta creada con éxito! Redirigiendo...', 'success');
         setTimeout(() => {
           window.location.href = 'pacientes.html';
@@ -385,7 +393,7 @@
       }
     } catch (err) {
       console.error('Error de red:', err);
-      mostrarMensaje('No se pudo conectar con el servidor backend en http://localhost:3000', 'error');
+      mostrarMensaje('Error de conexión con el servidor backend.', 'error');
     }
   });
 </script>

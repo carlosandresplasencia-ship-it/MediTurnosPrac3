@@ -123,6 +123,50 @@
       "obra": "OSDE",
       "telefono": "1111",
       "email": ""
+    },
+    {
+      "id": 13,
+      "usuario": "43064423",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "Aaron Amuedo",
+      "dni": "43064423",
+      "obra": "Particular",
+      "telefono": "3756586866",
+      "email": ""
+    },
+    {
+      "id": 14,
+      "usuario": "23987456",
+      "password": "12345",
+      "rol": "paciente",
+      "nombre": "Carlos Aguirre",
+      "dni": "23987456",
+      "obra": "OSDE",
+      "telefono": "3756586866",
+      "email": ""
+    },
+    {
+      "id": 15,
+      "usuario": "28948562",
+      "password": "1111",
+      "rol": "paciente",
+      "nombre": "Aaron Amuedo",
+      "dni": "28948562",
+      "obra": "OSDE",
+      "telefono": "3756586866",
+      "email": ""
+    },
+    {
+      "id": 16,
+      "usuario": "11222333",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "pedro picapiedra",
+      "dni": "11222333",
+      "obra": "Galeno",
+      "telefono": "3412233344",
+      "email": ""
     }
   ],
   "turnos": [
@@ -449,6 +493,36 @@
       "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 28,
+      "paciente": "Aarón Amuedo",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-06",
+      "hora": "10:30",
+      "motivo": "control de lunar",
+      "estado": "Pendiente",
+      "creado": "2026-10-03T16:13:28.946Z"
+    },
+    {
+      "id": 29,
+      "paciente": "Carlos Aguirre",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "motivo": "control de lunar",
+      "estado": "Pendiente",
+      "creado": "2026-10-03T16:29:28.990Z"
+    },
+    {
+      "id": 30,
+      "paciente": "Pedro Picapiedra",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-08",
+      "hora": "11:30",
+      "motivo": "control de lunar",
+      "estado": "Pendiente",
+      "creado": "2026-10-03T17:11:04.691Z"
     }
   ],
   "pacientes": [
@@ -503,7 +577,7 @@
     {
       "id": 3,
       "legajo": "3",
-      "nombre": "José Argento",
+      "nombre": "Aarón Amuedo",
       "tipoDoc": "DNI",
       "dni": "11222333",
       "cuil": "20112223334",
@@ -517,10 +591,22 @@
       "obra": "Particular",
       "planObra": "-",
       "afiliado": "-",
-      "direccion": "av siempre viva 123",
-      "telefono": "3412223344",
-      "whatsapp": "3412223344",
-      "estado": "Habilitado"
+      "direccion": "salta 656",
+      "telefono": "3412233344",
+      "whatsapp": "3412233344",
+      "estado": "Habilitado",
+      "apellido": "Amuedo",
+      "numDoc": "11222333",
+      "sexo": "Masculino",
+      "fechaNacimiento": "2026-10-01",
+      "email": "aaronamuedo2000@gmail.com",
+      "obraSocial": "Galeno",
+      "plan": "1234",
+      "numAfiliado": "1234",
+      "cp": "3400",
+      "ciudad": "Corrientes",
+      "provincia": "Corrientes",
+      "pais": "Argentina"
     },
     {
       "id": 4,
@@ -558,6 +644,38 @@
       "dni": "45248819",
       "obra": "OSDE",
       "telefono": "1111",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 13,
+      "nombre": "Aaron Amuedo",
+      "dni": "43064423",
+      "obra": "Particular",
+      "telefono": "3756586866",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 14,
+      "nombre": "Carlos Aguirre",
+      "dni": "23987456",
+      "obra": "OSDE",
+      "telefono": "3756586866",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 15,
+      "nombre": "Aaron Amuedo",
+      "dni": "28948562",
+      "obra": "OSDE",
+      "telefono": "3756586866",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 16,
+      "nombre": "pedro picapiedra",
+      "dni": "11222333",
+      "obra": "Galeno",
+      "telefono": "3412233344",
       "estado": "Habilitado"
     }
   ],

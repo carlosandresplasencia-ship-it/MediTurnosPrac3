@@ -710,8 +710,8 @@
     </div>
   </div>
   <div class="patient-chip">
-    <span>JP</span>
-    <span id="chipNombre">Juan Pérez</span>
+    <span id="chipIniciales">--</span>
+    <span id="chipNombre">Cargando...</span>
   </div>
 </header>
 
@@ -728,7 +728,7 @@
     <a class="side-item" href="#" onclick="mostrarSeccion('datos'); return false;">
       <span class="icon">👤</span> Datos personales
     </a>
-    <a class="logout-item" href="pacientes-login.html" onclick="return confirm('¿Querés cerrar la sesión?');">
+    <a class="logout-item" href="pacientes-login.html" onclick="localStorage.removeItem('usuario_activo'); return confirm('¿Querés cerrar la sesión?');">
       <span class="icon">↪</span> Cerrar sesión
     </a>
   </aside>
@@ -1064,7 +1064,7 @@
           <a href="https://wa.me/5491145678900" target="_blank">Enviar mensaje</a>
         </div>
         <div class="contact-card">
-          <div class="icon">✉️️</div>
+          <div class="icon">✉</div>
           <strong>Email</strong>
           <a href="mailto:turnos@mediturnos.com">turnos@mediturnos.com</a>
         </div>
@@ -1181,11 +1181,11 @@
   // DATOS DEL PACIENTE
   // ============================================================
   let paciente = {
-    nombre: 'Juan Pérez',
-    dni: '32456789',
-    telefono: '11 5555-1234',
-    email: 'juan.perez@email.com',
-    obra: 'OSDE',
+    nombre: 'Paciente',
+    dni: '',
+    telefono: '',
+    email: '',
+    obra: 'Particular',
     afiliado: ''
   };
 
@@ -1306,22 +1306,85 @@
   }
 
   // ============================================================
-  // COMPROBACIÓN DE PRIMER INGRESO (MODAL OBLIGATORIO)
+  // COMPROBACIÓN Y LECTURA DEL USUARIO LOGUEADO
   // ============================================================
   document.addEventListener('DOMContentLoaded', async function() {
-    await inicializarProvinciasGeoref();
-    localStorage.clear();
-    verificarPrimerIngreso();
+    if (typeof inicializarProvinciasGeoref === 'function') {
+      await inicializarProvinciasGeoref();
+    }
+    cargarUsuarioActivo();
   });
 
-  function verificarPrimerIngreso() {
-    const yaRegistrado = localStorage.getItem('pacienteRegistrado');
+  function cargarUsuarioActivo() {
+    const usuarioActivoRaw = localStorage.getItem('usuario_activo');
 
-    if (!yaRegistrado) {
-      document.getElementById('modalRegistroObligatorio').classList.add('active');
-      document.body.style.overflow = 'hidden';
+    if (!usuarioActivoRaw) {
+      alert('Debés iniciar sesión para acceder al sistema.');
+      window.location.href = 'pacientes-login.html';
+      return;
+    }
+
+    const usuarioActivo = JSON.parse(usuarioActivoRaw);
+    const dniActual = usuarioActivo.dni || usuarioActivo.usuario;
+
+    // Cargar datos básicos en el objeto paciente global
+    paciente.nombre = usuarioActivo.nombre || 'Paciente';
+    paciente.dni = dniActual || '';
+    paciente.telefono = usuarioActivo.telefono || '';
+    paciente.obra = usuarioActivo.obra || 'Particular';
+
+    // Impactar en la barra superior (Header) y vistas de turno
+    const chipNombre = document.getElementById('chipNombre');
+    const chipIniciales = document.getElementById('chipIniciales');
+
+    if (chipNombre) chipNombre.textContent = paciente.nombre;
+    if (chipIniciales) {
+      const partes = paciente.nombre.trim().split(/\s+/);
+      const ini1 = partes[0] ? partes[0].charAt(0).toUpperCase() : '';
+      const ini2 = partes.length > 1 ? partes[partes.length - 1].charAt(0).toUpperCase() : '';
+      chipIniciales.textContent = (ini1 + ini2) || '--';
+    }
+
+    const vistaNombre = document.getElementById('vistaNombre');
+    const vistaDni = document.getElementById('vistaDni');
+    const vistaTelefono = document.getElementById('vistaTelefono');
+    const vistaObra = document.getElementById('vistaObra');
+
+    if (vistaNombre) vistaNombre.textContent = paciente.nombre;
+    if (vistaDni) vistaDni.textContent = paciente.dni;
+    if (vistaTelefono) vistaTelefono.textContent = paciente.telefono;
+    if (vistaObra) vistaObra.textContent = paciente.obra;
+
+    // VERIFICAR SI YA COMPLETÓ EL REGISTRO OBLIGATORIO DE DATOS PARA ESTE DNI
+    const registradoLocal = localStorage.getItem(`pacienteRegistrado_${dniActual}`);
+    const datosLocales = JSON.parse(localStorage.getItem(`datosPaciente_${dniActual}`));
+
+    if (registradoLocal === 'true' && datosLocales) {
+      actualizarVistaDatos(datosLocales);
     } else {
-      actualizarVistaDatos();
+      // SI ES USUARIO NUEVO: Desplegar el modal obligatorio
+      const modal = document.getElementById('modalRegistroObligatorio');
+      if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      const inputNombre = document.getElementById('regNombre');
+      const inputDni = document.getElementById('regNumDoc');
+      const inputTel = document.getElementById('regTelefono');
+      const inputObra = document.getElementById('regObraSocial');
+
+      if (inputNombre && paciente.nombre !== 'Paciente') {
+        const partesNombre = paciente.nombre.trim().split(/\s+/);
+        inputNombre.value = partesNombre[0] || '';
+        const inputApellido = document.getElementById('regApellido');
+        if (inputApellido && partesNombre.length > 1) {
+          inputApellido.value = partesNombre.slice(1).join(' ');
+        }
+      }
+      if (inputDni) inputDni.value = paciente.dni;
+      if (inputTel && paciente.telefono) inputTel.value = paciente.telefono;
+      if (inputObra && paciente.obra) inputObra.value = paciente.obra;
     }
   }
 
@@ -1329,6 +1392,7 @@
     event.preventDefault();
 
     const emailInput = document.getElementById('regEmail').value.trim();
+    const dniInput = document.getElementById('regNumDoc').value.trim();
 
     // Validar de forma estricta que contenga '@' y termine exactamente en '.com'
     const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
@@ -1342,7 +1406,7 @@
       nombre: document.getElementById('regNombre').value.trim(),
       apellido: document.getElementById('regApellido').value.trim(),
       tipoDoc: document.getElementById('regTipoDoc').value,
-      numDoc: document.getElementById('regNumDoc').value.trim(),
+      numDoc: dniInput,
       cuil: document.getElementById('regCuil').value.trim(),
       sexo: document.getElementById('regSexo').value,
       fechaNacimiento: document.getElementById('regFechaNac').value,
@@ -1366,10 +1430,10 @@
         body: JSON.stringify(datosPaciente)
       }).catch(err => console.log('Guardando datos de manera local...'));
 
-      localStorage.setItem('pacienteRegistrado', 'true');
-      localStorage.setItem('datosPacienteObligatorios', JSON.stringify(datosPaciente));
+      localStorage.setItem(`pacienteRegistrado_${dniInput}`, 'true');
+      localStorage.setItem(`datosPaciente_${dniInput}`, JSON.stringify(datosPaciente));
 
-      actualizarVistaDatos();
+      actualizarVistaDatos(datosPaciente);
 
       document.getElementById('modalRegistroObligatorio').classList.remove('active');
       document.body.style.overflow = 'auto';
@@ -1387,6 +1451,7 @@
     event.preventDefault();
 
     const emailInput = document.getElementById('datoEmail').value.trim();
+    const dniInput = document.getElementById('datoNumDoc').value.trim();
 
     // Validar correo
     const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
@@ -1400,7 +1465,7 @@
       nombre: document.getElementById('datoNombre').value.trim(),
       apellido: document.getElementById('datoApellido').value.trim(),
       tipoDoc: document.getElementById('datoTipoDoc').value,
-      numDoc: document.getElementById('datoNumDoc').value,
+      numDoc: dniInput,
       cuil: document.getElementById('datoCuil').value,
       sexo: document.getElementById('datoSexo').value,
       fechaNacimiento: document.getElementById('datoFechaNac').value,
@@ -1424,9 +1489,9 @@
         body: JSON.stringify(datosActualizados)
       }).catch(err => console.log('Sincronizando modificaciones de manera local...'));
 
-      localStorage.setItem('datosPacienteObligatorios', JSON.stringify(datosActualizados));
+      localStorage.setItem(`datosPaciente_${dniInput}`, JSON.stringify(datosActualizados));
 
-      actualizarVistaDatos();
+      actualizarVistaDatos(datosActualizados);
       showToast('¡Tus datos personales fueron actualizados correctamente!');
     } catch (error) {
       console.error('Error al actualizar datos:', error);
@@ -1435,21 +1500,45 @@
   }
 
   // ============================================================
+  // OBTENER INICIALES (primer nombre + último apellido)
+  // ============================================================
+  function obtenerIniciales(nombre, apellido) {
+    const primerNombre = (nombre || '').trim().split(/\s+/)[0] || '';
+    const apellidos = (apellido || '').trim().split(/\s+/).filter(Boolean);
+    const ultimoApellido = apellidos.length > 0 ? apellidos[apellidos.length - 1] : '';
+
+    const inicialN = primerNombre.charAt(0).toUpperCase();
+    const inicialA = ultimoApellido.charAt(0).toUpperCase();
+
+    return (inicialN + inicialA) || '--';
+  }
+
+  // ============================================================
   // ACTUALIZAR VISTA DE DATOS PERSONALES
   // ============================================================
-  async function actualizarVistaDatos() {
-    const datosGuardados = JSON.parse(localStorage.getItem('datosPacienteObligatorios'));
+  async function actualizarVistaDatos(datosCargados = null) {
+    const usuarioActivoRaw = localStorage.getItem('usuario_activo');
+    const usuarioActivo = usuarioActivoRaw ? JSON.parse(usuarioActivoRaw) : {};
+    const dniActual = paciente.dni || usuarioActivo.dni || usuarioActivo.usuario;
+
+    const datosGuardados = datosCargados || JSON.parse(localStorage.getItem(`datosPaciente_${dniActual}`));
+
+    let nombreParaIniciales = paciente.nombre.split(' ')[0] || '';
+    let apellidoParaIniciales = paciente.nombre.split(' ')[1] || '';
 
     if (datosGuardados) {
       paciente.nombre = `${datosGuardados.nombre} ${datosGuardados.apellido}`;
-      paciente.dni = datosGuardados.numDoc;
-      paciente.telefono = datosGuardados.telefono;
-      paciente.obra = datosGuardados.obraSocial;
+      paciente.dni = datosGuardados.numDoc || dniActual;
+      paciente.telefono = datosGuardados.telefono || paciente.telefono;
+      paciente.obra = datosGuardados.obraSocial || paciente.obra;
+
+      nombreParaIniciales = datosGuardados.nombre || '';
+      apellidoParaIniciales = datosGuardados.apellido || '';
 
       document.getElementById('datoNombre').value = datosGuardados.nombre || '';
       document.getElementById('datoApellido').value = datosGuardados.apellido || '';
       document.getElementById('datoTipoDoc').value = datosGuardados.tipoDoc || 'DNI';
-      document.getElementById('datoNumDoc').value = datosGuardados.numDoc || '';
+      document.getElementById('datoNumDoc').value = datosGuardados.numDoc || dniActual;
       document.getElementById('datoCuil').value = datosGuardados.cuil || '';
       document.getElementById('datoSexo').value = datosGuardados.sexo || 'Femenino';
       document.getElementById('datoFechaNac').value = datosGuardados.fechaNacimiento || '';
@@ -1471,14 +1560,12 @@
         await cargarLocalidadesVista(prov, ciudad);
       }
     } else {
-      document.getElementById('datoNombre').value = 'Juan';
-      document.getElementById('datoApellido').value = 'Pérez';
+      document.getElementById('datoNombre').value = paciente.nombre.split(' ')[0] || '';
+      document.getElementById('datoApellido').value = paciente.nombre.split(' ')[1] || '';
       document.getElementById('datoTipoDoc').value = 'DNI';
-      document.getElementById('datoNumDoc').value = '32456789';
-      document.getElementById('datoCuil').value = '20324567898';
-      document.getElementById('datoTelefono').value = '11 5555-1234';
-      document.getElementById('datoEmail').value = 'juan.perez@email.com';
-      document.getElementById('datoObra').value = 'OSDE';
+      document.getElementById('datoNumDoc').value = paciente.dni;
+      document.getElementById('datoTelefono').value = paciente.telefono;
+      document.getElementById('datoObra').value = paciente.obra;
 
       document.getElementById('datoProvincia').value = 'Buenos Aires';
       await cargarLocalidadesVista('Buenos Aires');
@@ -1491,10 +1578,14 @@
     document.getElementById('vistaTelefono').textContent = paciente.telefono;
     document.getElementById('vistaObra').textContent = paciente.obra;
     document.getElementById('chipNombre').textContent = paciente.nombre;
+
+    // Actualizar las iniciales del chip
+    const iniciales = obtenerIniciales(nombreParaIniciales, apellidoParaIniciales);
+    const chipIniciales = document.getElementById('chipIniciales');
+    if (chipIniciales) chipIniciales.textContent = iniciales;
   }
 
   function confirmarDatosOk() {
-    actualizarVistaDatos();
     datosConfirmados = true;
     document.getElementById('datosOkBadge').classList.add('show');
     showToast('Datos confirmados. Ya podés solicitar el turno.');
@@ -1818,7 +1909,7 @@
           <div class="turno-actions-row">
             <button type="button" class="btn btn-outline" onclick="modificarTurno(0)" style="padding:6px 12px; font-size:12px; background:white;">✏️ Modificar / Trasladar</button>
             <button type="button" class="btn btn-danger" onclick="cancelarTurno(0)" style="padding:6px 12px; font-size:12px;">🚫 Cancelar turno</button>
-            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px; background:white;">🖨️️ Imprimir</button>
+            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px; background:white;">🖨 Imprimir</button>
             <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()" style="padding:6px 12px; font-size:12px; background:white;">📄 Descargar PDF</button>
           </div>
         </div>
@@ -1940,7 +2031,7 @@
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:18px;">
           <button type="button" class="btn btn-primary" onclick="confirmarAsistenciaBackend()">✓ Confirmar asistencia</button>
-          <button type="button" class="btn btn-outline" onclick="modificarTurno(0)">✏️️ Modificar / Trasladar</button>
+          <button type="button" class="btn btn-outline" onclick="modificarTurno(0)">✏ Modificar / Trasladar</button>
           <button type="button" class="btn btn-danger" onclick="cancelarTurno(0)">🚫 Cancelar turno</button>
           <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()">🖨️ Imprimir comprobante</button>
           <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()">📄 Descargar PDF</button>

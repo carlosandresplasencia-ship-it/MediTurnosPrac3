@@ -76,7 +76,6 @@ function loadDB() {
   if (fs.existsSync(DB_FILE)) {
     try {
       const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-      // Asegurarnos de que existan todas las estructuras necesarias
       if (!data.usuarios) data.usuarios = DEFAULT_USERS;
       if (!data.turnos) data.turnos = [];
       if (!data.pacientes) data.pacientes = [
@@ -133,13 +132,11 @@ app.use(express.static(__dirname)); // sirve los HTML
 
 // ========== RUTAS API DE DATOS (Secretaría y Estadísticas) ==========
 
-// Obtener todos los datos centralizados
 app.get('/api/datos', (req, res) => {
   db = loadDB();
   res.json(db);
 });
 
-// Guardar/Actualizar todos los datos centralizados
 app.post('/api/datos', (req, res) => {
   const { pacientes, turnos, obras, hc, contactos } = req.body;
   
@@ -155,12 +152,14 @@ app.post('/api/datos', (req, res) => {
 
 // ========== RUTAS API TRADICIONALES ==========
 
-// LOGIN
-app.post('/api/login', (req, res) => {
-  const { usuario, password, rol } = req.body;
+// LOGIN (Soporta /api/login y alias /api/pacientes/login)
+const handleLogin = (req, res) => {
+  const usuario = req.body.usuario || req.body.dni;
+  const password = req.body.password;
+  const rol = req.body.rol;
 
   if (!usuario || !password) {
-    return res.status(400).json({ mensaje: 'Usuario y contraseña son obligatorios' });
+    return res.status(400).json({ ok: false, mensaje: 'Usuario y contraseña son obligatorios' });
   }
 
   const user = db.usuarios.find(u =>
@@ -170,27 +169,34 @@ app.post('/api/login', (req, res) => {
   );
 
   if (!user) {
-    return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
+    return res.status(401).json({ ok: false, mensaje: 'Credenciales incorrectas' });
   }
 
   const { password: _, ...usuarioSinPass } = user;
   res.json({
+    ok: true,
     mensaje: 'Login exitoso',
-    usuario: usuarioSinPass
+    usuario: usuarioSinPass,
+    nombre: user.nombre,
+    dni: user.dni || user.usuario,
+    redirect: 'pacientes.html'
   });
-});
+};
 
-// REGISTRO DE PACIENTE
+app.post('/api/login', handleLogin);
+app.post('/api/pacientes/login', handleLogin);
+
+// REGISTRO BÁSICO DE PACIENTE
 app.post('/api/pacientes', (req, res) => {
   const { nombre, dni, obra, telefono, password } = req.body;
 
   if (!nombre || !dni) {
-    return res.status(400).json({ mensaje: 'Nombre y DNI son obligatorios' });
+    return res.status(400).json({ ok: false, mensaje: 'Nombre y DNI son obligatorios' });
   }
 
   const existe = db.usuarios.find(u => u.dni === dni || u.usuario === dni);
   if (existe) {
-    return res.status(400).json({ mensaje: 'Ya existe un paciente con ese DNI' });
+    return res.status(400).json({ ok: false, mensaje: 'Ya existe un paciente registrado con ese DNI' });
   }
 
   const nuevoId = db.usuarios.length ? Math.max(...db.usuarios.map(u => u.id)) + 1 : 1;
@@ -218,7 +224,29 @@ app.post('/api/pacientes', (req, res) => {
   saveDB(db);
 
   const { password: _, ...sinPass } = nuevoUsuario;
-  res.status(201).json({ mensaje: 'Paciente registrado', usuario: sinPass });
+  res.status(201).json({ ok: true, mensaje: 'Paciente registrado', usuario: sinPass });
+});
+
+// REGISTRO COMPLETO / MODIFICACIÓN DE PACIENTE
+app.post('/api/pacientes/registro-completo', (req, res) => {
+  const datos = req.body;
+  const dni = datos.numDoc || datos.dni;
+
+  let pacienteExistente = db.pacientes.find(p => p.dni === dni);
+  if (pacienteExistente) {
+    Object.assign(pacienteExistente, datos, { nombre: `${datos.nombre} ${datos.apellido}`.trim() });
+  } else {
+    db.pacientes.push({
+      id: db.pacientes.length ? Math.max(...db.pacientes.map(p => p.id)) + 1 : 1,
+      ...datos,
+      nombre: `${datos.nombre} ${datos.apellido}`.trim(),
+      dni: dni,
+      estado: 'Habilitado'
+    });
+  }
+
+  saveDB(db);
+  res.json({ ok: true, message: 'Datos personales guardados correctamente' });
 });
 
 // LISTAR TURNOS
@@ -250,6 +278,19 @@ app.post('/api/turnos', (req, res) => {
   res.status(201).json(nuevoTurno);
 });
 
+// CANCELAR TURNO
+app.post('/api/turnos/cancelar', (req, res) => {
+  const { fecha, hora, paciente } = req.body;
+  const index = db.turnos.findIndex(t => t.fecha === fecha && t.hora === hora && t.paciente === paciente);
+  if (index !== -1) {
+    db.turnos[index].estado = 'Cancelado';
+    saveDB(db);
+    res.json({ ok: true, mensaje: 'Turno cancelado' });
+  } else {
+    res.status(404).json({ ok: false, mensaje: 'Turno no encontrado' });
+  }
+});
+
 // ACTUALIZAR ESTADO DE TURNO
 app.put('/api/turnos/:id', (req, res) => {
   const id = parseInt(req.params.id);
@@ -261,7 +302,7 @@ app.put('/api/turnos/:id', (req, res) => {
   res.json(turno);
 });
 
-// RUTA NUEVA: Limpiar todas las historias clínicas
+// LIMPIAR HISTORIAS CLÍNICAS
 app.delete('/api/hc/limpiar-todas', (req, res) => {
   db = loadDB();
   db.hc = [];
@@ -269,7 +310,7 @@ app.delete('/api/hc/limpiar-todas', (req, res) => {
   res.json({ success: true, message: 'Todas las historias clínicas fueron eliminadas.' });
 });
 
-// LISTAR USUARIOS (solo admin)
+// LISTAR USUARIOS
 app.get('/api/usuarios', (req, res) => {
   const usuariosSinPass = db.usuarios.map(({ password, ...u }) => u);
   res.json(usuariosSinPass);
