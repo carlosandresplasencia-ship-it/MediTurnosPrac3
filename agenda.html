@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Medi-Turnos | Gestión de Agenda</title>
+<link rel="icon" type="image/png" href="assets/Logo-MediTurnos.png">
 <style>
 :root {
   --lila-primary: #c6bcdb;
@@ -188,6 +189,201 @@ input, select, textarea {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s ease; z-index: 9999;
 }
 .toast.show { opacity: 1; }
+/* --- MODO OSCURO AGENDA --- */
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+html.dark-mode,
+body.dark-mode html {
+  background-color: #121212 !important;
+}
+
+/* Topbar */
+body.dark-mode .topbar-prof {
+  background-color: #1e1e1e !important;
+  border-bottom-color: #333 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode .eyebrow { color: #c4b5fd !important; }
+body.dark-mode .quick-access button {
+  background: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+body.dark-mode .quick-access button:hover {
+  background: #444 !important;
+  color: #fff !important;
+}
+body.dark-mode .doctor-box {
+  background: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+body.dark-mode .doctor-avatar {
+  background: #3b2f5a !important;
+  color: #e9d5ff !important;
+}
+body.dark-mode .doctor-box small { color: #a1a1aa !important; }
+
+/* Workspace y nav de semana */
+body.dark-mode .agenda-workspace {
+  background: #121212 !important;
+}
+body.dark-mode .agenda-header-nav {
+  background: #1e1e1e !important;
+  border-color: #333 !important;
+  box-shadow: none !important;
+}
+body.dark-mode .agenda-header-nav h2 { color: #e0e0e0 !important; }
+body.dark-mode .btn-nav {
+  background: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+body.dark-mode .btn-nav:hover {
+  background: #5b4b8a !important;
+  color: #fff !important;
+}
+
+/* Contenedor de la grilla (el que scrollea) */
+body.dark-mode .week-view-wrapper {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+  box-shadow: none !important;
+}
+
+/* Columna de horas */
+body.dark-mode .time-scale-col {
+  background: #1a1a1a !important;
+  border-right-color: #333 !important;
+}
+body.dark-mode .time-scale-col > div {
+  background: #1a1a1a !important;
+  border-bottom-color: #333 !important;
+  color: #a1a1aa !important;
+}
+body.dark-mode .time-scale-col span {
+  color: #a1a1aa !important;
+}
+
+/* Columnas de días */
+body.dark-mode .days-wrapper {
+  background: #1a1a1a !important;
+}
+body.dark-mode .day-column {
+  background-color: #1a1a1a !important;
+  border-right-color: #333 !important;
+}
+body.dark-mode .day-column:hover {
+  background-color: #222 !important;
+}
+body.dark-mode .day-column.today-col {
+  background-color: #1e1b2e !important;
+}
+body.dark-mode .day-column.selected-col {
+  background-color: #252038 !important;
+  border-left-color: #7c6aa8 !important;
+  border-right-color: #7c6aa8 !important;
+  box-shadow: 0 0 15px rgba(124, 106, 168, 0.25) !important;
+}
+body.dark-mode .day-column.col-bloqueada {
+  background-color: #2a2a2a !important;
+}
+body.dark-mode .day-column.col-bloqueada .day-header {
+  background: #3f3f46 !important;
+  color: #d4d4d8 !important;
+  border-bottom-color: #52525b !important;
+}
+
+/* Headers de día (sticky) */
+body.dark-mode .day-header {
+  background: #1e1e1e !important;
+  border-bottom-color: #333 !important;
+  color: #a1a1aa !important;
+}
+body.dark-mode .day-header strong { color: #e0e0e0 !important; }
+body.dark-mode .day-header:hover { background: #2a2a2a !important; }
+body.dark-mode .day-column.today-col .day-header {
+  background: #2a2340 !important;
+  color: #e9d5ff !important;
+  border-bottom-color: #5b4b8a !important;
+}
+body.dark-mode .day-column.selected-col .day-header {
+  background: #2a2340 !important;
+  color: #c4b5fd !important;
+}
+
+/* Cuerpo del día + líneas de grilla generadas en JS */
+body.dark-mode .day-body {
+  background: #1a1a1a !important;
+}
+body.dark-mode .day-body .grid-lines-container,
+body.dark-mode .day-body .grid-lines-container > div {
+  border-bottom-color: #333 !important;
+  background: transparent !important;
+}
+
+/* Chips de eventos (se mantienen legibles) */
+body.dark-mode .event-chip {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Modales */
+body.dark-mode .modal {
+  background: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+body.dark-mode .modal h2 { color: #c4b5fd !important; }
+body.dark-mode .modal-close { color: #a1a1aa !important; }
+body.dark-mode label { color: #a1a1aa !important; }
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+body.dark-mode #verTurnoContent {
+  background: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Timeline del modal día */
+body.dark-mode .timeline-time { color: #a1a1aa !important; border-right-color: #444 !important; }
+body.dark-mode .timeline-content.free {
+  background: #2a2a2a !important;
+  border-color: #555 !important;
+  color: #a1a1aa !important;
+}
+body.dark-mode .timeline-content.free:hover {
+  background: #333 !important;
+  color: #e0e0e0 !important;
+}
+body.dark-mode .timeline-content.occupied {
+  background: #2a2340 !important;
+  border-left-color: #c4b5fd !important;
+  color: #e9d5ff !important;
+}
+
+/* Forzar fondos claros residuales (inline styles del JS) */
+body.dark-mode div[style*="background:#f8fafc"],
+body.dark-mode div[style*="background: #f8fafc"],
+body.dark-mode div[style*="background:#fff"],
+body.dark-mode div[style*="background: #fff"],
+body.dark-mode div[style*="background:#ffffff"],
+body.dark-mode div[style*="background: #ffffff"],
+body.dark-mode div[style*="background:#faf7fd"],
+body.dark-mode div[style*="background: #faf7fd"] {
+  background: #1a1a1a !important;
+  background-color: #1a1a1a !important;
+}
+body.dark-mode div[style*="border-bottom:1px solid #e2e8f0"],
+body.dark-mode div[style*="border-bottom:1px solid #cbd5e1"],
+body.dark-mode div[style*="border-bottom:1px dashed #e2e8f0"] {
+  border-bottom-color: #333 !important;
+}
 </style>
 </head>
 <body>
@@ -200,10 +396,11 @@ input, select, textarea {
         <div class="eyebrow">GESTIÓN DE AGENDA</div>
       </div>
       
-      <!-- BOTONES DINÁMICOS CON IDS PARA CONTROLAR ORIGEN -->
+<!-- BOTONES DINÁMICOS CON IDS PARA CONTROLAR ORIGEN -->
       <div class="quick-access">
-        <button id="btnVolverProf" style="display: none;" onclick="window.location.href='profesionales.html'">← VOLVER A PROFESIONAL</button>
-        <button id="btnVolverAdmin" style="display: none;" onclick="window.location.href='secretaria.html'">VOLVER A ADMINISTRACIÓN</button>
+        <button id="btnVolverProf" style="display: none;" onclick="window.location.href='profecionales.html'">← VOLVER A PROFESIONAL</button>
+        <button id="btnVolverAdmin" style="display: none;" onclick="window.location.href='secretaria.html'">← VOLVER A ADMINISTRACIÓN</button>
+      <button id="btnModoOscuro" onclick="toggleDarkMode()" style="font-size: 1.2rem; padding: 5px 10px;" title="Alternar Modo Oscuro">🌙</button>
       </div>
       
       <div class="doctor-box">
@@ -373,15 +570,22 @@ input, select, textarea {
     renderizarSemana();
   }
 
-  function renderizarEscalaTiempo() {
+    function renderizarEscalaTiempo() {
     const container = document.getElementById('timeScaleContainer');
-    let html = `<div style="height:50px; border-bottom:1px solid #e2e8f0; position:sticky; top:0; background:#f8fafc; z-index:20;"></div>`;
+    const isDark = document.body.classList.contains('dark-mode');
+    const bg = isDark ? '#1a1a1a' : '#f8fafc';
+    const border = isDark ? '#333' : '#e2e8f0';
+    const borderStrong = isDark ? '#333' : '#cbd5e1';
+    const colorH = isDark ? '#a1a1aa' : '#64748b';
+    const colorM = isDark ? '#71717a' : '#94a3b8';
+
+    let html = `<div style="height:50px; border-bottom:1px solid ${border}; position:sticky; top:0; background:${bg}; z-index:20;"></div>`;
     
     for (let h = HORA_INICIO; h <= HORA_FIN; h++) {
       html += `
-        <div style="height:60px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; border-bottom:1px solid #cbd5e1; box-sizing:border-box; padding:4px 0; background:#f8fafc;">
-          <span style="font-size:12px; font-weight:700; color:#64748b;">${String(h).padStart(2, '0')}:00</span>
-          <span style="font-size:10px; font-weight:600; color:#94a3b8;">${String(h).padStart(2, '0')}:30</span>
+        <div style="height:60px; display:flex; flex-direction:column; align-items:center; justify-content:space-between; border-bottom:1px solid ${borderStrong}; box-sizing:border-box; padding:4px 0; background:${bg};">
+          <span style="font-size:12px; font-weight:700; color:${colorH};">${String(h).padStart(2, '0')}:00</span>
+          <span style="font-size:10px; font-weight:600; color:${colorM};">${String(h).padStart(2, '0')}:30</span>
         </div>`;
     }
     container.innerHTML = html;
@@ -436,10 +640,13 @@ input, select, textarea {
     document.getElementById('rangoSemanaLabel').textContent = 
       `${lunes.getDate()} de ${meses[lunes.getMonth()]} - ${domingo.getDate()} de ${meses[domingo.getMonth()]} ${lunes.getFullYear()}`;
 
+    const isDark = document.body.classList.contains('dark-mode');
+    const lineDash = isDark ? '#333' : '#e2e8f0';
+    const lineSolid = isDark ? '#333' : '#cbd5e1';
     let lineasFondo = `<div class="grid-lines-container" style="width:100%; pointer-events:none;">`;
     for (let h = HORA_INICIO; h <= HORA_FIN; h++) {
-      lineasFondo += `<div style="height:30px; border-bottom:1px dashed #e2e8f0; box-sizing:border-box;"></div>`;
-      lineasFondo += `<div style="height:30px; border-bottom:1px solid #cbd5e1; box-sizing:border-box;"></div>`;
+      lineasFondo += `<div style="height:30px; border-bottom:1px dashed ${lineDash}; box-sizing:border-box;"></div>`;
+      lineasFondo += `<div style="height:30px; border-bottom:1px solid ${lineSolid}; box-sizing:border-box;"></div>`;
     }
     lineasFondo += `</div>`;
 
@@ -710,7 +917,7 @@ input, select, textarea {
 
     if (tipo === 'Consulta') {
       fieldsContainer.style.display = 'none';
-      btnSubmit.textContent = 'Ir a Secretaría para cargar el Turno ➔';
+      btnSubmit.textContent = 'Ir al Área Principal para cargar el Turno ➔';
       btnSubmit.className = 'btn full btn-modificar';
     } else {
       fieldsContainer.style.display = 'block';
@@ -735,7 +942,13 @@ input, select, textarea {
     const horaHasta = document.getElementById('newHoraHasta').value;
 
     if (tipo === 'Consulta') {
-      window.location.href = `secretaria.html`;
+      const urlParams = new URLSearchParams(window.location.search);
+      const origen = urlParams.get('origen');
+      if (origen === 'prof') {
+        window.location.href = 'profesionales.html';
+      } else {
+        window.location.href = 'secretaria.html';
+      }
       return; 
     }
 
@@ -785,6 +998,30 @@ input, select, textarea {
   // Inicializar funciones al cargar la página
   configurarBotonesRetorno();
   cargarDatosServidor();
+  // --- LÓGICA DEL MODO OSCURO ---
+    function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.getElementById('btnModoOscuro');
+    if (document.body.classList.contains('dark-mode')) {
+      localStorage.setItem('theme', 'dark');
+      if (btn) btn.textContent = '☀️';
+    } else {
+      localStorage.setItem('theme', 'light');
+      if (btn) btn.textContent = '🌙';
+    }
+    // Redibuja horas y semana para que los estilos inline no queden en blanco
+    renderizarEscalaTiempo();
+    renderizarSemana();
+  }
+
+  // Comprobar preferencia guardada al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      const btn = document.getElementById('btnModoOscuro');
+      if(btn) btn.textContent = '☀️';
+    }
+  });
 </script>
 </body>
 </html>

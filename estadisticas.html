@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Medi-Turnos | Estadísticas y Reportes</title>
+<link rel="icon" type="image/png" href="assets/Logo-MediTurnos.png">
 <!-- Librería Chart.js para gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -158,6 +159,64 @@ body, html {
 }
 .total-card-box span { font-size: 13px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
 .total-card-box strong { font-size: 18px; font-weight: 800; color: var(--red); }
+
+/* ===== ESTILOS MODO NOCHE / OSCURO ===== */
+body.dark-mode {
+  background: #121212 !important;
+  color: #f3f4f6 !important;
+}
+body.dark-mode .topbar-prof,
+body.dark-mode .hc-card,
+body.dark-mode .fecha-grupo-card,
+body.dark-mode .data-table,
+body.dark-mode .chart-box-small {
+  background-color: #1e1e1e !important;
+  color: #f6f3f3 !important;
+  border-color: #332233 !important;
+  box-shadow: none !important;
+}
+
+/* Color de fondo específico para las tarjetas de estadísticas en modo noche */
+body.dark-mode .stat-card-item {
+  background-color: #a1939c !important; /* Puedes cambiar este código de color (#261c26) por el que prefieras */
+  color: #f3f4f6 !important;
+  border-color: #4a2b2b !important;
+}
+body.dark-mode .data-table th {
+  background-color: #2d1b2d !important;
+  color: #f6f4f3 !important;
+}
+body.dark-mode .data-table td {
+  border-bottom-color: #2a2a2a !important;
+}
+body.dark-mode input, 
+body.dark-mode select {
+  background-color: #27272a !important;
+  color: #f6f3f3 !important;
+  border-color: #4b5563 !important;
+}
+body.dark-mode .quick-access button {
+  background: #1e1e1e;
+  color: #f6f3f3;
+  border-color: #4b5563;
+}
+body.dark-mode .quick-access button:hover,
+body.dark-mode .quick-access button.active-quick {
+  background: var(--red);
+  color: #fff;
+}
+body.dark-mode .stat-icon-circle {
+  background: #2d1b2d !important;
+  border-color: #581c87 !important;
+}
+body.dark-mode .total-card-box {
+  background: #2d1b2d !important;
+  border-color: #581c87 !important;
+}
+
+/* ===== IMPRESIÓN / PDF ===== */
+.total-card-box span { font-size: 13px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
+.total-card-box strong { font-size: 18px; font-weight: 800; color: var(--red); }
 /* ===== IMPRESIÓN / PDF ===== */
 .print-only { display: none !important; }
 
@@ -262,13 +321,15 @@ body, html {
     <button onclick="cambiarSeccion('historial', this)">Hist.Turnos</button>
     <button onclick="cambiarSeccion('obras', this)">O.Sociales</button>
     <button onclick="cambiarSeccion('motivos', this)">Motivos Consulta</button>
+    
     <!-- BOTONES DE RETORNO CONDICIONALES -->
     <button id="btnVolverAdmin" style="display:none;" onclick="window.location.href='secretaria.html'">Volver a administración</button>
-    <button id="btnVolverProf" style="display:none;" onclick="window.location.href='profesional.html'">Volver a área profesional</button>
+    <button id="btnVolverProf" style="display:none;" onclick="window.location.href='profesionales.html'">Volver a área profesional</button>
+    <button onclick="toggleModoNoche()" id="btnModoNoche" style="font-size:14px;" title="Cambiar Modo Día/Noche">🌙</button>
   </div>
   <div class="doctor-box">
-    <div class="doctor-avatar">SC</div>
-    <div><strong>Secretaría</strong><small>Administración · Consultorio</small></div>
+    <div class="doctor-avatar" id="avatarUsuarioStats">SC</div>
+    <div><strong id="nombreUsuarioStats">Secretaría</strong><small id="rolUsuarioStats">Administración · Consultorio</small></div>
   </div>
 </header>
 
@@ -442,10 +503,19 @@ body, html {
     <div class="hc-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <h3 style="color:var(--red); margin:0;" id="tituloMotivosHeader">Estadísticas por Motivo de Consulta</h3>
-        <div style="display:flex; gap:6px;">
-          <button class="btn-action btn-finish" onclick="imprimirMotivosConsulta()">🖨️ Imprimir</button>
-          <button class="btn-action btn-ver" onclick="imprimirMotivosConsulta()">📥 Descargar PDF</button>
-          <button class="btn-action btn-modificar" onclick="enviarPorMailMotivos()">✉️ Enviar por Mail</button>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div class="filter-date-group" style="padding: 2px 8px;">
+            <label>Motivos:</label>
+            <select id="selectFiltroConAtencion" onchange="actualizarDatos()">
+              <option value="todos">Mostrar todos</option>
+              <option value="con_atencion">Solo atendidos</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action btn-finish" onclick="imprimirMotivosConsulta()">🖨️ Imprimir</button>
+            <button class="btn-action btn-ver" onclick="imprimirMotivosConsulta()">📥 Descargar PDF</button>
+            <button class="btn-action btn-modificar" onclick="enviarPorMailMotivos()">✉️ Enviar por Mail</button>
+          </div>
         </div>
       </div>
 
@@ -505,32 +575,93 @@ body, html {
     }
   }
 
+  function cargarUsuarioLogueado() {
+    // Buscamos los datos de sesión en las variables más comunes de localStorage
+    let usuarioInfo = localStorage.getItem('usuarioLogueado') || localStorage.getItem('usuarioActivo') || localStorage.getItem('user') || localStorage.getItem('usuario');
+    let nombreFinal = '';
+    let rolFinal = '';
+
+    if (usuarioInfo) {
+      try {
+        let datos = JSON.parse(usuarioInfo);
+        nombreFinal = datos.nombre || datos.usuario || datos.user || 'Usuario';
+        rolFinal = datos.rol || datos.tipo || '';
+      } catch (e) {
+        // Si guardaste el nombre como un simple texto en vez de un JSON
+        nombreFinal = usuarioInfo; 
+      }
+    }
+
+    // Si no detecta una sesión global, deduce los datos basándose en desde dónde entró (Secretaría o Profesionales)
+    const memoria = localStorage.getItem('memoriaEstadisticas');
+    if (!nombreFinal) {
+      if (memoria === 'profesionales') {
+        nombreFinal = 'Profesional';
+        rolFinal = 'Área Médica';
+      } else {
+        nombreFinal = 'Secretaría';
+        rolFinal = 'Administración · Consultorio';
+      }
+    }
+
+    // Inyectamos la información en el HTML
+    const nombreEl = document.getElementById('nombreUsuarioStats');
+    const rolEl = document.getElementById('rolUsuarioStats');
+    const avatarEl = document.getElementById('avatarUsuarioStats');
+
+    if (nombreEl) nombreEl.textContent = nombreFinal;
+    if (rolEl && rolFinal) rolEl.textContent = rolFinal;
+    
+    // Generamos las iniciales dinámicas para el círculo (ej: "Sabrina Costa" -> "SC")
+    if (avatarEl) {
+      let iniciales = nombreFinal.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      avatarEl.textContent = iniciales || 'US';
+    }
+  }
+
   window.onload = () => {
-    // Capturar parámetros de la URL o verificar el historial de navegación (referrer)
+    // 0. Cargar preferencia de Modo Noche guardada
+    if (localStorage.getItem('modoNocheEstadisticas') === 'enabled') {
+      document.body.classList.add('dark-mode');
+      const btnM = document.getElementById('btnModoNoche');
+      if (btnM) btnM.textContent = '☀️';
+    }
+
+    // 1. Buscamos la pista en la URL o en el historial
     const urlParams = new URLSearchParams(window.location.search);
-    const origen = (urlParams.get('origen') || '').toLowerCase();
+    const origenURL = (urlParams.get('origen') || '').toLowerCase();
     const referrer = (document.referrer || '').toLowerCase();
     
     const btnAdmin = document.getElementById('btnVolverAdmin');
     const btnProf = document.getElementById('btnVolverProf');
 
-    // Determinar si viene de secretaría (por parámetro o por archivo anterior)
-    const esAdmin = origen === 'admin' || origen === 'secretaria' || referrer.includes('secretaria.html');
-    // Determinar si viene de profesionales
-    const esProf = origen === 'profesional' || origen === 'profesionales' || referrer.includes('profesional.html');
+    // 2. Evaluamos de dónde viene
+    const vieneDeProf = origenURL.includes('profecional') || origenURL.includes('profesional') || referrer.includes('profesionales.html') || referrer.includes('profesional.html');
+    const vieneDeAdmin = origenURL.includes('secretaria') || origenURL.includes('admin') || referrer.includes('secretaria.html');
 
-    if (esAdmin) {
-      if (btnAdmin) btnAdmin.style.display = 'inline-block';
-      if (btnProf) btnProf.style.display = 'none';
-    } else if (esProf) {
+    // 3. Mostramos los botones y guardamos en memoria (por si recargan la página)
+    if (vieneDeProf) {
       if (btnAdmin) btnAdmin.style.display = 'none';
       if (btnProf) btnProf.style.display = 'inline-block';
-    } else {
-      // Por defecto (si se abre directo), mostramos el de administración para que no quede vacío
+      localStorage.setItem('memoriaEstadisticas', 'profesionales'); 
+    } else if (vieneDeAdmin) {
       if (btnAdmin) btnAdmin.style.display = 'inline-block';
       if (btnProf) btnProf.style.display = 'none';
+      localStorage.setItem('memoriaEstadisticas', 'secretaria');
+    } else {
+      // 4. Si recarga la página con F5 o entra directo sin pista, leemos la memoria
+      const memoria = localStorage.getItem('memoriaEstadisticas');
+      if (memoria === 'profesionales') {
+        if (btnAdmin) btnAdmin.style.display = 'none';
+        if (btnProf) btnProf.style.display = 'inline-block';
+      } else {
+        // Por defecto, área administrativa
+        if (btnAdmin) btnAdmin.style.display = 'inline-block';
+        if (btnProf) btnProf.style.display = 'none';
+      }
     }
 
+    cargarUsuarioLogueado(); // Inicializamos el módulo del usuario
     cargarDatosServidor();
   };
 
@@ -1281,100 +1412,158 @@ body, html {
   let chartMotivosTortaInstance = null;
   let graficosLineasMotivosInstancias = [];
 
-  async function obtenerConsultasClinicasMotivos() {
+    async function obtenerConsultasClinicasMotivos() {
     try {
       const response = await fetch('http://localhost:3000/api/datos');
       const data = await response.json();
-      
-      // 1) Motivos configurados en Actualizaciones (servidor). Fallback a lista por defecto.
-      let motivosConfigurados = Array.isArray(data.configMotivos) && data.configMotivos.length > 0
-        ? [...data.configMotivos]
-        : ['Control general', 'Primera vez', 'Urgencia', 'Receta', 'Otro'];
+
+      // 1) Motivos SOLO desde Actualizaciones (configMotivos)
+      //    NUNCA desde configTurnos (tipos: Primera consulta, Control, Cirugía, etc.)
+      let motivosConfigurados = [];
+
+      if (Array.isArray(data.configMotivos) && data.configMotivos.length > 0) {
+        motivosConfigurados = data.configMotivos.map(m => {
+          if (typeof m === 'string') return m.trim();
+          return (m.motivo || m.nombre || m.texto || m.name || '').toString().trim();
+        }).filter(Boolean);
+      }
+
+      // Fallback: lo que guardó secretaría en este navegador
+      if (motivosConfigurados.length === 0) {
+        try {
+          const local = JSON.parse(localStorage.getItem('medi_configMotivos') || '[]');
+          if (Array.isArray(local) && local.length) {
+            motivosConfigurados = local.map(m => String(m).trim()).filter(Boolean);
+          }
+        } catch (e) {}
+      }
+
+      if (motivosConfigurados.length === 0) {
+        motivosConfigurados = ['Control general', 'Primera vez', 'Urgencia', 'Receta', 'Otro'];
+      }
+
+      if (!motivosConfigurados.some(m => m.toLowerCase() === 'otros') &&
+          !motivosConfigurados.some(m => m.toLowerCase() === 'otro')) {
+        motivosConfigurados.push('Otros');
+      }
+
+      const normalizarMotivo = (texto) => {
+        if (!texto) return 'Otros';
+        const t = String(texto).trim();
+        const encontrado = motivosConfigurados.find(m => m.toLowerCase() === t.toLowerCase());
+        return encontrado || 'Otros';
+      };
+
+      // Tipos de consulta a IGNORAR si vinieran mezclados en el campo motivo
+      const tiposConsultaIgnorar = new Set([
+        'primera consulta', 'control', 'seguimiento', 'urgencia/prioritario',
+        'práctica', 'practica', 'cirugía', 'cirugia', 'otros'
+      ]);
+      // Ojo: "Otros" como categoría de motivo SÍ se permite; solo ignoramos si es el tipo de configTurnos usado como motivo libre sin estar en la lista
 
       let consultasConsolidadas = [];
-      
-      // 2) Historias clínicas: fuente principal de motivos de consulta
-      if (data.hc && Array.isArray(data.hc)) {
+
+      // 2) Historias clínicas → preferir motivoPredeterminado
+      if (Array.isArray(data.hc)) {
         data.hc.forEach(paciente => {
-          if (paciente.consultas && Array.isArray(paciente.consultas)) {
-            paciente.consultas.forEach(c => {
-              const motivoElegido = (c.motivoPredeterminado || c.motivo || '').trim();
-              if (motivoElegido) {
-                // Si aparece un motivo nuevo en HC (no está en config), lo agregamos para que se vea
-                if (!motivosConfigurados.includes(motivoElegido)) {
-                  motivosConfigurados.push(motivoElegido);
-                }
-                consultasConsolidadas.push({
-                  fecha: c.fecha,
-                  motivo: motivoElegido,
-                  paciente: paciente.paciente
-                });
+          (paciente.consultas || []).forEach(c => {
+            let bruto = (c.motivoPredeterminado || '').trim();
+            // Si no hay motivo predeterminado, usar motivo libre SOLO si coincide con la lista
+            if (!bruto && c.motivo) {
+              const cand = String(c.motivo).trim();
+              if (motivosConfigurados.some(m => m.toLowerCase() === cand.toLowerCase())) {
+                bruto = cand;
               }
+            }
+            if (!bruto) return;
+            const motivoElegido = normalizarMotivo(bruto);
+            consultasConsolidadas.push({
+              fecha: c.fecha,
+              motivo: motivoElegido,
+              paciente: paciente.paciente
+            });
+          });
+        });
+      }
+
+      // 3) Turnos atendidos / finalizados (sin duplicar)
+      if (Array.isArray(data.turnos)) {
+        data.turnos.forEach(t => {
+          const est = (t.estado || '').toLowerCase();
+          if (est !== 'atendido' && est !== 'finalizado') return;
+
+          let bruto = (t.motivoPredeterminado || t.motivo || '').trim();
+          if (!bruto) return;
+
+          // Si el texto es un TIPO de consulta y no está en configMotivos, no cuenta como motivo
+          if (tiposConsultaIgnorar.has(bruto.toLowerCase()) &&
+              !motivosConfigurados.some(m => m.toLowerCase() === bruto.toLowerCase())) {
+            return;
+          }
+
+          const motivoElegido = normalizarMotivo(bruto);
+          const yaExiste = consultasConsolidadas.some(
+            c => c.fecha === t.fecha && c.paciente === t.paciente && c.motivo === motivoElegido
+          );
+          if (!yaExiste) {
+            consultasConsolidadas.push({
+              fecha: t.fecha,
+              motivo: motivoElegido,
+              paciente: t.paciente
             });
           }
         });
       }
-      
-      // 3) Turnos atendidos/finalizados como respaldo (sin duplicar)
-      if (data.turnos && Array.isArray(data.turnos)) {
-        data.turnos.forEach(t => {
-          const est = (t.estado || '').toLowerCase();
-          if (est === 'atendido' || est === 'finalizado') {
-            const motivoElegido = (t.motivoPredeterminado || t.motivo || '').trim();
-            if (motivoElegido) {
-              if (!motivosConfigurados.includes(motivoElegido)) {
-                motivosConfigurados.push(motivoElegido);
-              }
-              const yaExiste = consultasConsolidadas.some(c =>
-                c.fecha === t.fecha && c.paciente === t.paciente && c.motivo === motivoElegido
-              );
-              if (!yaExiste) {
-                consultasConsolidadas.push({
-                  fecha: t.fecha,
-                  motivo: motivoElegido,
-                  paciente: t.paciente
-                });
-              }
-            }
-          }
-        });
-      }
-      
+
       return { consultas: consultasConsolidadas, motivosConfigurados };
     } catch (e) {
-      console.error("Error al obtener motivos:", e);
-      return { consultas: [], motivosConfigurados: ['Control general', 'Primera vez', 'Urgencia', 'Receta', 'Otro'] };
+      console.error('Error al obtener motivos:', e);
+      let fallback = [];
+      try {
+        fallback = JSON.parse(localStorage.getItem('medi_configMotivos') || '[]');
+      } catch (err) {}
+      if (!fallback.length) fallback = ['Control general', 'Urgencia', 'Otros'];
+      return { consultas: [], motivosConfigurados: fallback };
     }
   }
 
-  async function renderReporteMotivosConsulta(turnosPeriodo, desde, hasta) {
-    document.getElementById('tituloMotivosHeader').textContent = `Estadísticas por Motivo de Consulta (${desde} al ${hasta})`;
-    
+    async function renderReporteMotivosConsulta(turnosPeriodo, desde, hasta) {
+    const titulo = document.getElementById('tituloMotivosHeader');
+    if (titulo) {
+      titulo.textContent = `Estadísticas por Motivo de Consulta (${desde} al ${hasta})`;
+    }
+
     const { consultas: todasConsultas, motivosConfigurados } = await obtenerConsultasClinicasMotivos();
-    
-    // Filtrar consultas por el rango de fechas actual
+
+    // Solo consultas del período
     const consultasFiltradas = todasConsultas.filter(c => c.fecha >= desde && c.fecha <= hasta);
 
-    // Contabilizar frecuencias: incluir TODOS los motivos de Actualizaciones (aunque den 0)
+    // Contar TODOS los motivos de Actualizaciones (aunque den 0)
     const conteoMotivos = {};
     motivosConfigurados.forEach(m => { conteoMotivos[m] = 0; });
     consultasFiltradas.forEach(c => {
-      let mot = (c.motivo || 'No especificado').trim();
+      const mot = (c.motivo || 'Otros').trim();
       conteoMotivos[mot] = (conteoMotivos[mot] || 0) + 1;
     });
 
-    // Ordenar por cantidad (mayor a menor); los de 0 quedan al final
-    const motivosOrdenados = Object.entries(conteoMotivos).sort((a, b) => b[1] - a[1]);
+    // Verificamos si el usuario activó el selector de "Solo con atención"
+    const tipoFiltroAtencion = document.getElementById('selectFiltroConAtencion')?.value || 'todos';
+    let motivosOrdenados = Object.entries(conteoMotivos).sort((a, b) => b[1] - a[1]);
+
+    if (tipoFiltroAtencion === 'con_atencion') {
+      // Filtramos para dejar únicamente los que tengan más de 0 atenciones en el período
+      motivosOrdenados = motivosOrdenados.filter(item => item[1] > 0);
+    }
     const totalConsultasMotivo = consultasFiltradas.length;
 
-    // --- 1. Gráfico de Torta (Top 4 + Otros) ---
+    // --- Torta: Top 4 + resto ---
     const top4 = motivosOrdenados.slice(0, 4);
     const otrosCount = motivosOrdenados.slice(4).reduce((acc, curr) => acc + curr[1], 0);
 
     let labelsTorta = top4.map(m => m[0]);
     let dataTorta = top4.map(m => m[1]);
     if (otrosCount > 0) {
-      labelsTorta.push('Otros');
+      labelsTorta.push('Resto');
       dataTorta.push(otrosCount);
     }
 
@@ -1385,9 +1574,10 @@ body, html {
       chartMotivosTortaInstance = new Chart(ctxTorta, {
         type: 'doughnut',
         data: { labels: ['Sin registros'], datasets: [{ data: [1], backgroundColor: ['#e5e7eb'] }] },
-        options: { plugins: { title: { display: true, text: 'Distribución de Motivos', font: {size: 12} } } }
+        options: { plugins: { title: { display: true, text: 'Distribución de Motivos', font: { size: 12 } } } }
       });
-      document.getElementById('resumenMotivosTextos').innerHTML = 'No se registran consultas en este período para agrupar por motivo.';
+      document.getElementById('resumenMotivosTextos').innerHTML =
+        'No hay consultas con motivo en este período. Los motivos configurados en Actualizaciones igual se listan abajo con total 0.';
     } else {
       chartMotivosTortaInstance = new Chart(ctxTorta, {
         type: 'doughnut',
@@ -1407,19 +1597,18 @@ body, html {
 
       let htmlResumen = '<ul>';
       top4.forEach(m => {
-        let p = ((m[1] / totalConsultasMotivo) * 100).toFixed(1);
+        const p = totalConsultasMotivo > 0 ? ((m[1] / totalConsultasMotivo) * 100).toFixed(1) : '0.0';
         htmlResumen += `<li><strong>${m[0]}:</strong> ${m[1]} consultas (${p}%)</li>`;
       });
       if (otrosCount > 0) {
-        let pOtr = ((otrosCount / totalConsultasMotivo) * 100).toFixed(1);
-        htmlResumen += `<li><strong>Otros motivos:</strong> ${otrosCount} consultas (${pOtr}%)</li>`;
+        const pOtr = ((otrosCount / totalConsultasMotivo) * 100).toFixed(1);
+        htmlResumen += `<li><strong>Resto:</strong> ${otrosCount} consultas (${pOtr}%)</li>`;
       }
       htmlResumen += '</ul>';
       document.getElementById('resumenMotivosTextos').innerHTML = htmlResumen;
     }
 
-    // --- 2. Gráficos de Línea Adaptativos por cada Motivo ---
-    // Agrupar fechas según amplitud del período (si es un mes o verano, agrupamos por semana o día)
+    // --- Líneas: un gráfico por cada motivo de Actualizaciones ---
     const contenedorLineas = document.getElementById('contenedorGraficosMotivosLineas');
     contenedorLineas.innerHTML = '';
 
@@ -1427,15 +1616,12 @@ body, html {
     graficosLineasMotivosInstancias = [];
 
     if (motivosOrdenados.length === 0) {
-      contenedorLineas.innerHTML = '<p style="color:var(--text-soft); grid-column:1/-1; text-align:center;">No hay datos suficientes para mostrar evolución temporal por motivo.</p>';
+      contenedorLineas.innerHTML = '<p style="color:var(--text-soft); grid-column:1/-1; text-align:center;">No hay motivos configurados en Actualizaciones.</p>';
       return;
     }
 
-    // Tomamos los motivos principales para generar su evolución temporal
     motivosOrdenados.forEach(([motivoNombre, cantidadTotal], index) => {
       const cardId = `canvas_motivo_${index}`;
-      
-      // Crear contenedor visual para el gráfico del motivo
       const divCard = document.createElement('div');
       divCard.className = 'hc-card';
       divCard.style.margin = '0';
@@ -1446,7 +1632,7 @@ body, html {
           <span style="font-size:12px; font-weight:700; background:var(--red-light); color:var(--red); padding:3px 8px; border-radius:10px;">Total: ${cantidadTotal}</span>
         </div>
         <p style="font-size:12px; color:var(--text-soft); margin-bottom:10px;">
-          Gráfico de tendencia temporal adaptado al intervalo seleccionado (${desde} al ${hasta}). Muestra la frecuencia de consultas registradas bajo este motivo clínico.
+          Motivo de consulta (Actualizaciones). Período ${desde} al ${hasta}.
         </p>
         <div style="height:180px; position:relative;">
           <canvas id="${cardId}"></canvas>
@@ -1454,10 +1640,7 @@ body, html {
       `;
       contenedorLineas.appendChild(divCard);
 
-      // Extraer las fechas y ocurrencias para este motivo específico
       const consultasDelMotivo = consultasFiltradas.filter(c => (c.motivo || '').trim() === motivoNombre);
-      
-      // Agrupar por fecha exacta dentro del rango
       const frecuenciaPorFecha = {};
       consultasDelMotivo.forEach(c => {
         frecuenciaPorFecha[c.fecha] = (frecuenciaPorFecha[c.fecha] || 0) + 1;
@@ -1466,14 +1649,20 @@ body, html {
       const fechasOrdenadas = Object.keys(frecuenciaPorFecha).sort();
       const datosFrecuencia = fechasOrdenadas.map(f => frecuenciaPorFecha[f]);
 
+      // Si no hubo consultas, mostrar eje vacío del período
+      const labels = fechasOrdenadas.length
+        ? fechasOrdenadas.map(f => formatearFechaDDMMAA(f))
+        : [formatearFechaDDMMAA(desde), formatearFechaDDMMAA(hasta)];
+      const dataLine = fechasOrdenadas.length ? datosFrecuencia : [0, 0];
+
       const ctxLine = document.getElementById(cardId).getContext('2d');
       const newChart = new Chart(ctxLine, {
         type: 'line',
         data: {
-          labels: fechasOrdenadas.map(f => formatearFechaDDMMAA(f)),
+          labels,
           datasets: [{
             label: `Consultas de ${motivoNombre}`,
-            data: datosFrecuencia,
+            data: dataLine,
             borderColor: '#8f3f8b',
             backgroundColor: 'rgba(143, 63, 139, 0.1)',
             borderWidth: 2,
@@ -1556,6 +1745,55 @@ body, html {
     `;
     imprimirBloque('Estadísticas por Motivo de Consulta', html);
   }
+  // --- FUNCIÓN DE MODO NOCHE / DÍA ---
+  function toggleModoNoche() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('modoNocheEstadisticas', isDark ? 'enabled' : 'disabled');
+    
+    const btnM = document.getElementById('btnModoNoche');
+    if (btnM) {
+      btnM.textContent = isDark ? '☀️' : '🌙';
+    }
+  }
+
+  // --- Mostrar nombre del usuario logueado ---
+  (function mostrarUsuarioLogueado() {
+    try {
+      const raw = localStorage.getItem('usuario_activo') || localStorage.getItem('usuarioLogueado') || '{}';
+      const usuario = JSON.parse(raw);
+
+      const nombre = usuario.nombre || usuario.usuario || 'Usuario';
+      const rol = (usuario.rol || '').toLowerCase();
+
+      const nombreEl = document.getElementById('nombreUsuarioStats');
+      const rolEl = document.getElementById('rolUsuarioStats');
+      const avatarEl = document.getElementById('avatarUsuarioStats');
+
+      if (nombreEl) nombreEl.textContent = nombre;
+
+      if (rolEl) {
+        if (rol === 'profesional') {
+          rolEl.textContent = 'Área Profesional · Consultorio';
+        } else if (rol === 'admin') {
+          rolEl.textContent = 'Administrador Master';
+        } else {
+          rolEl.textContent = 'Administración · Consultorio';
+        }
+      }
+
+      if (avatarEl && nombre) {
+        const partes = nombre.trim().split(' ');
+        let iniciales = partes[0].charAt(0).toUpperCase();
+        if (partes.length > 1) {
+          iniciales += partes[partes.length - 1].charAt(0).toUpperCase();
+        }
+        avatarEl.textContent = iniciales;
+      }
+    } catch (e) {
+      console.warn('No se pudo cargar el usuario en estadísticas', e);
+    }
+  })();
 </script>
 <!-- Área exclusiva de impresión / PDF -->
 <div id="printRoot" class="print-only">

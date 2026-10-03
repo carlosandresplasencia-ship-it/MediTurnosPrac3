@@ -90,16 +90,27 @@
   }
   .btn-submit:hover { background: #1f2937; }
   .msg-box {
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     display: none;
+    line-height: 1.4;
   }
-  .msg-box.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: block; }
-  .msg-box.success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; display: block; }
+  .msg-box.error { 
+    background: #fef2f2; 
+    color: #dc2626; 
+    border: 2px solid #fca5a5; 
+    display: block !important; 
+  }
+  .msg-box.success { 
+    background: #d1fae5; 
+    color: #065f46; 
+    border: 2px solid #6ee7b7; 
+    display: block !important; 
+  }
   .back-link {
     display: block;
     text-align: center;
@@ -132,63 +143,85 @@
     <div id="msgAlert" class="msg-box"></div>
     <form id="formLogin">
       <div class="input-group">
-        <label>Usuario</label>
+        <label>DNI</label>
         <div class="input-wrapper">
           <span class="input-icon">🛡️</span>
-          <input type="text" id="loginUsuario" placeholder="admin" required value="admin">
+          <input type="text" id="loginDni" placeholder="Ej: 30123456" required autocomplete="username">
         </div>
       </div>
       <div class="input-group">
         <label>Contraseña</label>
         <div class="input-wrapper">
           <span class="input-icon">🔒</span>
-          <input type="password" id="loginPass" placeholder="••••••••" required value="1234">
+          <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
         </div>
       </div>
       <button type="submit" class="btn-submit">Ingresar al Panel Master</button>
     </form>
-    <div class="hint">Usuario: <b>admin</b> &nbsp;·&nbsp; Clave: <b>1234</b></div>
+    <div class="hint">Ingresá con el <b>DNI</b> y la <b>contraseña</b> que te enviaron por correo.<br>
+      (Usuario de emergencia: DNI <b>admin</b> · Clave <b>1234</b>)</div>
     <a href="index.html" class="back-link">← Volver al Menú Principal</a>
   </div>
 </div>
 <script>
-  document.getElementById('formLogin').addEventListener('submit', async function(e) {
+  document.getElementById('formLogin').addEventListener('submit', function(e) {
     e.preventDefault();
     const box = document.getElementById('msgAlert');
     box.style.display = 'none';
+    box.className = 'msg-box';
 
-    const usuario = document.getElementById('loginUsuario').value.trim();
-    const password = document.getElementById('loginPass').value;
+    const dniIngresado = document.getElementById('loginDni').value.trim();
+    const passwordIngresado = document.getElementById('loginPass').value;
 
-    try {
-      const res = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, password, rol: 'admin' })
-      });
-      const data = await res.json();
+    // 1. Lista de usuarios creados desde permisos.html
+    const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
 
-      if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify(data.usuario));
-        box.textContent = '¡Bienvenido! Redirigiendo...';
-        box.className = 'msg-box success';
-        setTimeout(() => window.location.href = 'permisos.html', 700);
-      } else {
-        box.textContent = data.mensaje || 'Credenciales incorrectas';
+    // Buscamos por DNI + contraseña
+    const usuarioValido = listaUsuarios.find(u => 
+      String(u.dni) === dniIngresado && 
+      u.password === passwordIngresado
+    );
+
+    if (usuarioValido) {
+      // Solo permitimos rol admin
+      const rol = (usuarioValido.rol || '').toLowerCase();
+      if (rol !== 'admin') {
+        box.innerHTML = '❌ Este usuario no tiene permisos de Administrador Master.';
         box.className = 'msg-box error';
+        return;
       }
-    } catch (err) {
-      // Fallback local
-      if (usuario === 'admin' && password === '1234') {
-        localStorage.setItem('usuario_activo', JSON.stringify({ nombre: 'Administrador Master', rol: 'admin' }));
-        box.textContent = '¡Bienvenido! (Modo Local)';
-        box.className = 'msg-box success';
-        setTimeout(() => window.location.href = 'permisos.html', 700);
-      } else {
-        box.textContent = 'Error de conexión. ¿Está corriendo el backend? (npm start)';
-        box.className = 'msg-box error';
-      }
+
+      // Guardamos el usuario activo
+      localStorage.setItem('usuario_activo', JSON.stringify({
+        ...usuarioValido,
+        nombre: usuarioValido.usuario || usuarioValido.nombre,
+        rol: 'admin',
+        rolMostrar: 'Administrador Master'
+      }));
+
+      box.textContent = '¡Bienvenido! Redirigiendo...';
+      box.className = 'msg-box success';
+      setTimeout(() => window.location.href = 'permisos.html', 700);
+      return;
     }
+
+    // 2. Usuario de emergencia
+    if (dniIngresado === 'admin' && passwordIngresado === '1234') {
+      localStorage.setItem('usuario_activo', JSON.stringify({
+        nombre: 'Administrador Master',
+        dni: 'admin',
+        rol: 'admin',
+        rolMostrar: 'Administrador Master'
+      }));
+      box.textContent = '¡Bienvenido! (Modo Local)';
+      box.className = 'msg-box success';
+      setTimeout(() => window.location.href = 'permisos.html', 700);
+      return;
+    }
+
+    // 3. Credenciales incorrectas
+    box.innerHTML = '❌ DNI o contraseña incorrectos';
+    box.className = 'msg-box error';
   });
 </script>
 </body>

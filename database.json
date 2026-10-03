@@ -112,6 +112,17 @@
       "obra": "OSDE",
       "telefono": "1111",
       "email": ""
+    },
+    {
+      "id": 12,
+      "usuario": "45248819",
+      "password": "1234",
+      "rol": "paciente",
+      "nombre": "alejandro",
+      "dni": "45248819",
+      "obra": "OSDE",
+      "telefono": "1111",
+      "email": ""
     }
   ],
   "turnos": [
@@ -306,6 +317,138 @@
       "estado": "Finalizado",
       "tipoEvento": "Consulta",
       "medioSolicitud": "Web"
+    },
+    {
+      "id": 17,
+      "fecha": "2026-10-01",
+      "hora": "16:00",
+      "horaHasta": "16:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Lepra (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Web"
+    },
+    {
+      "id": 18,
+      "fecha": "2026-10-01",
+      "hora": "16:30",
+      "horaHasta": "17:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 19,
+      "fecha": "2026-10-01",
+      "hora": "17:00",
+      "horaHasta": "17:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 20,
+      "fecha": "2026-10-01",
+      "hora": "17:30",
+      "horaHasta": "18:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Acne (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 21,
+      "fecha": "2026-10-01",
+      "hora": "18:00",
+      "horaHasta": "18:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 22,
+      "fecha": "2026-10-01",
+      "hora": "18:30",
+      "horaHasta": "19:00",
+      "paciente": "Juan Pérez",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 23,
+      "fecha": "2026-10-01",
+      "hora": "19:00",
+      "horaHasta": "19:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 24,
+      "fecha": "2026-10-01",
+      "hora": "19:30",
+      "horaHasta": "20:00",
+      "paciente": "José Argento",
+      "obra": "Particular",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "Teléfono"
+    },
+    {
+      "id": 25,
+      "fecha": "2026-10-01",
+      "hora": "20:00",
+      "horaHasta": "20:30",
+      "paciente": "José Argento",
+      "obra": "Particular",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 26,
+      "fecha": "2026-10-01",
+      "hora": "20:30",
+      "horaHasta": "21:00",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Psoriasis (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
+    },
+    {
+      "id": 27,
+      "fecha": "2026-10-01",
+      "hora": "22:00",
+      "horaHasta": "22:30",
+      "paciente": "Carlos Plasencia",
+      "obra": "OSDE",
+      "motivo": "Control general (Primera consulta)",
+      "estado": "Finalizado",
+      "tipoEvento": "Consulta",
+      "medioSolicitud": "WhatsApp"
     }
   ],
   "pacientes": [
@@ -329,7 +472,7 @@
       "primeraConsulta": "2019-03-10",
       "peso": "75",
       "altura": "178",
-      "estado": "Habilitado"
+      "estado": "Deshabilitado"
     },
     {
       "id": 2,
@@ -405,6 +548,14 @@
       "id": 11,
       "nombre": "Carlos Luis Fernando",
       "dni": "334567893",
+      "obra": "OSDE",
+      "telefono": "1111",
+      "estado": "Habilitado"
+    },
+    {
+      "id": 12,
+      "nombre": "alejandro",
+      "dni": "45248819",
       "obra": "OSDE",
       "telefono": "1111",
       "estado": "Habilitado"
@@ -686,12 +837,87 @@
             "nombreArchivo": "radiografia-scaled2.jpg"
           },
           "notas": "-"
+        },
+        {
+          "fecha": "2026-10-01",
+          "motivoPredeterminado": "Lepra",
+          "motivo": "Lepra",
+          "tratamiento": "ok",
+          "medicacion": "lepritis",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": {
+            "tipo": "No especificado",
+            "fecha": "-",
+            "resultados": "-",
+            "archivoId": "hc1_1790868195301_radiografia-scaled2.jpg",
+            "nombreArchivo": "radiografia-scaled2.jpg"
+          },
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-10-01",
+          "motivoPredeterminado": "Control general",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-10-01",
+          "motivoPredeterminado": "Piel seca",
+          "motivo": "Psoriasis",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
+        },
+        {
+          "fecha": "2026-10-01",
+          "motivoPredeterminado": "Quemaduras solares",
+          "motivo": "Control general",
+          "tratamiento": "-",
+          "medicacion": "Sin medicación",
+          "estudios": {
+            "presion": "-",
+            "fiebre": "-",
+            "pulsaciones": "-",
+            "freqResp": "-",
+            "satO2": "-",
+            "otros": "-"
+          },
+          "estudioComplementario": null,
+          "notas": "-"
         }
       ],
       "tratamientos": [
         "anti-acne 2.0",
         "Leprosil",
-        "radio pie"
+        "radio pie",
+        "lepritis"
       ]
     },
     {
