@@ -1,15 +1,47 @@
 const express = require('express');
-const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// ========== CONFIGURACIÓN DE MULTER (ALMACENAMIENTO DE ARCHIVOS) ==========
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    // Genera un nombre único con timestamp para evitar colisiones
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `estudio-${uniqueSuffix}${ext}`);
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // Límite de 10MB por archivo
+});
+
+// ========== MIDDLEWARES GENERALES ==========
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Servir la carpeta de subidas y la raíz para los HTML
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(__dirname));
 
 // ========== BASE DE DATOS SIMPLE (JSON) ==========
 const DB_FILE = path.join(__dirname, 'database.json');
 
-// Usuarios por defecto (relacionados con el sistema)
+// Usuarios por defecto consolidados (sin duplicados redundantes)
 const DEFAULT_USERS = [
   {
     id: 1,
@@ -38,29 +70,8 @@ const DEFAULT_USERS = [
     email: 'maria.gonzalez@mediturnos.com'
   },
   {
-    id: 4,
-    usuario: 'profesional',
-    password: '1234',
-    rol: 'profesional',
-    nombre: 'Dra. María González',
-    especialidad: 'Dermatología',
-    matricula: 'MP 12345',
-    email: 'maria.gonzalez@mediturnos.com'
-  },
-  {
     id: 5,
     usuario: 'paciente',
-    password: '1234',
-    rol: 'paciente',
-    nombre: 'Juan Pérez',
-    dni: '32456789',
-    obra: 'OSDE',
-    telefono: '11 5555-1234',
-    email: 'juan.perez@mail.com'
-  },
-  {
-    id: 6,
-    usuario: '32456789',
     password: '1234',
     rol: 'paciente',
     nombre: 'Juan Pérez',
@@ -76,7 +87,6 @@ function loadDB() {
   if (fs.existsSync(DB_FILE)) {
     try {
       const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-      // Asegurarnos de que existan todas las estructuras necesarias
       if (!data.usuarios) data.usuarios = DEFAULT_USERS;
       if (!data.turnos) data.turnos = [];
       if (!data.pacientes) data.pacientes = [
@@ -95,7 +105,7 @@ function loadDB() {
       if (!data.contactos) data.contactos = [];
       return data;
     } catch (e) {
-      console.log('Error leyendo DB, se crea nueva...');
+      console.log('Error leyendo DB, se crea una nueva...');
     }
   }
   const db = {
@@ -126,12 +136,17 @@ function saveDB(db) {
 
 let db = loadDB();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static(__dirname)); // sirve los HTML
+// ========== RUTAS API PARA ARCHIVOS Y DATOS ==========
 
-// ========== RUTAS API DE DATOS (Secretaría y Estadísticas) ==========
+// Subida de adjuntos/estudios
+app.post('/api/upload', upload.single('archivo'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ status: 'error', mensaje: 'No se subió ningún archivo' });
+  }
+  
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.json({ status: 'ok', url: fileUrl, nombreOriginal: req.file.originalname });
+});
 
 // Obtener todos los datos centralizados
 app.get('/api/datos', (req, res) => {
@@ -152,8 +167,6 @@ app.post('/api/datos', (req, res) => {
   saveDB(db);
   res.json({ success: true, message: 'Datos guardados correctamente' });
 });
-
-// ========== RUTAS API TRADICIONALES ==========
 
 // LOGIN
 app.post('/api/login', (req, res) => {
@@ -261,7 +274,7 @@ app.put('/api/turnos/:id', (req, res) => {
   res.json(turno);
 });
 
-// RUTA NUEVA: Limpiar todas las historias clínicas
+// LIMPIAR HISTORIAS CLÍNICAS
 app.delete('/api/hc/limpiar-todas', (req, res) => {
   db = loadDB();
   db.hc = [];
@@ -299,7 +312,7 @@ app.post('/api/usuarios', (req, res) => {
   res.status(201).json(sinPass);
 });
 
-// ========== INICIO ==========
+// ========== INICIALIZACIÓN DEL SERVIDOR ==========
 app.listen(PORT, () => {
   console.log('');
   console.log('=============================================');
@@ -311,8 +324,8 @@ app.listen(PORT, () => {
   console.log('---------------------------------------------');
   console.log('   ADMIN      →   usuario: admin');
   console.log('   SECRETARIA →   usuario: secretaria');
-  console.log('   DOCTORA    →   usuario: doctora   (o profesional)');
-  console.log('   PACIENTE   →   usuario: paciente  (o 32456789)');
+  console.log('   DOCTORA    →   usuario: doctora');
+  console.log('   PACIENTE   →   usuario: paciente (o por DNI)');
   console.log('---------------------------------------------');
   console.log('');
 });

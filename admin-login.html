@@ -223,6 +223,44 @@
     box.innerHTML = '❌ DNI o contraseña incorrectos';
     box.className = 'msg-box error';
   });
+
+  document.getElementById('formLogin').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const box = document.getElementById('msgAlert');
+    box.style.display = 'none';
+    box.className = 'msg-box';
+
+    const usuario = document.getElementById('loginDni').value.trim();
+    const password = document.getElementById('loginPass').value;
+
+    try {
+      const res = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, password, rol: 'admin' })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('usuario_activo', JSON.stringify({
+          ...data.usuario,
+          rolMostrar: 'Administrador Master'
+        }));
+        box.textContent = '¡Bienvenido! Redirigiendo...';
+        box.className = 'msg-box success';
+        setTimeout(() => window.location.href = 'permisos.html', 700);
+      } else {
+        box.innerHTML = '❌ ' + (data.mensaje || 'DNI o contraseña incorrectos');
+        box.className = 'msg-box error';
+      }
+    } catch (err) {
+      box.innerHTML = '❌ Error de conexión con el backend.';
+      box.className = 'msg-box error';
+    }
+  });
+
+
 </script>
 </body>
 </html>
