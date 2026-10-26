@@ -378,3 +378,38 @@ app.listen(PORT, () => {
   console.log('---------------------------------------------');
   console.log('');
 });
+app.post('/api/pacientes/cambiar-password', (req, res) => {
+  const { dni, passActual, passNueva } = req.body;
+
+  if (!dni || !passActual || !passNueva) {
+    return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
+  }
+
+  // 1. Obtener la lista de usuarios (busca en 'usuarios' o 'pacientes' según cómo se llame tu arreglo)
+  const lista = (typeof usuarios !== 'undefined' ? usuarios : (typeof pacientes !== 'undefined' ? pacientes : []));
+
+  // 2. Buscar al usuario por DNI o nombre de usuario
+  const usuarioEncontrado = lista.find(u => 
+    (u.dni && u.dni.toString() === dni.toString()) || 
+    (u.usuario && u.usuario.toString() === dni.toString())
+  );
+
+  if (!usuarioEncontrado) {
+    return res.status(404).json({ mensaje: 'Usuario no encontrado en el servidor.' });
+  }
+
+  // 3. Obtener la contraseña guardada en el objeto (sea u.password o u.pass)
+  const claveGuardada = usuarioEncontrado.password || usuarioEncontrado.pass;
+
+  // 4. Comparar contraseñas
+  if (claveGuardada !== passActual) {
+    return res.status(400).json({ mensaje: 'La contraseña actual es incorrecta.' });
+  }
+
+  // 5. Actualizar la contraseña en todas las propiedades posibles
+  usuarioEncontrado.password = passNueva;
+  usuarioEncontrado.pass = passNueva;
+
+  console.log(`[OK] Contraseña actualizada correctamente para el DNI: ${dni}`);
+  return res.status(200).json({ mensaje: 'Contraseña actualizada con éxito.' });
+});

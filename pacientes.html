@@ -22,6 +22,25 @@
     --danger: #dc2626;
     --radius: 14px;
     --shadow: 0 4px 16px rgba(26, 122, 76, 0.08);
+    --input-bg: #fafffe;
+    --card-bg: #ffffff;
+  }
+
+  /* ===== MODO OSCURO ===== */
+  body.dark-mode {
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-light: #14532d;
+    --green-mid: #166534;
+    --green-soft: #0f172a;
+    --text: #f8fafc;
+    --text-soft: #94a3b8;
+    --border: #334155;
+    --white: #1e293b;
+    --danger: #ef4444;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --input-bg: #0f172a;
+    --card-bg: #1e293b;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,10 +51,30 @@
     color: var(--text);
     min-height: 100vh;
     line-height: 1.5;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  /* Botones de la barra superior */
+  .btn-theme-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 
   .header {
-    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    background: linear-gradient(135deg, #1a7a4c 0%, #145c3a 100%);
     color: white;
     padding: 14px 24px;
     display: flex;
@@ -52,7 +91,7 @@
     height: 42px; background: white; border-radius: 10px; padding: 4px 8px;
   }
   .header-left .fallback-logo {
-    height: 42px; width: 42px; background: white; color: var(--green);
+    height: 42px; width: 42px; background: white; color: #1a7a4c;
     border-radius: 10px; display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 16px;
   }
@@ -63,7 +102,7 @@
     font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
   }
   .patient-chip span {
-    width: 28px; height: 28px; background: white; color: var(--green);
+    width: 28px; height: 28px; background: white; color: #1a7a4c;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 700;
   }
@@ -93,7 +132,7 @@
     font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none;
     border-left: 3px solid transparent; transition: all 0.15s; cursor: pointer;
   }
-  .side-item:hover { background: var(--green-light); color: var(--green-dark); }
+  .side-item:hover { background: var(--green-light); color: var(--green); }
   .side-item.active {
     background: var(--green-light); color: var(--green);
     border-left-color: var(--green); font-weight: 600;
@@ -176,17 +215,22 @@
   }
   .contact-card .icon { font-size: 22px; margin-bottom: 4px; }
   .contact-card strong { display: block; font-size: 13px; margin-bottom: 2px; }
-  .contact-card a { color: var(--green-dark); font-size: 12px; text-decoration: none; font-weight: 600; }
+  .contact-card a { color: var(--text); font-size: 12px; text-decoration: none; font-weight: 600; }
   .contact-card a:hover { text-decoration: underline; }
 
   .info-box {
     background: var(--green-light); border-left: 4px solid var(--green);
     border-radius: 0 10px 10px 0; padding: 11px 14px; font-size: 13px;
-    color: var(--text-soft); margin-top: 14px;
+    color: var(--text); margin-top: 14px;
   }
   .info-box.warning {
     background: #fffbeb;
     border-left-color: #d97706;
+    color: #1a2e22;
+  }
+  body.dark-mode .info-box.warning {
+    background: #451a03;
+    color: #fde68a;
   }
 
   /* ===== ESTILOS PARA TURNOS ===== */
@@ -198,11 +242,11 @@
 
   .appt-item {
     display: flex; align-items: center; gap: 12px; padding: 12px 0;
-    border-bottom: 1px solid var(--green-mid);
+    border-bottom: 1px solid var(--border);
   }
   .appt-item:last-child { border-bottom: none; }
   .appt-time {
-    background: var(--green-light); color: var(--green-dark); font-weight: 700;
+    background: var(--green-light); color: var(--text); font-weight: 700;
     font-size: 13px; padding: 8px 11px; border-radius: 10px; min-width: 58px; text-align: center;
   }
   .appt-info { flex: 1; }
@@ -236,13 +280,13 @@
   .form-group label .req { color: var(--danger); }
   .form-group input, .form-group select, .form-group textarea {
     width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
-    border-radius: 10px; font-size: 14px; background: #fafffe; color: var(--text);
+    border-radius: 10px; font-size: 14px; background: var(--input-bg); color: var(--text);
     transition: all 0.2s;
   }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    outline: none; border-color: var(--green); background: white;
+    outline: none; border-color: var(--green); background: var(--white);
   }
-  .form-group input[readonly] { background: #f1f5f4; color: var(--text-soft); cursor: not-allowed; }
+  .form-group input[readonly] { opacity: 0.7; cursor: not-allowed; }
   .form-group textarea { resize: vertical; min-height: 70px; }
   .form-hint { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
   .form-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
@@ -255,16 +299,13 @@
     margin-top: 6px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--green-dark);
+    color: var(--text);
     background: var(--green-light);
     border: 1px solid var(--border);
     padding: 5px 10px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
-  }
-  .btn-copiar-telefono:hover {
-    background: var(--green-mid);
   }
 
   .btn {
@@ -273,10 +314,10 @@
     border: none; cursor: pointer; transition: all 0.2s;
   }
   .btn-primary { background: var(--green); color: white; }
-  .btn-primary:hover { background: var(--green-dark); }
-  .btn-outline { background: white; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-outline { background: var(--white); border: 1.5px solid var(--border); color: var(--text); }
   .btn-outline:hover { border-color: var(--green); color: var(--green); }
-  .btn-danger { background: white; border: 1.5px solid var(--danger); color: var(--danger); }
+  .btn-danger { background: var(--white); border: 1.5px solid var(--danger); color: var(--danger); }
   .btn-danger:hover { background: #fef2f2; }
 
   /* ===== CALENDARIO ===== */
@@ -289,25 +330,24 @@
   .cal-day {
     aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
     border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid transparent;
-    background: #f1f5f4; color: #94a3b8;
+    background: var(--green-soft); color: var(--text-soft);
   }
   .cal-day.empty { background: transparent; border: none; }
-  .cal-day.available { background: var(--green-light); color: var(--green-dark); border-color: #86efac; cursor: pointer; }
-  .cal-day.available:hover { background: #bbf7d0; }
+  .cal-day.available { background: var(--green-light); color: var(--text); border-color: var(--green); cursor: pointer; }
   .cal-day.selected { background: var(--green); color: white; border-color: var(--green); }
 
   .slots-grid { display: flex; flex-wrap: wrap; gap: 8px; }
   .slot-btn {
     padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: white; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer;
+    background: var(--white); font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer;
   }
   .slot-btn:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
   .slot-btn.selected { background: var(--green); border-color: var(--green); color: white; }
-  .slot-btn:disabled { background: #f1f5f4; color: #94a3b8; cursor: not-allowed; text-decoration: line-through; }
+  .slot-btn:disabled { opacity: 0.4; cursor: not-allowed; text-decoration: line-through; }
 
   .selected-summary {
     margin-top: 12px; padding: 10px 14px; background: var(--green-light);
-    border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--green-dark); display: none;
+    border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text); display: none;
   }
   .selected-summary.show { display: block; }
 
@@ -347,7 +387,7 @@
   .toast {
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: var(--green-dark); color: white; padding: 12px 22px;
+    background: var(--green); color: white; padding: 12px 22px;
     border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0;
     transition: all 0.3s; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   }
@@ -355,15 +395,15 @@
 
   /* ===== TURNO DESTACADO ===== */
   .turno-destacado {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border: 3px solid var(--green);
+    background: var(--green-light);
+    border: 2px solid var(--green);
     border-radius: 14px;
     padding: 18px 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-bottom: 16px;
-    box-shadow: 0 4px 16px rgba(26, 122, 76, 0.2);
+    box-shadow: var(--shadow);
   }
   .turno-destacado-top {
     display: flex;
@@ -383,7 +423,7 @@
   }
   .turno-destacado .appt-info strong {
     font-size: 17px;
-    color: var(--green-dark);
+    color: var(--text);
   }
   .turno-destacado .appt-info small {
     font-size: 13px;
@@ -404,17 +444,17 @@
     align-items: center;
     flex-wrap: wrap;
     padding-top: 8px;
-    border-top: 1px solid rgba(26, 122, 76, 0.2);
+    border-top: 1px solid var(--border);
   }
 
-  /* ===== ESTILOS PARA MODAL OBLIGATORIO DE REGISTRO ===== */
+  /* ===== ESTILOS PARA MODALES ===== */
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(10, 30, 20, 0.85);
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(6px);
     display: none;
     align-items: center;
@@ -426,7 +466,8 @@
     display: flex;
   }
   .modal-card {
-    background: #ffffff;
+    background: var(--white);
+    color: var(--text);
     border-radius: 16px;
     max-width: 800px;
     width: 100%;
@@ -434,20 +475,30 @@
     overflow-y: auto;
     padding: 28px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    border: 2px solid #1a7a4c;
+    border: 2px solid var(--green);
+  }
+  .modal-password-card {
+    background: var(--white);
+    color: var(--text);
+    border-radius: 16px;
+    max-width: 420px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--green);
   }
   .modal-header {
-    border-bottom: 2px solid #e8f5ee;
+    border-bottom: 2px solid var(--border);
     padding-bottom: 12px;
     margin-bottom: 20px;
   }
   .modal-header h2 {
-    color: #1a7a4c;
+    color: var(--green);
     font-size: 20px;
     font-weight: 700;
   }
   .modal-header p {
-    color: #5a6b60;
+    color: var(--text-soft);
     font-size: 13px;
     margin-top: 4px;
   }
@@ -466,40 +517,33 @@
   .modal-group label {
     font-size: 12px;
     font-weight: 700;
-    color: #1a2e22;
+    color: var(--text);
     margin-bottom: 4px;
   }
   .modal-group label .req {
-    color: #dc2626;
+    color: var(--danger);
   }
   .modal-group input, 
   .modal-group select {
     padding: 9px 12px;
-    border: 1.5px solid #b7d4c4;
+    border: 1.5px solid var(--border);
     border-radius: 8px;
     font-size: 13px;
-    background: #fafffe;
-    color: #1a2e22;
+    background: var(--input-bg);
+    color: var(--text);
     outline: none;
     transition: all 0.2s;
   }
   .modal-group input:focus, 
   .modal-group select:focus {
-    border-color: #1a7a4c;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(26, 122, 76, 0.15);
-  }
-  .modal-group input:disabled {
-    background: #e2e8f0;
-    color: #94a3b8;
-    cursor: not-allowed;
-    border-color: #cbd5e1;
+    border-color: var(--green);
+    background: var(--white);
   }
   .modal-actions {
     margin-top: 24px;
   }
   .btn-guardar-modal {
-    background: #1a7a4c;
+    background: var(--green);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -507,11 +551,11 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: opacity 0.2s;
     width: 100%;
   }
   .btn-guardar-modal:hover {
-    background: #145c3a;
+    opacity: 0.9;
   }
 
   /* ===== ESTILOS PARA IMPRESIÓN ===== */
@@ -553,9 +597,7 @@
 </head>
 <body>
 
-<!-- ============================================================ -->
 <!-- MODAL OBLIGATORIO PARA NUEVO PACIENTE -->
-<!-- ============================================================ -->
 <div id="modalRegistroObligatorio" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-header">
@@ -565,8 +607,6 @@
 
     <form id="formRegistroObligatorio" onsubmit="guardarDatosNuevos(event)">
       <div class="modal-grid">
-        
-        <!-- Datos Personales -->
         <div class="modal-group">
           <label>Nombre <span class="req">*</span></label>
           <input type="text" id="regNombre" required placeholder="Ej: Juan">
@@ -618,7 +658,6 @@
           <input type="email" id="regEmail" required placeholder="ejemplo@correo.com">
         </div>
 
-        <!-- Cobertura Médica -->
         <div class="modal-group">
           <label>Obra Social / Prepaga <span class="req">*</span></label>
           <select id="regObraSocial" required onchange="evaluarObraSocialModal()">
@@ -644,7 +683,6 @@
           <input type="text" id="regNumAfiliado" required placeholder="Nº de carnet">
         </div>
 
-        <!-- Contacto -->
         <div class="modal-group">
           <label>Teléfono <span class="req">*</span></label>
           <input type="tel" id="regTelefono" required placeholder="Ej: 11 4567-8900" oninput="sincronizarTelefonoModal()">
@@ -658,7 +696,6 @@
           </button>
         </div>
 
-        <!-- Domicilio -->
         <div class="modal-group full">
           <label>Dirección (Calle y Número) <span class="req">*</span></label>
           <input type="text" id="regDireccion" required placeholder="Ej: Av. Santa Fe 1234, Piso 2 A">
@@ -689,11 +726,46 @@
             <option value="">Seleccionar Provincia primero...</option>
           </select>
         </div>
-
       </div>
 
       <div class="modal-actions">
         <button type="submit" class="btn-guardar-modal">Guardar y Continuar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE CAMBIO DE CONTRASEÑA -->
+<div id="modalCambiarPassword" class="modal-overlay">
+  <div class="modal-password-card">
+    <div class="modal-header">
+      <h2>🔒 Cambiar Contraseña</h2>
+      <p>Ingresá tu contraseña actual y la nueva contraseña.</p>
+    </div>
+
+    <form id="formCambiarPassword" onsubmit="guardarNuevaPassword(event)">
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+        
+        <div class="form-group">
+          <label>Contraseña Actual <span class="req">*</span></label>
+          <input type="password" id="passActual" required placeholder="••••••••">
+        </div>
+
+        <div class="form-group">
+          <label>Nueva Contraseña <span class="req">*</span></label>
+          <input type="password" id="passNueva" required minlength="6" placeholder="Mínimo 6 caracteres">
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar Nueva Contraseña <span class="req">*</span></label>
+          <input type="password" id="passConfirmar" required minlength="6" placeholder="Repetir nueva contraseña">
+        </div>
+
+      </div>
+
+      <div class="form-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Guardar</button>
+        <button type="button" class="btn btn-outline" onclick="cerrarModalPassword()">Cancelar</button>
       </div>
     </form>
   </div>
@@ -709,9 +781,21 @@
       <small>Turnos Online · Área Paciente</small>
     </div>
   </div>
-  <div class="patient-chip">
-    <span id="chipIniciales">--</span>
-    <span id="chipNombre">Cargando...</span>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <!-- BOTÓN CAMBIAR CONTRASEÑA -->
+    <button class="btn-theme-toggle" onclick="abrirModalPassword()">
+      🔒 Cambiar Contraseña
+    </button>
+
+    <!-- BOTÓN MODO OSCURO -->
+    <button class="btn-theme-toggle" id="btnThemeToggle" onclick="toggleDarkMode()">
+      <span id="themeIcon">🌙</span> <span id="themeText">Modo Oscuro</span>
+    </button>
+
+    <div class="patient-chip">
+      <span id="chipIniciales">--</span>
+      <span id="chipNombre">Cargando...</span>
+    </div>
   </div>
 </header>
 
@@ -784,7 +868,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <label for="historialPageSize" style="font-size:13px; font-weight:600;">Mostrar:</label>
-          <select id="historialPageSize" onchange="cambiarPageSizeHistorial()" style="padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; background:white; color:var(--text); font-size:13px; font-weight:600; cursor:pointer;">
+          <select id="historialPageSize" onchange="cambiarPageSizeHistorial()" style="padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; background:var(--white); color:var(--text); font-size:13px; font-weight:600; cursor:pointer;">
             <option value="5">5</option>
             <option value="10" selected>10</option>
             <option value="20">20</option>
@@ -796,7 +880,7 @@
 
       <div id="anterioresTurnosBox"><p class="empty-msg">No hay turnos anteriores.</p></div>
 
-      <div id="historialPaginacion" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--green-mid); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <div id="historialPaginacion" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
         <span id="historialInfoPaginacion" style="font-size:12px; color:var(--text-soft);"></span>
         <div style="display:flex; align-items:center; gap:8px;">
           <button type="button" class="btn btn-outline" id="btnHistorialPrev" onclick="cambiarPaginaHistorial(-1)" style="padding:7px 12px; font-size:12px;">← Anterior</button>
@@ -873,21 +957,21 @@
           </div>
         </div>
 
-        <div style="margin-top:14px; border:1px solid var(--border); border-radius:12px; padding:16px; background:#fafffe;">
+        <div style="margin-top:14px; border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--input-bg);">
           <label style="font-weight:600; font-size:13px;">Elegí día y horario disponible <span style="color:var(--danger);">*</span></label>
           <div style="margin-top:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-weight:700; font-size:15px;">
-              <button type="button" onclick="changeMonth(-1)" style="background:var(--green-light); border:1px solid var(--border); width:32px; height:32px; border-radius:8px; cursor:pointer; color:var(--green); font-size:16px;">‹</button>
+              <button type="button" onclick="changeMonth(-1)" style="background:var(--green-light); border:1px solid var(--border); width:32px; height:32px; border-radius:8px; cursor:pointer; color:var(--text); font-size:16px;">‹</button>
               <span id="calTitle">Mes Año</span>
-              <button type="button" onclick="changeMonth(1)" style="background:var(--green-light); border:1px solid var(--border); width:32px; height:32px; border-radius:8px; cursor:pointer; color:var(--green); font-size:16px;">›</button>
+              <button type="button" onclick="changeMonth(1)" style="background:var(--green-light); border:1px solid var(--border); width:32px; height:32px; border-radius:8px; cursor:pointer; color:var(--text); font-size:16px;">›</button>
             </div>
             <div class="cal-grid" id="calGrid"></div>
             <div style="display:flex; gap:14px; margin-top:12px; font-size:12px; color:var(--text-soft); flex-wrap:wrap;">
-              <span style="display:flex; align-items:center; gap:5px;"><i style="width:12px; height:12px; border-radius:3px; display:inline-block; background:var(--green-light); border:1px solid #86efac;"></i> Con turnos libres</span>
-              <span style="display:flex; align-items:center; gap:5px;"><i style="width:12px; height:12px; border-radius:3px; display:inline-block; background:#f1f5f4;"></i> Sin disponibilidad</span>
+              <span style="display:flex; align-items:center; gap:5px;"><i style="width:12px; height:12px; border-radius:3px; display:inline-block; background:var(--green-light); border:1px solid var(--border);"></i> Con turnos libres</span>
+              <span style="display:flex; align-items:center; gap:5px;"><i style="width:12px; height:12px; border-radius:3px; display:inline-block; background:var(--green-soft);"></i> Sin disponibilidad</span>
               <span style="display:flex; align-items:center; gap:5px;"><i style="width:12px; height:12px; border-radius:3px; display:inline-block; background:var(--green);"></i> Seleccionado</span>
             </div>
-            <div id="slotsBox" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--green-mid);">
+            <div id="slotsBox" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
               <h4 id="slotsTitle" style="font-size:13px; font-weight:700; margin-bottom:10px;">Horarios disponibles</h4>
               <div class="slots-grid" id="slotsGrid"></div>
             </div>
@@ -922,8 +1006,6 @@
 
       <form id="formDatos" onsubmit="guardarModificacionDatos(event)">
         <div class="form-grid">
-          
-          <!-- Datos Personales -->
           <div class="form-group">
             <label>Nombre <span class="req">*</span></label>
             <input type="text" id="datoNombre" required>
@@ -961,7 +1043,6 @@
             <input type="email" id="datoEmail" required placeholder="ejemplo@correo.com">
           </div>
 
-          <!-- Cobertura -->
           <div class="form-group">
             <label>Obra Social / Prepaga <span class="req">*</span></label>
             <select id="datoObra" required onchange="evaluarObraSocialVista()">
@@ -984,7 +1065,6 @@
             <input type="text" id="datoAfiliado" required placeholder="Nº de carnet">
           </div>
 
-          <!-- Contacto -->
           <div class="form-group">
             <label>Teléfono <span class="req">*</span></label>
             <input type="tel" id="datoTelefono" required oninput="sincronizarTelefonoVista()">
@@ -997,7 +1077,6 @@
             </button>
           </div>
 
-          <!-- Domicilio -->
           <div class="form-group full">
             <label>Dirección <span class="req">*</span></label>
             <input type="text" id="datoDireccion" required>
@@ -1086,6 +1165,112 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ============================================================
+  // LÓGICA DE MODO OSCURO
+  // ============================================================
+  function toggleDarkMode() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+
+    localStorage.setItem('modo_oscuro', isDark ? 'enabled' : 'disabled');
+
+    const icon = document.getElementById('themeIcon');
+    const text = document.getElementById('themeText');
+
+    if (isDark) {
+      if (icon) icon.textContent = '☀️';
+      if (text) text.textContent = 'Modo Claro';
+    } else {
+      if (icon) icon.textContent = '🌙';
+      if (text) text.textContent = 'Modo Oscuro';
+    }
+  }
+
+  function cargarPreferenciaModoOscuro() {
+    const modoGuardado = localStorage.getItem('modo_oscuro');
+    if (modoGuardado === 'enabled') {
+      document.body.classList.add('dark-mode');
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (icon) icon.textContent = '☀️';
+      if (text) text.textContent = 'Modo Claro';
+    }
+  }
+
+  // ============================================================
+  // LÓGICA DE CAMBIO DE CONTRASEÑA
+  // ============================================================
+  function abrirModalPassword() {
+    document.getElementById('formCambiarPassword').reset();
+    const modal = document.getElementById('modalCambiarPassword');
+    if (modal) modal.classList.add('active');
+  }
+
+  function cerrarModalPassword() {
+    const modal = document.getElementById('modalCambiarPassword');
+    if (modal) modal.classList.remove('active');
+  }
+
+ async function guardarNuevaPassword(event) {
+    event.preventDefault();
+
+    const passActual = document.getElementById('passActual').value;
+    const passNueva = document.getElementById('passNueva').value;
+    const passConfirmar = document.getElementById('passConfirmar').value;
+
+    if (passNueva !== passConfirmar) {
+      alert('⚠️ La nueva contraseña y la confirmación no coinciden.');
+      return;
+    }
+
+    if (passNueva.length < 6) {
+      alert('⚠️ La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    // 1. Obtener la sesión activa
+    const usuarioActivoRaw = localStorage.getItem('usuario_activo');
+    if (!usuarioActivoRaw) {
+      alert('Error: No se encontró la sesión activa.');
+      return;
+    }
+
+    const usuarioActivo = JSON.parse(usuarioActivoRaw);
+    const dniActual = usuarioActivo.dni || usuarioActivo.usuario;
+
+    try {
+      // 2. Enviar la actualización de contraseña al servidor Node.js
+      const respuesta = await fetch('/api/pacientes/cambiar-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dni: dniActual,
+          passActual: passActual,
+          passNueva: passNueva
+        })
+      });
+
+      const resData = await respuesta.json().catch(() => ({}));
+
+      if (!respuesta.ok) {
+        alert(resData.mensaje || '❌ La contraseña actual es incorrecta.');
+        return;
+      }
+
+      // 3. Actualizar la contraseña en la sesión local
+      usuarioActivo.password = passNueva;
+      localStorage.setItem('usuario_activo', JSON.stringify(usuarioActivo));
+
+      showToast('🔑 ¡Contraseña cambiada con éxito!');
+      cerrarModalPassword();
+
+    } catch (error) {
+      console.error('Error al conectar con el servidor:', error);
+      alert('⚠️ No se pudo conectar con el servidor para actualizar la contraseña.');
+    }
+  }
+
   // ============================================================
   // CONSUMO DE API OFICIAL DE PROVINCIAS Y LOCALIDADES (GEOREF AR)
   // ============================================================
@@ -1309,6 +1494,7 @@
   // COMPROBACIÓN Y LECTURA DEL USUARIO LOGUEADO
   // ============================================================
   document.addEventListener('DOMContentLoaded', async function() {
+    cargarPreferenciaModoOscuro();
     if (typeof inicializarProvinciasGeoref === 'function') {
       await inicializarProvinciasGeoref();
     }
@@ -1327,13 +1513,11 @@
     const usuarioActivo = JSON.parse(usuarioActivoRaw);
     const dniActual = usuarioActivo.dni || usuarioActivo.usuario;
 
-    // Cargar datos básicos en el objeto paciente global
     paciente.nombre = usuarioActivo.nombre || 'Paciente';
     paciente.dni = dniActual || '';
     paciente.telefono = usuarioActivo.telefono || '';
     paciente.obra = usuarioActivo.obra || 'Particular';
 
-    // Impactar en la barra superior (Header) y vistas de turno
     const chipNombre = document.getElementById('chipNombre');
     const chipIniciales = document.getElementById('chipIniciales');
 
@@ -1355,14 +1539,12 @@
     if (vistaTelefono) vistaTelefono.textContent = paciente.telefono;
     if (vistaObra) vistaObra.textContent = paciente.obra;
 
-    // VERIFICAR SI YA COMPLETÓ EL REGISTRO OBLIGATORIO DE DATOS PARA ESTE DNI
     const registradoLocal = localStorage.getItem(`pacienteRegistrado_${dniActual}`);
     const datosLocales = JSON.parse(localStorage.getItem(`datosPaciente_${dniActual}`));
 
     if (registradoLocal === 'true' && datosLocales) {
       actualizarVistaDatos(datosLocales);
     } else {
-      // SI ES USUARIO NUEVO: Desplegar el modal obligatorio
       const modal = document.getElementById('modalRegistroObligatorio');
       if (modal) {
         modal.classList.add('active');
@@ -1394,7 +1576,6 @@
     const emailInput = document.getElementById('regEmail').value.trim();
     const dniInput = document.getElementById('regNumDoc').value.trim();
 
-    // Validar de forma estricta que contenga '@' y termine exactamente en '.com'
     const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
     if (!regexEmail.test(emailInput)) {
       alert('Por favor ingresá un correo electrónico válido que incluya "@" y termine en ".com" (Ej: ejemplo@correo.com)');
@@ -1424,7 +1605,7 @@
     };
 
     try {
-      await fetch('http://localhost:3000/api/pacientes/registro-completo', {
+      await fetch('/api/pacientes/registro-completo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datosPaciente)
@@ -1453,7 +1634,6 @@
     const emailInput = document.getElementById('datoEmail').value.trim();
     const dniInput = document.getElementById('datoNumDoc').value.trim();
 
-    // Validar correo
     const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
     if (!regexEmail.test(emailInput)) {
       alert('Por favor ingresá un correo electrónico válido que incluya "@" y termine en ".com"');
@@ -1483,7 +1663,7 @@
     };
 
     try {
-      await fetch('http://localhost:3000/api/pacientes/modificar', {
+      await fetch('/api/pacientes/modificar', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datosActualizados)
@@ -1500,7 +1680,7 @@
   }
 
   // ============================================================
-  // OBTENER INICIALES (primer nombre + último apellido)
+  // OBTENER INICIALES
   // ============================================================
   function obtenerIniciales(nombre, apellido) {
     const primerNombre = (nombre || '').trim().split(/\s+/)[0] || '';
@@ -1551,7 +1731,6 @@
       document.getElementById('datoDireccion').value = datosGuardados.direccion || '';
       document.getElementById('datoCp').value = datosGuardados.cp || '';
 
-      // Cargar geografía
       const prov = datosGuardados.provincia || 'Buenos Aires';
       const ciudad = datosGuardados.ciudad || '';
 
@@ -1579,7 +1758,6 @@
     document.getElementById('vistaObra').textContent = paciente.obra;
     document.getElementById('chipNombre').textContent = paciente.nombre;
 
-    // Actualizar las iniciales del chip
     const iniciales = obtenerIniciales(nombreParaIniciales, apellidoParaIniciales);
     const chipIniciales = document.getElementById('chipIniciales');
     if (chipIniciales) chipIniciales.textContent = iniciales;
@@ -1650,7 +1828,7 @@
     const turnoACancelar = turnosFuturos[index];
 
     try {
-      await fetch('http://localhost:3000/api/turnos/cancelar', {
+      await fetch('/api/turnos/cancelar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fecha: turnoACancelar.date, hora: turnoACancelar.time, paciente: paciente.nombre })
@@ -1768,7 +1946,7 @@
   // ============================================================
   async function cargarTurnosDesdeBackend() {
     try {
-      const respuesta = await fetch('http://localhost:3000/api/turnos');
+      const respuesta = await fetch('/api/turnos');
       const data = await respuesta.json();
 
       const hoy = new Date();
@@ -1851,7 +2029,7 @@
     } else {
       const p = turnosFuturos[0];
       box.innerHTML = `
-        <div style="background:linear-gradient(135deg,#e8f5ee 0%,#d1fae5 100%); border:2px solid var(--green); border-radius:14px; padding:16px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:relative;">
+        <div style="background:var(--green-light); border:2px solid var(--green); border-radius:14px; padding:16px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:relative;">
           <div style="background:var(--green); color:white; font-size:15px; padding:10px 14px; min-width:70px; border-radius:10px; font-weight:700; text-align:center;">${p.time}</div>
           <div style="flex:1;">
             <strong style="font-size:16px;">${p.date}</strong>
@@ -1907,10 +2085,10 @@
             }
           </div>
           <div class="turno-actions-row">
-            <button type="button" class="btn btn-outline" onclick="modificarTurno(0)" style="padding:6px 12px; font-size:12px; background:white;">✏️ Modificar / Trasladar</button>
+            <button type="button" class="btn btn-outline" onclick="modificarTurno(0)" style="padding:6px 12px; font-size:12px;">✏️ Modificar / Trasladar</button>
             <button type="button" class="btn btn-danger" onclick="cancelarTurno(0)" style="padding:6px 12px; font-size:12px;">🚫 Cancelar turno</button>
-            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px; background:white;">🖨 Imprimir</button>
-            <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()" style="padding:6px 12px; font-size:12px; background:white;">📄 Descargar PDF</button>
+            <button type="button" class="btn btn-outline" onclick="imprimirComprobanteTurno()" style="padding:6px 12px; font-size:12px;">🖨 Imprimir</button>
+            <button type="button" class="btn btn-outline" onclick="descargarPDFTurno()" style="padding:6px 12px; font-size:12px;">📄 Descargar PDF</button>
           </div>
         </div>
       `;
@@ -2020,7 +2198,7 @@
 
     const t = turnosFuturos[0];
     box.innerHTML = `
-      <div style="background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%); border:2px solid var(--green); border-radius:16px; padding:22px 20px;">
+      <div style="background:var(--green-light); border:2px solid var(--green); border-radius:16px; padding:22px 20px;">
         <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
           <div class="appt-time" style="background:var(--green); color:white; font-size:18px; padding:12px 16px; min-width:80px; border-radius:10px; font-weight:700; text-align:center;">${t.time}</div>
           <div class="appt-info">
@@ -2040,13 +2218,39 @@
   }
 
   // ============================================================
-  // CONFIRMAR ASISTENCIA
+  // CONFIRMAR ASISTENCIA (LÓGICA CON RESTRICCIÓN DE 48 HORAS)
   // ============================================================
   function confirmarAsistenciaBackend() {
     if (turnosFuturos.length === 0) return;
-    turnosFuturos[0].status = 'Confirmado';
-    turnosFuturos[0].cls = 'confirmed';
-    document.getElementById('statusOk').classList.add('show');
+
+    const turno = turnosFuturos[0];
+    const ahora = new Date();
+
+    let fechaTurnoStr = turno.iso || turno.date;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaTurnoStr)) {
+      const partes = fechaTurnoStr.split('/');
+      fechaTurnoStr = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    }
+
+    const horaTurnoStr = turno.time24 || turno.time || '00:00';
+    const fechaHoraTurno = new Date(`${fechaTurnoStr}T${horaTurnoStr}:00`);
+
+    const diferenciaMs = fechaHoraTurno - ahora;
+    const horasFaltantes = diferenciaMs / (1000 * 60 * 60);
+
+    if (horasFaltantes > 48) {
+      const diasAproximados = Math.floor(horasFaltantes / 24);
+      alert(`⚠️ Aún no podés confirmar la asistencia.\n\nFaltan aproximadamente ${diasAproximados} días para tu turno. La asistencia solo se puede confirmar dentro de las 48 horas previas al mismo.`);
+      showToast('La confirmación se habilita 48 hs antes del turno.');
+      return;
+    }
+
+    turno.status = 'Confirmado';
+    turno.cls = 'confirmed';
+
+    const statusOk = document.getElementById('statusOk');
+    if (statusOk) statusOk.classList.add('show');
+
     showToast('¡Asistencia confirmada con éxito!');
     renderMisTurnos();
     renderConfirmarTurno();
@@ -2159,7 +2363,7 @@
     }
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/turnos', {
+      const respuesta = await fetch('/api/turnos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
