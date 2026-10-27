@@ -44,13 +44,14 @@
     {
       "id": 13,
       "usuario": "43064423",
-      "password": "1234",
+      "password": "hola123",
       "rol": "paciente",
       "nombre": "Aaron Amuedo",
       "dni": "43064423",
       "obra": "Particular",
       "telefono": "3756586866",
-      "email": ""
+      "email": "",
+      "pass": "hola123"
     },
     {
       "id": 14,
