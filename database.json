@@ -89,13 +89,14 @@
     {
       "id": 17,
       "usuario": "34084883",
-      "password": "hola123",
+      "password": "comova",
       "rol": "paciente",
       "nombre": "Rodolfo Malconi",
       "dni": "34084883",
       "obra": "Particular",
       "telefono": "3795887234",
-      "email": ""
+      "email": "",
+      "pass": "comova"
     },
     {
       "id": 18,
