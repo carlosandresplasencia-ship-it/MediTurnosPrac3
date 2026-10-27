@@ -212,10 +212,10 @@
     <!-- FORMULARIO INICIAR SESIÓN -->
     <form id="formLogin">
       <div class="input-group">
-        <label>Usuario o DNI</label>
+        <label>DNI / Documento</label>
         <div class="input-wrapper">
-          <span class="input-icon">👤</span>
-          <input type="text" id="loginUsuario" placeholder="Ej: 43064423" required>
+          <span class="input-icon">🪪</span>
+          <input type="text" id="loginUsuario" placeholder="Ej: 43064423" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
       </div>
 
@@ -229,14 +229,22 @@
 
       <button type="submit" class="btn-submit">Acceder al Portal</button>
     </form>
-
+    
     <!-- FORMULARIO REGISTRO NUEVO PACIENTE -->
     <form id="formRegistro" style="display:none;">
       <div class="input-group">
-        <label>Nombre Completo</label>
+        <label>Nombre</label>
         <div class="input-wrapper">
           <span class="input-icon">👤</span>
-          <input type="text" id="regNombre" placeholder="Ej: Juan Pérez" required>
+          <input type="text" id="regNombre" placeholder="Ej: Juan" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Apellido</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input type="text" id="regApellido" placeholder="Ej: Pérez" required>
         </div>
       </div>
 
@@ -287,103 +295,6 @@
 </div>
 
 <script>
-  // Función para el frontend que se conecta con tu server.js
-  function switchTab(type) {
-    const fLogin = document.getElementById('formLogin');
-    const fReg = document.getElementById('formRegistro');
-    const tLogin = document.getElementById('btnTabLogin');
-    const tReg = document.getElementById('btnTabReg');
-    ocultarMensaje();
-
-    if (type === 'login') {
-      fLogin.style.display = 'block';
-      fReg.style.display = 'none';
-      tLogin.classList.add('active');
-      tReg.classList.remove('active');
-    } else {
-      fLogin.style.display = 'none';
-      fReg.style.display = 'block';
-      tReg.classList.add('active');
-      tLogin.classList.remove('active');
-    }
-  }
-
-  function mostrarMensaje(text, type) {
-    const box = document.getElementById('msgAlert');
-    box.textContent = text;
-    box.className = 'msg-box ' + type;
-    box.style.display = 'block';
-  }
-
-  function ocultarMensaje() {
-    const box = document.getElementById('msgAlert');
-    box.className = 'msg-box';
-    box.style.display = 'none';
-  }
-
-  // EVENTO: INICIAR SESIÓN CON BACKEND
-  document.getElementById('formLogin').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    ocultarMensaje();
-
-    const usuario = document.getElementById('loginUsuario').value.trim();
-    const password = document.getElementById('loginPass').value;
-
-    try {
-      const res = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, password, rol: 'paciente' })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify(data.usuario));
-        mostrarMensaje('¡Bienvenido/a! Redirigiendo...', 'success');
-        setTimeout(() => window.location.href = 'pacientes.html', 800);
-      } else {
-        mostrarMensaje('❌ ' + (data.mensaje || 'Credenciales incorrectas'), 'error');
-      }
-    } catch (err) {
-      mostrarMensaje('❌ Error de conexión con el backend (Verificá que Node esté corriendo).', 'error');
-    }
-  });
-
-  // EVENTO: REGISTRO DE PACIENTE NUEVO CON BACKEND
-  document.getElementById('formRegistro').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    ocultarMensaje();
-
-    const nombre = document.getElementById('regNombre').value.trim();
-    const dni = document.getElementById('regDni').value.trim();
-    const obra = document.getElementById('regObra').value;
-    const telefono = document.getElementById('regTel').value.trim();
-    const password = document.getElementById('regPass').value; // ESTO FALTABA CAPTURAR
-
-    try {
-      const res = await fetch('http://localhost:3000/api/pacientes', {   
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, dni, obra, telefono, password }) // AHORA ENVIAMOS LA CLAVE
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify(data.usuario));
-        mostrarMensaje('¡Cuenta creada con éxito! Redirigiendo...', 'success');
-        setTimeout(() => {
-          window.location.href = 'pacientes.html';
-        }, 1200);
-      } else {
-        mostrarMensaje('❌ ' + (data.mensaje || 'No se pudieron guardar los datos.'), 'error');
-      }
-    } catch (err) {
-      mostrarMensaje('❌ No se pudo conectar con el servidor backend.', 'error');
-    }
-  });
-
   function switchTab(type) {
     const fLogin = document.getElementById('formLogin');
     const fReg = document.getElementById('formRegistro');
@@ -444,11 +355,11 @@
         mostrarMensaje('¡Bienvenido/a! Redirigiendo...', 'success');
         setTimeout(() => window.location.href = 'pacientes.html', 800);
       } else {
-        mostrarMensaje(data.mensaje || 'DNI o contraseña incorrectos', 'error');
+        mostrarMensaje('❌ ' + (data.mensaje || 'Credenciales incorrectas'), 'error');
       }
     } catch (err) {
       console.error(err);
-      mostrarMensaje('Error de conexión con el servidor backend.', 'error');
+      mostrarMensaje('❌ Error de conexión con el servidor backend.', 'error');
     }
   });
 
@@ -458,6 +369,8 @@
     ocultarMensaje();
 
     const nombre = document.getElementById('regNombre').value.trim();
+    const apellido = document.getElementById('regApellido').value.trim();
+    const nombreCompleto = `${nombre} ${apellido}`.trim();
     const dni = document.getElementById('regDni').value.trim();
     const obra = document.getElementById('regObra').value;
     const telefono = document.getElementById('regTel').value.trim();
@@ -467,14 +380,14 @@
       const res = await fetch('/api/pacientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, dni, obra, telefono, password })
+        body: JSON.stringify({ nombre: nombreCompleto, dni, obra, telefono, password })
       });
 
       const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem('usuario_activo', JSON.stringify({
-          nombre: nombre,
+          nombre: nombreCompleto,
           dni: dni,
           obra: obra,
           telefono: telefono,
@@ -486,11 +399,11 @@
           window.location.href = 'pacientes.html';
         }, 1000);
       } else {
-        mostrarMensaje(data.mensaje || 'No se pudieron guardar los datos.', 'error');
+        mostrarMensaje('❌ ' + (data.mensaje || 'No se pudieron guardar los datos.'), 'error');
       }
     } catch (err) {
       console.error('Error de red:', err);
-      mostrarMensaje('Error de conexión con el servidor backend.', 'error');
+      mostrarMensaje('❌ Error de conexión con el servidor backend.', 'error');
     }
   });
 </script>

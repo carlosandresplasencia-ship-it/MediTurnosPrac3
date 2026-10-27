@@ -288,7 +288,6 @@
   }
   .form-group input[readonly] { opacity: 0.7; cursor: not-allowed; }
   .form-group textarea { resize: vertical; min-height: 70px; }
-  .form-hint { font-size: 12px; color: var(--text-soft); margin-top: 4px; }
   .form-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
 
   /* Botón Inteligente WhatsApp */
@@ -609,19 +608,19 @@
       <div class="modal-grid">
         <div class="modal-group">
           <label>Nombre <span class="req">*</span></label>
-          <input type="text" id="regNombre" required placeholder="Ej: Juan">
+          <input type="text" id="regNombre" readonly style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
         </div>
 
         <div class="modal-group">
           <label>Apellido <span class="req">*</span></label>
-          <input type="text" id="regApellido" required placeholder="Ej: Pérez">
+          <input type="text" id="regApellido" readonly style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
         </div>
 
         <div class="modal-group">
           <label>Tipo de Documento <span class="req">*</span></label>
           <select id="regTipoDoc" required>
             <option value="">Seleccionar...</option>
-            <option value="DNI">DNI</option>
+            <option value="DNI" selected>DNI</option>
             <option value="LC">LC</option>
             <option value="LE">LE</option>
             <option value="Pasaporte">Pasaporte</option>
@@ -630,7 +629,7 @@
 
         <div class="modal-group">
           <label>Número de Documento (8 dígitos) <span class="req">*</span></label>
-          <input type="text" id="regNumDoc" required placeholder="Ej: 32456789" maxlength="8" pattern="[0-9]{8}" title="Debe contener exactamente 8 números" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          <input type="text" id="regNumDoc" readonly style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
         </div>
 
         <div class="modal-group">
@@ -660,8 +659,7 @@
 
         <div class="modal-group">
           <label>Obra Social / Prepaga <span class="req">*</span></label>
-          <select id="regObraSocial" required onchange="evaluarObraSocialModal()">
-            <option value="">Seleccionar...</option>
+          <select id="regObraSocial" disabled style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
             <option value="Particular">Particular</option>
             <option value="OSDE">OSDE</option>
             <option value="Swiss Medical">Swiss Medical</option>
@@ -685,7 +683,7 @@
 
         <div class="modal-group">
           <label>Teléfono <span class="req">*</span></label>
-          <input type="tel" id="regTelefono" required placeholder="Ej: 11 4567-8900" oninput="sincronizarTelefonoModal()">
+          <input type="tel" id="regTelefono" readonly style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
         </div>
 
         <div class="modal-group">
@@ -1212,7 +1210,7 @@
     if (modal) modal.classList.remove('active');
   }
 
- async function guardarNuevaPassword(event) {
+  async function guardarNuevaPassword(event) {
     event.preventDefault();
 
     const passActual = document.getElementById('passActual').value;
@@ -1545,28 +1543,33 @@
     if (registradoLocal === 'true' && datosLocales) {
       actualizarVistaDatos(datosLocales);
     } else {
+      // Si es la primera vez, mostramos el modal obligatorio
       const modal = document.getElementById('modalRegistroObligatorio');
       if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
+      // Autocompletar y bloquear datos del registro previo
       const inputNombre = document.getElementById('regNombre');
+      const inputApellido = document.getElementById('regApellido');
       const inputDni = document.getElementById('regNumDoc');
       const inputTel = document.getElementById('regTelefono');
       const inputObra = document.getElementById('regObraSocial');
 
-      if (inputNombre && paciente.nombre !== 'Paciente') {
+      // Separar Nombre y Apellido si vienen juntos
+      if (paciente.nombre && paciente.nombre !== 'Paciente') {
         const partesNombre = paciente.nombre.trim().split(/\s+/);
-        inputNombre.value = partesNombre[0] || '';
-        const inputApellido = document.getElementById('regApellido');
-        if (inputApellido && partesNombre.length > 1) {
-          inputApellido.value = partesNombre.slice(1).join(' ');
-        }
+        if (inputNombre) inputNombre.value = partesNombre[0] || '';
+        if (inputApellido) inputApellido.value = partesNombre.slice(1).join(' ') || partesNombre[0];
       }
+
       if (inputDni) inputDni.value = paciente.dni;
-      if (inputTel && paciente.telefono) inputTel.value = paciente.telefono;
-      if (inputObra && paciente.obra) inputObra.value = paciente.obra;
+      if (inputTel) inputTel.value = paciente.telefono;
+      if (inputObra) {
+        inputObra.value = paciente.obra || 'Particular';
+        evaluarObraSocialModal();
+      }
     }
   }
 
@@ -1592,7 +1595,7 @@
       sexo: document.getElementById('regSexo').value,
       fechaNacimiento: document.getElementById('regFechaNac').value,
       email: emailInput,
-      obraSocial: document.getElementById('regObraSocial').value,
+      obraSocial: document.getElementById('regObraSocial').value || paciente.obra,
       plan: document.getElementById('regPlan').value.trim(),
       numAfiliado: document.getElementById('regNumAfiliado').value.trim(),
       telefono: document.getElementById('regTelefono').value.trim(),
@@ -1820,12 +1823,37 @@
   }
 
   // ============================================================
-  // ACCIONES DE CANCELACIÓN Y TRASLADO/MODIFICACIÓN
+  // CANCELAR TURNO (CON RESTRICCIÓN DE 24 HORAS PREVIAS)
   // ============================================================
   async function cancelarTurno(index) {
-    if (!confirm('¿Estás seguro de que querés cancelar este turno?')) return;
-
     const turnoACancelar = turnosFuturos[index];
+    if (!turnoACancelar) return;
+
+    // 1. Obtener la fecha y hora actual
+    const ahora = new Date();
+
+    // 2. Convertir la fecha y hora del turno a un objeto Date
+    let fechaTurnoStr = turnoACancelar.iso || turnoACancelar.date;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaTurnoStr)) {
+      const partes = fechaTurnoStr.split('/');
+      fechaTurnoStr = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    }
+
+    const horaTurnoStr = turnoACancelar.time24 || turnoACancelar.time || '00:00';
+    const fechaHoraTurno = new Date(`${fechaTurnoStr}T${horaTurnoStr}:00`);
+
+    // 3. Calcular las horas restantes hasta el turno
+    const diferenciaMs = fechaHoraTurno - ahora;
+    const horasFaltantes = diferenciaMs / (1000 * 60 * 60);
+
+    // 4. Validar si faltan menos de 24 horas para el turno
+    if (horasFaltantes < 24) {
+      alert('⚠️ No es posible cancelar el turno.\n\nLas cancelaciones solo se permiten con al menos 24 horas de anticipación. Por favor, comunicate directamente con el consultorio.');
+      showToast('Cancelación no permitida (menos de 24 hs restantes)');
+      return;
+    }
+
+    if (!confirm(`¿Estás seguro de que querés cancelar tu turno del ${turnoACancelar.date} a las ${turnoACancelar.time} hs?`)) return;
 
     try {
       await fetch('/api/turnos/cancelar', {

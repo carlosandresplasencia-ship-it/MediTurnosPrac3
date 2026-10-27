@@ -17,7 +17,6 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    // Genera un nombre único con timestamp para evitar colisiones
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     cb(null, `estudio-${uniqueSuffix}${ext}`);
@@ -41,12 +40,12 @@ app.use(express.static(__dirname));
 // ========== BASE DE DATOS SIMPLE (JSON) ==========
 const DB_FILE = path.join(__dirname, 'database.json');
 
-// Usuarios por defecto consolidados (sin duplicados redundantes)
 const DEFAULT_USERS = [
   {
     id: 1,
     usuario: 'admin',
     password: '1234',
+    pass: '1234',
     rol: 'admin',
     nombre: 'Administrador Master',
     email: 'admin@mediturnos.com'
@@ -55,6 +54,7 @@ const DEFAULT_USERS = [
     id: 2,
     usuario: 'secretaria',
     password: '1234',
+    pass: '1234',
     rol: 'secretaria',
     nombre: 'Secretaría',
     email: 'secretaria@mediturnos.com'
@@ -63,6 +63,7 @@ const DEFAULT_USERS = [
     id: 3,
     usuario: 'doctora',
     password: '1234',
+    pass: '1234',
     rol: 'profesional',
     nombre: 'Dra. María González',
     especialidad: 'Dermatología',
@@ -73,6 +74,7 @@ const DEFAULT_USERS = [
     id: 5,
     usuario: 'paciente',
     password: '1234',
+    pass: '1234',
     rol: 'paciente',
     nombre: 'Juan Pérez',
     dni: '32456789',
@@ -82,7 +84,6 @@ const DEFAULT_USERS = [
   }
 ];
 
-// Cargar o crear base de datos
 function loadDB() {
   if (fs.existsSync(DB_FILE)) {
     try {
@@ -130,8 +131,8 @@ function loadDB() {
   return db;
 }
 
-function saveDB(db) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
+function saveDB(dbData) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(dbData, null, 2), 'utf8');
 }
 
 let db = loadDB();
@@ -166,34 +167,32 @@ app.post('/api/datos', (req, res) => {
   res.json({ success: true, message: 'Datos guardados correctamente' });
 });
 
-
-// LOGIN
-app.post('/api/login', (req, res) => {
-  const { usuario, password, rol } = req.body;
 // ========== RUTAS API TRADICIONALES ==========
 
-// LOGIN (Soporta /api/login y alias /api/pacientes/login)
+// LOGIN POR USUARIO / DNI
 const handleLogin = (req, res) => {
-  const usuario = req.body.usuario || req.body.dni;
+  const usuarioInput = (req.body.usuario || req.body.dni || '').trim().toLowerCase();
   const password = req.body.password;
   const rol = req.body.rol;
 
-
-  if (!usuario || !password) {
-    return res.status(400).json({ ok: false, mensaje: 'Usuario y contraseña son obligatorios' });
+  if (!usuarioInput || !password) {
+    return res.status(400).json({ ok: false, mensaje: 'Usuario/DNI y contraseña son obligatorios' });
   }
 
-  const user = db.usuarios.find(u =>
-    (u.usuario.toLowerCase() === usuario.toLowerCase() || u.dni === usuario) &&
-    u.password === password &&
-    (!rol || u.rol === rol || (rol === 'profesional' && u.rol === 'profesional'))
-  );
+  const user = db.usuarios.find(u => {
+    const coincideUsuario = u.usuario && u.usuario.toString().toLowerCase() === usuarioInput;
+    const coincideDni = u.dni && u.dni.toString().toLowerCase() === usuarioInput;
+    const coincideClave = (u.password === password || u.pass === password);
+    const coincideRol = !rol || u.rol === rol || (rol === 'profesional' && u.rol === 'profesional');
+
+    return (coincideUsuario || coincideDni) && coincideClave && coincideRol;
+  });
 
   if (!user) {
     return res.status(401).json({ ok: false, mensaje: 'Credenciales incorrectas' });
   }
 
-  const { password: _, ...usuarioSinPass } = user;
+  const { password: _, pass: __, ...usuarioSinPass } = user;
   res.json({
     ok: true,
     mensaje: 'Login exitoso',
@@ -207,6 +206,39 @@ const handleLogin = (req, res) => {
 app.post('/api/login', handleLogin);
 app.post('/api/pacientes/login', handleLogin);
 
+// CAMBIAR CONTRASEÑA DE PACIENTES
+app.post('/api/pacientes/cambiar-password', (req, res) => {
+  const { dni, passActual, passNueva } = req.body;
+
+  if (!dni || !passActual || !passNueva) {
+    return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
+  }
+
+  const dniStr = dni.toString().toLowerCase();
+
+  const usuarioEncontrado = db.usuarios.find(u => 
+    (u.dni && u.dni.toString().toLowerCase() === dniStr) || 
+    (u.usuario && u.usuario.toString().toLowerCase() === dniStr)
+  );
+
+  if (!usuarioEncontrado) {
+    return res.status(404).json({ mensaje: 'Usuario no encontrado en el servidor.' });
+  }
+
+  const claveGuardada = usuarioEncontrado.password || usuarioEncontrado.pass;
+  if (claveGuardada !== passActual) {
+    return res.status(400).json({ mensaje: 'La contraseña actual es incorrecta.' });
+  }
+
+  usuarioEncontrado.password = passNueva;
+  usuarioEncontrado.pass = passNueva;
+
+  saveDB(db);
+
+  console.log(`[OK] Contraseña actualizada correctamente para el DNI: ${dni}`);
+  return res.status(200).json({ mensaje: 'Contraseña actualizada con éxito.' });
+});
+
 // REGISTRO BÁSICO DE PACIENTE
 app.post('/api/pacientes', (req, res) => {
   const { nombre, dni, obra, telefono, password } = req.body;
@@ -215,16 +247,22 @@ app.post('/api/pacientes', (req, res) => {
     return res.status(400).json({ ok: false, mensaje: 'Nombre y DNI son obligatorios' });
   }
 
-  const existe = db.usuarios.find(u => u.dni === dni || u.usuario === dni);
+  const existe = db.usuarios.find(u => 
+    (u.dni && u.dni.toString() === dni.toString()) || 
+    (u.usuario && u.usuario.toString() === dni.toString())
+  );
+
   if (existe) {
-    return res.status(400).json({ ok: false, mensaje: 'Ya existe un paciente registrado con ese DNI' });
+    return res.status(400).json({ ok: false, mensaje: 'Ya existe un usuario registrado con ese DNI' });
   }
 
   const nuevoId = db.usuarios.length ? Math.max(...db.usuarios.map(u => u.id)) + 1 : 1;
+  
   const nuevoUsuario = {
     id: nuevoId,
     usuario: dni,
     password: password || '1234',
+    pass: password || '1234',
     rol: 'paciente',
     nombre,
     dni,
@@ -242,10 +280,11 @@ app.post('/api/pacientes', (req, res) => {
     telefono: telefono || '',
     estado: 'Habilitado'
   });
+
   saveDB(db);
 
-  const { password: _, ...sinPass } = nuevoUsuario;
-  res.status(201).json({ ok: true, mensaje: 'Paciente registrado', usuario: sinPass });
+  const { password: _, pass: __, ...sinPass } = nuevoUsuario;
+  res.status(201).json({ ok: true, mensaje: 'Paciente registrado correctamente', usuario: sinPass });
 });
 
 // REGISTRO COMPLETO / MODIFICACIÓN DE PACIENTE
@@ -333,7 +372,7 @@ app.delete('/api/hc/limpiar-todas', (req, res) => {
 
 // LISTAR USUARIOS
 app.get('/api/usuarios', (req, res) => {
-  const usuariosSinPass = db.usuarios.map(({ password, ...u }) => u);
+  const usuariosSinPass = db.usuarios.map(({ password, pass, ...u }) => u);
   res.json(usuariosSinPass);
 });
 
@@ -351,13 +390,14 @@ app.post('/api/usuarios', (req, res) => {
     id: db.usuarios.length ? Math.max(...db.usuarios.map(u => u.id)) + 1 : 1,
     usuario,
     password,
+    pass: password,
     rol,
     nombre: nombre || usuario
   };
   db.usuarios.push(nuevo);
   saveDB(db);
 
-  const { password: _, ...sinPass } = nuevo;
+  const { password: _, pass: __, ...sinPass } = nuevo;
   res.status(201).json(sinPass);
 });
 
@@ -377,39 +417,4 @@ app.listen(PORT, () => {
   console.log('   PACIENTE   →   usuario: paciente (o por DNI)');
   console.log('---------------------------------------------');
   console.log('');
-});
-app.post('/api/pacientes/cambiar-password', (req, res) => {
-  const { dni, passActual, passNueva } = req.body;
-
-  if (!dni || !passActual || !passNueva) {
-    return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
-  }
-
-  // 1. Obtener la lista de usuarios (busca en 'usuarios' o 'pacientes' según cómo se llame tu arreglo)
-  const lista = (typeof usuarios !== 'undefined' ? usuarios : (typeof pacientes !== 'undefined' ? pacientes : []));
-
-  // 2. Buscar al usuario por DNI o nombre de usuario
-  const usuarioEncontrado = lista.find(u => 
-    (u.dni && u.dni.toString() === dni.toString()) || 
-    (u.usuario && u.usuario.toString() === dni.toString())
-  );
-
-  if (!usuarioEncontrado) {
-    return res.status(404).json({ mensaje: 'Usuario no encontrado en el servidor.' });
-  }
-
-  // 3. Obtener la contraseña guardada en el objeto (sea u.password o u.pass)
-  const claveGuardada = usuarioEncontrado.password || usuarioEncontrado.pass;
-
-  // 4. Comparar contraseñas
-  if (claveGuardada !== passActual) {
-    return res.status(400).json({ mensaje: 'La contraseña actual es incorrecta.' });
-  }
-
-  // 5. Actualizar la contraseña en todas las propiedades posibles
-  usuarioEncontrado.password = passNueva;
-  usuarioEncontrado.pass = passNueva;
-
-  console.log(`[OK] Contraseña actualizada correctamente para el DNI: ${dni}`);
-  return res.status(200).json({ mensaje: 'Contraseña actualizada con éxito.' });
 });
