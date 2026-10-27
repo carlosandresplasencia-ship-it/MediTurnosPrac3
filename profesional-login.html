@@ -122,15 +122,30 @@
     font-weight: 600;
   }
   .back-link:hover { text-decoration: underline; }
-  .hint {
+  .forgot-link {
+    display: block;
+    text-align: right;
     font-size: 12px;
-    color: #5a6b7a;
-    text-align: center;
-    margin-top: 14px;
-    background: #e8f1fa;
-    padding: 8px;
-    border-radius: 8px;
+    color: #1a5a9c;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 14px;
   }
+  .forgot-link:hover { text-decoration: underline; }
+  .btn-secondary {
+    width: 100%;
+    padding: 10px;
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: #cbd5e1; }
 </style>
 </head>
 <body>
@@ -142,6 +157,8 @@
   </div>
   <div class="auth-body">
     <div id="msgAlert" class="msg-box"></div>
+
+    <!-- Formulario de Login -->
     <form id="formLogin">
       <div class="input-group">
         <label>DNI</label>
@@ -157,65 +174,93 @@
           <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
         </div>
       </div>
+      <a href="#" id="btnForgot" class="forgot-link">¿Olvidaste tu contraseña?</a>
       <button type="submit" class="btn-submit">Ingresar al Consultorio</button>
     </form>
-    <div class="hint">Ingresá con el <b>DNI</b> y la <b>contraseña</b> que te enviaron por correo.<br>
-      (Usuario de emergencia: DNI <b>doctora</b> · Clave <b>1234</b>)</div>
+
+    <!-- Formulario de Recuperación -->
+    <form id="formRecover" style="display: none;">
+      <p style="font-size: 13px; color: #4b5563; margin-bottom: 14px; text-align: center;">
+        Ingresá tu DNI y tu Correo Electrónico para enviarte una clave provisoria (válida por 3 días).
+      </p>
+      <div class="input-group">
+        <label>DNI</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🩺</span>
+          <input type="text" id="recoverDni" placeholder="Ej: 30123456" required>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="recoverEmail" placeholder="correo@ejemplo.com" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Enviar Contraseña Provisoria</button>
+      <button type="button" id="btnCancelRecover" class="btn-secondary">Volver al Login</button>
+    </form>
+
     <a href="index.html" class="back-link">← Volver al Menú Principal</a>
   </div>
 </div>
 <script>
-  
-  document.getElementById('formLogin').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const box = document.getElementById('msgAlert');
+const formLogin = document.getElementById('formLogin');
+  const formRecover = document.getElementById('formRecover');
+  const btnForgot = document.getElementById('btnForgot');
+  const btnCancelRecover = document.getElementById('btnCancelRecover');
+  const box = document.getElementById('msgAlert');
+
+  function ocultarAlerta() {
     box.style.display = 'none';
     box.className = 'msg-box';
+  }
 
-    const usuario = document.getElementById('loginDni').value.trim();
-    const password = document.getElementById('loginPass').value;
-
-    try {
-      const res = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, password, rol: 'profesional' })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('usuario_activo', JSON.stringify(data.usuario));
-        box.textContent = '¡Bienvenida/o! Redirigiendo...';
-        box.className = 'msg-box success';
-        setTimeout(() => window.location.href = 'profesionales.html', 700);
-      } else {
-        box.innerHTML = '❌ ' + (data.mensaje || 'DNI o contraseña incorrectos');
-        box.className = 'msg-box error';
-      }
-    } catch (err) {
-      box.innerHTML = '❌ Error de conexión con el backend.';
-      box.className = 'msg-box error';
-    }
+  // Alternar entre login y recuperación
+  btnForgot.addEventListener('click', function(e) {
+    e.preventDefault();
+    ocultarAlerta();
+    formLogin.style.display = 'none';
+    formRecover.style.display = 'block';
   });
 
-  document.getElementById('formLogin').addEventListener('submit', function(e) {
+  btnCancelRecover.addEventListener('click', function() {
+    ocultarAlerta();
+    formRecover.style.display = 'none';
+    formLogin.style.display = 'block';
+  });
+
+  // Login
+  formLogin.addEventListener('submit', function(e) {
     e.preventDefault();
-    const box = document.getElementById('msgAlert');
-    box.style.display = 'none';
-    box.className = 'msg-box';
+    ocultarAlerta();
 
     const dniIngresado = document.getElementById('loginDni').value.trim();
     const passwordIngresado = document.getElementById('loginPass').value;
 
-    // 1. Lista de usuarios creados desde permisos.html
     const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
+    const ahora = Date.now();
 
-    // Buscamos por DNI + contraseña
-    const usuarioValido = listaUsuarios.find(u => 
-      String(u.dni) === dniIngresado && 
-      u.password === passwordIngresado
-    );
+    // Validar por contraseña normal o por contraseña provisoria válida
+    const idxUsuario = listaUsuarios.findIndex(u => String(u.dni) === dniIngresado);
+    let usuarioValido = null;
+    let esPasswordProvisorio = false;
+
+    if (idxUsuario !== -1) {
+      const u = listaUsuarios[idxUsuario];
+      if (u.password === passwordIngresado) {
+        usuarioValido = u;
+      } else if (u.tempPassword && u.tempPassword === passwordIngresado) {
+        if (u.tempPasswordExpires && ahora <= u.tempPasswordExpires) {
+          usuarioValido = u;
+          esPasswordProvisorio = true;
+        } else {
+          box.innerHTML = '❌ La contraseña provisoria ha expirado (duración: 3 días). Solicita una nueva.';
+          box.className = 'msg-box error';
+          return;
+        }
+      }
+    }
 
     if (usuarioValido) {
       // Solo permitimos roles de profesional / admin
@@ -229,16 +274,17 @@
       // Guardamos el usuario activo
       localStorage.setItem('usuario_activo', JSON.stringify({
         ...usuarioValido,
-        rol: 'profesional'
+        rol: 'profesional',
+        debeCambiarPassword: esPasswordProvisorio
       }));
 
-      box.textContent = '¡Bienvenida/o! Redirigiendo...';
+      box.textContent = esPasswordProvisorio ? '¡Ingreso correcto con clave provisoria! Redirigiendo...' : '¡Bienvenida/o! Redirigiendo...';
       box.className = 'msg-box success';
       setTimeout(() => window.location.href = 'profesionales.html', 700);
       return;
     }
 
-    // 2. Usuario de emergencia (modo local)
+    // Usuario de emergencia (modo local)
     if ((dniIngresado === 'doctora' || dniIngresado === 'profesional' || dniIngresado === 'maria') && passwordIngresado === '1234') {
       localStorage.setItem('usuario_activo', JSON.stringify({
         usuario: 'Dra. María González',
@@ -253,7 +299,7 @@
       return;
     }
 
-    // 3. Credenciales incorrectas
+    // Credenciales incorrectas
     box.innerHTML = '❌ DNI o contraseña incorrectos';
     box.className = 'msg-box error';
   });

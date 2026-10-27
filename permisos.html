@@ -361,7 +361,10 @@ body.dark-mode hr {
       <h1 style="margin:0; font-size: 20px; color:#1a7a4c;">Panel de Permisos y Módulos del Sistema</h1>
       <p style="margin:4px 0 0 0; font-size:13px; color:#5a6b60;">Control centralizado sin tocar el código. Al activar cada módulo se despliega la consola de permisos.</p>
     </div>
-    <button class="btn btn-light" style="border:1px solid #b7d4c4;" onclick="resetearConfiguracion()">🔄 Restablecer Permisos</button>
+    <div style="display:flex; gap:12px;">
+      <button class="btn btn-light" style="border:1px solid #0284c7; color:#0284c7; font-weight:bold;" onclick="abrirModalTesting()">🔑 Datos de Testing</button>
+      <button class="btn btn-light" style="border:1px solid #b7d4c4;" onclick="resetearConfiguracion()">🔄 Restablecer Permisos</button>
+    </div>
   </div>
 
   <div class="permisos-columns">
@@ -1244,7 +1247,26 @@ body.dark-mode hr {
 </div>
 
 <div class="toast" id="toast"></div>
-
+<!-- MODAL DE CREDENCIALES DE TESTING -->
+<div class="modal-backdrop" id="modalTesting">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="margin-top:0; color:#1a7a4c;">🔑 Credenciales de Prueba</h3>
+      <button onclick="document.getElementById('modalTesting').classList.remove('show')" style="background:none; border:none; font-size:24px; cursor:pointer; color:#1a7a4c;">&times;</button>
+    </div>
+    <p style="font-size:13px; color:#5a6b60; margin-bottom:15px; border-bottom:1px solid #e5ebe8; padding-bottom:10px;">
+      Todas las cuentas de prueba utilizan la misma clave: <b>1234</b>
+    </p>
+    
+    <div style="background:#f8faf9; padding:12px; border-radius:8px; border:1px solid #b7d4c4; font-size:14px;">
+      <div style="margin-bottom:8px;"><strong>🛡️ Admin:</strong> <span style="font-family:monospace; background:#e5ebe8; padding:2px 6px; border-radius:4px;">admin</span></div>
+      <div style="margin-bottom:8px;"><strong>📋 Secretaría:</strong> <span style="font-family:monospace; background:#e5ebe8; padding:2px 6px; border-radius:4px;">secretaria</span></div>
+      <div style="margin-bottom:8px;"><strong>🩺 Doctora:</strong> <span style="font-family:monospace; background:#e5ebe8; padding:2px 6px; border-radius:4px;">doctora</span></div>
+      <div><strong>👤 Paciente:</strong> <span style="font-family:monospace; background:#e5ebe8; padding:2px 6px; border-radius:4px;">paciente</span> o <span style="font-family:monospace; background:#e5ebe8; padding:2px 6px; border-radius:4px;">32456789</span></div>
+    </div>
+    <button class="btn btn-green" style="width:100%; margin-top:16px;" onclick="document.getElementById('modalTesting').classList.remove('show')">Cerrar</button>
+  </div>
+</div>
 <script>
 const devConfig = JSON.parse(localStorage.getItem('medi_dev_config')) || {};
 
@@ -1389,7 +1411,9 @@ function updatePermiso(key) {
 function abrirModalUsuario() {
   document.getElementById('modalUsuario').classList.add('show');
 }
-
+function abrirModalTesting() {
+  document.getElementById('modalTesting').classList.add('show');
+}
 function cerrarModalUsuario() {
   document.getElementById('modalUsuario').classList.remove('show');
   document.getElementById('newUsername').value = '';
