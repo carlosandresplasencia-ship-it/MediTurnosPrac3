@@ -182,7 +182,7 @@
   .back-link {
     display: block;
     text-align: center;
-    margin-top: 16px;
+    margin-top: 18px;
     font-size: 13px;
     color: #1a7a4c;
     text-decoration: none;
@@ -190,6 +190,34 @@
   }
 
   .back-link:hover { text-decoration: underline; }
+
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: #1a7a4c;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .forgot-link:hover { text-decoration: underline; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 10px;
+    background: #e2e8f0;
+    color: #334155;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { background: #cbd5e1; }
 </style>
 </head>
 <body>
@@ -215,7 +243,7 @@
         <label>DNI / Documento</label>
         <div class="input-wrapper">
           <span class="input-icon">🪪</span>
-          <input type="text" id="loginUsuario" placeholder="Ej: 43064423" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          <input type="text" id="loginUsuario" placeholder="Ej: 43064423" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required autocomplete="username">
         </div>
       </div>
 
@@ -223,11 +251,35 @@
         <label>Contraseña</label>
         <div class="input-wrapper">
           <span class="input-icon">🔒</span>
-          <input type="password" id="loginPass" placeholder="••••••••" required>
+          <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
         </div>
       </div>
 
+      <a href="#" id="btnForgot" class="forgot-link">¿Olvidaste tu contraseña?</a>
       <button type="submit" class="btn-submit">Acceder al Portal</button>
+    </form>
+
+    <!-- FORMULARIO DE RECUPERACIÓN -->
+    <form id="formRecover" style="display: none;">
+      <p style="font-size: 13px; color: #4b5563; margin-bottom: 14px; text-align: center;">
+        Ingresá tu DNI y tu Correo Electrónico para enviarte una clave provisoria (válida por 3 días).
+      </p>
+      <div class="input-group">
+        <label>DNI</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🪪</span>
+          <input type="text" id="recoverDni" placeholder="Ej: 43064423" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="recoverEmail" placeholder="correo@ejemplo.com" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Enviar Contraseña Provisoria</button>
+      <button type="button" id="btnCancelRecover" class="btn-secondary">Volver al Login</button>
     </form>
     
     <!-- FORMULARIO REGISTRO NUEVO PACIENTE -->
@@ -295,21 +347,26 @@
 </div>
 
 <script>
+  const formLogin = document.getElementById('formLogin');
+  const formReg = document.getElementById('formRegistro');
+  const formRecover = document.getElementById('formRecover');
+  const btnForgot = document.getElementById('btnForgot');
+  const btnCancelRecover = document.getElementById('btnCancelRecover');
+  const tLogin = document.getElementById('btnTabLogin');
+  const tReg = document.getElementById('btnTabReg');
+
   function switchTab(type) {
-    const fLogin = document.getElementById('formLogin');
-    const fReg = document.getElementById('formRegistro');
-    const tLogin = document.getElementById('btnTabLogin');
-    const tReg = document.getElementById('btnTabReg');
     ocultarMensaje();
+    formRecover.style.display = 'none';
 
     if (type === 'login') {
-      fLogin.style.display = 'block';
-      fReg.style.display = 'none';
+      formLogin.style.display = 'block';
+      formReg.style.display = 'none';
       tLogin.classList.add('active');
       tReg.classList.remove('active');
     } else {
-      fLogin.style.display = 'none';
-      fReg.style.display = 'block';
+      formLogin.style.display = 'none';
+      formReg.style.display = 'block';
       tReg.classList.add('active');
       tLogin.classList.remove('active');
     }
@@ -328,19 +385,72 @@
     box.style.display = 'none';
   }
 
-  // EVENTO: INICIAR SESIÓN
-  document.getElementById('formLogin').addEventListener('submit', async function(e) {
+  // Alternar a formulario de recuperación
+  btnForgot.addEventListener('click', function(e) {
+    e.preventDefault();
+    ocultarMensaje();
+    formLogin.style.display = 'none';
+    formReg.style.display = 'none';
+    tLogin.classList.remove('active');
+    tReg.classList.remove('active');
+    formRecover.style.display = 'block';
+  });
+
+  btnCancelRecover.addEventListener('click', function() {
+    ocultarMensaje();
+    formRecover.style.display = 'none';
+    formLogin.style.display = 'block';
+    tLogin.classList.add('active');
+  });
+
+  // EVENTO: INICIAR SESIÓN (Soporta localStorage local con validación de clave de 3 días + Backend)
+  formLogin.addEventListener('submit', async function(e) {
     e.preventDefault();
     ocultarMensaje();
 
-    const usuario = document.getElementById('loginUsuario').value.trim();
-    const password = document.getElementById('loginPass').value;
+    const dniIngresado = document.getElementById('loginUsuario').value.trim();
+    const passwordIngresado = document.getElementById('loginPass').value;
+
+    const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
+    const ahora = Date.now();
+
+    const idxUsuario = listaUsuarios.findIndex(u => String(u.dni) === dniIngresado);
+    let usuarioValido = null;
+    let esPasswordProvisorio = false;
+
+    if (idxUsuario !== -1) {
+      const u = listaUsuarios[idxUsuario];
+      if (u.password === passwordIngresado) {
+        usuarioValido = u;
+      } else if (u.tempPassword && u.tempPassword === passwordIngresado) {
+        if (u.tempPasswordExpires && ahora <= u.tempPasswordExpires) {
+          usuarioValido = u;
+          esPasswordProvisorio = true;
+        } else {
+          mostrarMensaje('❌ La contraseña provisoria ha expirado (duración: 3 días). Solicita una nueva.', 'error');
+          return;
+        }
+      }
+    }
+
+    if (usuarioValido) {
+      const rol = (usuarioValido.rol || 'paciente').toLowerCase();
+      localStorage.setItem('usuario_activo', JSON.stringify({
+        ...usuarioValido,
+        rol: rol,
+        debeCambiarPassword: esPasswordProvisorio
+      }));
+
+      mostrarMensaje(esPasswordProvisorio ? '¡Ingreso correcto con clave provisoria! Redirigiendo...' : '¡Bienvenida/o! Redirigiendo...', 'success');
+      setTimeout(() => window.location.href = 'pacientes.html', 700);
+      return;
+    }
 
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, password, rol: 'paciente' })
+        body: JSON.stringify({ usuario: dniIngresado, password: passwordIngresado, rol: 'paciente' })
       });
 
       const data = await res.json();
@@ -359,7 +469,48 @@
       }
     } catch (err) {
       console.error(err);
-      mostrarMensaje('❌ Error de conexión con el servidor backend.', 'error');
+      mostrarMensaje('❌ DNI o contraseña incorrectos', 'error');
+    }
+  });
+
+  // EVENTO: RECUPERACIÓN DE CONTRASEÑA
+  formRecover.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    ocultarMensaje();
+
+    const dni = document.getElementById('recoverDni').value.trim();
+    const email = document.getElementById('recoverEmail').value.trim();
+
+    try {
+      const response = await fetch('/api/recuperar-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dni, email })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ok) {
+        mostrarMensaje(`📧 ${data.mensaje} Revisá tu bandeja de entrada.`, 'success');
+        document.getElementById('recoverDni').value = '';
+        document.getElementById('recoverEmail').value = '';
+      } else {
+        mostrarMensaje('❌ ' + (data.mensaje || 'No se encontró el usuario o el correo no coincide.'), 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Simulación local si el backend no tiene el endpoint activo aún
+      const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
+      const idx = listaUsuarios.findIndex(u => String(u.dni) === dni);
+      if (idx !== -1) {
+        const tempPass = Math.random().toString(36).slice(-6);
+        listaUsuarios[idx].tempPassword = tempPass;
+        listaUsuarios[idx].tempPasswordExpires = Date.now() + (3 * 24 * 60 * 60 * 1000); // 3 días
+        localStorage.setItem('medi_usuarios', JSON.stringify(listaUsuarios));
+        mostrarMensaje(`📧 Contraseña provisoria generada (Simulación local): ${tempPass} (Válida por 3 días)`, 'success');
+      } else {
+        mostrarMensaje('❌ No se encontró ningún paciente registrado con ese DNI.', 'error');
+      }
     }
   });
 
@@ -375,6 +526,13 @@
     const obra = document.getElementById('regObra').value;
     const telefono = document.getElementById('regTel').value.trim();
     const password = document.getElementById('regPass').value;
+
+    // Guardar también localmente para que la recuperación funcione offline si usa localStorage
+    const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
+    if (!listaUsuarios.some(u => String(u.dni) === dni)) {
+      listaUsuarios.push({ dni, password, nombre: nombreCompleto, obra, telefono, rol: 'paciente' });
+      localStorage.setItem('medi_usuarios', JSON.stringify(listaUsuarios));
+    }
 
     try {
       const res = await fetch('/api/pacientes', {
@@ -402,8 +560,12 @@
         mostrarMensaje('❌ ' + (data.mensaje || 'No se pudieron guardar los datos.'), 'error');
       }
     } catch (err) {
-      console.error('Error de red:', err);
-      mostrarMensaje('❌ Error de conexión con el servidor backend.', 'error');
+      // Si falla la red pero se registró en localStorage
+      localStorage.setItem('usuario_activo', JSON.stringify({
+        nombre: nombreCompleto, dni, obra, telefono, rol: 'paciente'
+      }));
+      mostrarMensaje('¡Cuenta creada localmente! Redirigiendo...', 'success');
+      setTimeout(() => window.location.href = 'pacientes.html', 1000);
     }
   });
 </script>
