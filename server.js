@@ -1,10 +1,30 @@
+require('dotenv').config(); // <-- CARGA LAS VARIABLES DEL ARCHIVO .env
+
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const cors = require('cors');
+const nodemailer = require('nodemailer'); // <-- NUEVO PARA CORREOS
 
 const app = express();
+
+// ==========================================
+// CONFIGURACIÓN DE NOTIFICACIONES (EMAIL)
+// ==========================================
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASS = process.env.GMAIL_APP_PASS;
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: GMAIL_USER,
+    pass: GMAIL_APP_PASS
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 // ========== CONFIGURACIÓN DE MULTER (ALMACENAMIENTO DE ARCHIVOS) ==========
@@ -239,6 +259,78 @@ app.post('/api/pacientes/cambiar-password', (req, res) => {
   return res.status(200).json({ mensaje: 'Contraseña actualizada con éxito.' });
 });
 
+// RECUPERAR CONTRASEÑA (ENVÍO DE EMAIL PROVISORIO)
+app.post('/api/recuperar-password', async (req, res) => {
+  const { dni, email } = req.body;
+  
+  if (!dni || !email) {
+    return res.status(400).json({ mensaje: 'DNI y Correo Electrónico son obligatorios.' });
+  }
+
+  const dniStr = dni.toString().toLowerCase();
+
+  // 1. Buscar si el usuario existe
+  const usuario = db.usuarios.find(u => 
+    (u.dni && u.dni.toString().toLowerCase() === dniStr) || 
+    (u.usuario && u.usuario.toString().toLowerCase() === dniStr)
+  );
+
+  if (!usuario) {
+    return res.status(404).json({ mensaje: 'No se encontró un paciente registrado con ese DNI.' });
+  }
+
+  // 2. Verificar que el email coincida con su cuenta 
+  const pacienteEncontrado = db.pacientes.find(p => p.dni && p.dni.toString() === dniStr);
+  const emailGuardado = pacienteEncontrado ? pacienteEncontrado.email : usuario.email;
+
+  if (emailGuardado && emailGuardado.toLowerCase() !== email.toLowerCase()) {
+    return res.status(403).json({ mensaje: 'El correo ingresado no coincide con el registrado en tu cuenta.' });
+  }
+
+  // 3. Generar contraseña provisoria aleatoria de 6 caracteres
+  const tempPass = Math.random().toString(36).slice(-6).toUpperCase();
+  
+  // Asignamos la contraseña nueva
+  usuario.password = tempPass;
+  usuario.pass = tempPass;
+  
+  // Si no tenía email guardado previamente, se lo guardamos ahora
+  if (pacienteEncontrado && !pacienteEncontrado.email) {
+    pacienteEncontrado.email = email; 
+  }
+  
+  saveDB(db);
+
+  // 4. Enviar el correo de recuperación
+  if (GMAIL_USER && GMAIL_APP_PASS) {
+    try {
+      await transporter.sendMail({
+        from: `"Medi-Turnos" <${GMAIL_USER}>`,
+        to: email,
+        subject: 'Recuperación de Contraseña - Medi-Turnos',
+        text: `Hola ${usuario.nombre}, tu contraseña provisoria es: ${tempPass}. Por seguridad, ingresá al sistema y cambiala desde "Datos Personales".`,
+        html: `
+          <div style="font-family: sans-serif; color: #1a2e22; padding: 20px;">
+            <h2>Hola ${usuario.nombre}</h2>
+            <p>Has solicitado recuperar tu acceso al portal de <strong>Medi-Turnos</strong>.</p>
+            <p>Tu contraseña provisoria es:</p>
+            <h3 style="background: #e2e8f0; padding: 10px; display: inline-block; letter-spacing: 2px;">${tempPass}</h3>
+            <p>Por cuestiones de seguridad, te recomendamos iniciar sesión y cambiar esta contraseña desde la sección <b>Datos Personales</b>.</p>
+          </div>
+        `
+      });
+      console.log(`✅ Contraseña provisoria enviada a ${email} para el DNI ${dni}`);
+      return res.status(200).json({ ok: true, mensaje: 'Clave enviada exitosamente.' });
+    } catch (error) {
+      console.error('❌ Error enviando email de recuperación:', error);
+      return res.status(500).json({ mensaje: 'No se pudo enviar el correo. Avisá al consultorio.' });
+    }
+  } else {
+    console.error('⚠️ No se puede enviar el email porque falta el GMAIL_USER en .env');
+    return res.status(500).json({ mensaje: 'El sistema de correos no está configurado.' });
+  }
+});
+
 // REGISTRO BÁSICO DE PACIENTE
 app.post('/api/pacientes', (req, res) => {
   const { nombre, dni, obra, telefono, password } = req.body;
@@ -314,11 +406,17 @@ app.get('/api/turnos', (req, res) => {
   res.json(db.turnos);
 });
 
-// CREAR TURNO
-app.post('/api/turnos', (req, res) => {
-  const { paciente, profesional, fecha, hora, motivo } = req.body;
+// CREAR TURNO Y ENVIAR NOTIFICACIONES
+app.post('/api/turnos', async (req, res) => {
+  console.log('\n=============================================');
+  console.log('📩 [PETICIÓN DE TURNO RECIBIDA IN]');
+  console.log('Datos en req.body:', req.body);
+  
+  // Extraemos únicamente el email, ya no usamos telegram_chat_id
+  const { paciente, profesional, fecha, hora, motivo, email } = req.body;
 
   if (!paciente || !fecha || !hora) {
+    console.log('❌ Error: Faltan datos obligatorios (paciente, fecha u hora)');
     return res.status(400).json({ mensaje: 'Faltan datos del turno' });
   }
 
@@ -335,7 +433,34 @@ app.post('/api/turnos', (req, res) => {
 
   db.turnos.push(nuevoTurno);
   saveDB(db);
-  res.status(201).json(nuevoTurno);
+
+  const textoMsg = `Hola ${paciente}, tu turno quedó confirmado para el ${fecha} a las ${hora} hs. ¡Te esperamos!`;
+  let notificaciones = { email: false };
+
+  // --- LÓGICA DE NOTIFICACIÓN DE EMAIL ---
+  if (!email) {
+    console.log('⚠️ ALERTA: No se envió email porque req.body.email llegó vacío o undefined desde el navegador.');
+  } else if (!GMAIL_USER || !GMAIL_APP_PASS) {
+    console.log('⚠️ ALERTA: No se envió email porque faltan configurar GMAIL_USER o GMAIL_APP_PASS en el archivo .env.');
+  } else {
+    console.log(`📧 Intentando enviar correo mediante Nodemailer a: ${email}...`);
+    try {
+      const info = await transporter.sendMail({
+        from: `"Medi-Turnos" <${GMAIL_USER}>`,
+        to: email,
+        subject: 'Confirmación de turno médico',
+        text: textoMsg,
+        html: `<p>Hola <strong>${paciente}</strong>,</p><p>Tu turno con ${nuevoTurno.profesional} quedó registrado para el <strong>${fecha}</strong> a las <strong>${hora} hs</strong>.</p><p>¡Te esperamos!</p>`
+      });
+      console.log('✅ Correo enviado con éxito. ID de mensaje:', info.messageId);
+      notificaciones.email = true;
+    } catch (error) {
+      console.error('❌ ERROR AL ENVIAR EMAIL DESDE GMAIL:', error.message);
+    }
+  }
+
+  console.log('=============================================\n');
+  res.status(201).json({ ...nuevoTurno, notificaciones });
 });
 
 // CANCELAR TURNO

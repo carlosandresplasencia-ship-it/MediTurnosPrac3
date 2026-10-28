@@ -174,6 +174,18 @@
       "obra": "Particular",
       "telefono": "3412223344",
       "email": ""
+    },
+    {
+      "id": 25,
+      "usuario": "44567890",
+      "password": "RRZTTK",
+      "pass": "RRZTTK",
+      "rol": "paciente",
+      "nombre": "Carlos Fernandez",
+      "dni": "44567890",
+      "obra": "OSDE",
+      "telefono": "3412223344",
+      "email": ""
     }
   ],
   "turnos": [
@@ -268,6 +280,136 @@
       "motivo": "control de lunar",
       "estado": "Pendiente",
       "creado": "2026-10-27T01:20:17.912Z"
+    },
+    {
+      "id": 36,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "10:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T17:45:42.814Z"
+    },
+    {
+      "id": 37,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "10:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T18:10:10.447Z"
+    },
+    {
+      "id": 38,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T18:33:35.618Z"
+    },
+    {
+      "id": 39,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:02:44.203Z"
+    },
+    {
+      "id": 40,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:02:46.552Z"
+    },
+    {
+      "id": 41,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:02:50.168Z"
+    },
+    {
+      "id": 42,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:02:51.000Z"
+    },
+    {
+      "id": 43,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:30",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:21:53.621Z"
+    },
+    {
+      "id": 44,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "17:00",
+      "motivo": "granos",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:48:57.891Z"
+    },
+    {
+      "id": 45,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:30",
+      "motivo": "edd",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:53:08.122Z"
+    },
+    {
+      "id": 46,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:30",
+      "motivo": "edd",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T20:58:27.108Z"
+    },
+    {
+      "id": 47,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "11:30",
+      "motivo": "dsadas",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T21:06:58.806Z"
+    },
+    {
+      "id": 48,
+      "paciente": "Carlos Fernandez",
+      "profesional": "Dra. María González",
+      "fecha": "2026-10-29",
+      "hora": "10:00",
+      "motivo": "deasda",
+      "estado": "Pendiente",
+      "creado": "2026-10-28T22:21:58.563Z"
     }
   ],
   "pacientes": [
@@ -591,6 +733,30 @@
       "cp": "3400",
       "ciudad": "Corrientes",
       "provincia": "Corrientes",
+      "pais": "Argentina"
+    },
+    {
+      "id": 25,
+      "nombre": "Carlos Fernandez",
+      "dni": "44567890",
+      "obra": "OSDE",
+      "telefono": "3412223344",
+      "estado": "Habilitado",
+      "apellido": "Fernandez",
+      "tipoDoc": "DNI",
+      "numDoc": "44567890",
+      "cuil": "20445678909",
+      "sexo": "Masculino",
+      "fechaNacimiento": "2018-01-28",
+      "email": "carlosandres.plasencia@gmail.com",
+      "obraSocial": "OSDE",
+      "plan": "210",
+      "numAfiliado": "1234567",
+      "whatsapp": "3412223344",
+      "direccion": "Cerrito",
+      "cp": "937",
+      "ciudad": "Alcorta",
+      "provincia": "Santa Fe",
       "pais": "Argentina"
     }
   ],

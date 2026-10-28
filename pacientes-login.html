@@ -473,13 +473,19 @@
     }
   });
 
-  // EVENTO: RECUPERACIÓN DE CONTRASEÑA
+  // EVENTO: RECUPERACIÓN DE CONTRASEÑA (SOLO POR EMAIL)
   formRecover.addEventListener('submit', async function(e) {
     e.preventDefault();
     ocultarMensaje();
 
     const dni = document.getElementById('recoverDni').value.trim();
     const email = document.getElementById('recoverEmail').value.trim();
+
+    // Mostramos estado de carga
+    const btnSubmit = formRecover.querySelector('.btn-submit');
+    const textoOriginal = btnSubmit.textContent;
+    btnSubmit.textContent = 'Enviando...';
+    btnSubmit.disabled = true;
 
     try {
       const response = await fetch('/api/recuperar-password', {
@@ -490,27 +496,19 @@
 
       const data = await response.json();
 
-      if (response.ok && data.ok) {
-        mostrarMensaje(`📧 ${data.mensaje} Revisá tu bandeja de entrada.`, 'success');
+      if (response.ok) {
+        mostrarMensaje(`📧 ¡Listo! Se envió una clave provisoria a tu correo. Revisá tu bandeja de entrada o spam.`, 'success');
         document.getElementById('recoverDni').value = '';
         document.getElementById('recoverEmail').value = '';
       } else {
-        mostrarMensaje('❌ ' + (data.mensaje || 'No se encontró el usuario o el correo no coincide.'), 'error');
+        mostrarMensaje('❌ ' + (data.mensaje || 'Error al intentar recuperar la cuenta.'), 'error');
       }
     } catch (error) {
-      console.error('Error:', error);
-      // Simulación local si el backend no tiene el endpoint activo aún
-      const listaUsuarios = JSON.parse(localStorage.getItem('medi_usuarios')) || [];
-      const idx = listaUsuarios.findIndex(u => String(u.dni) === dni);
-      if (idx !== -1) {
-        const tempPass = Math.random().toString(36).slice(-6);
-        listaUsuarios[idx].tempPassword = tempPass;
-        listaUsuarios[idx].tempPasswordExpires = Date.now() + (3 * 24 * 60 * 60 * 1000); // 3 días
-        localStorage.setItem('medi_usuarios', JSON.stringify(listaUsuarios));
-        mostrarMensaje(`📧 Contraseña provisoria generada (Simulación local): ${tempPass} (Válida por 3 días)`, 'success');
-      } else {
-        mostrarMensaje('❌ No se encontró ningún paciente registrado con ese DNI.', 'error');
-      }
+      console.error('Error de red:', error);
+      mostrarMensaje('❌ Ocurrió un error al contactar al servidor. Reintentá más tarde.', 'error');
+    } finally {
+      btnSubmit.textContent = textoOriginal;
+      btnSubmit.disabled = false;
     }
   });
 
