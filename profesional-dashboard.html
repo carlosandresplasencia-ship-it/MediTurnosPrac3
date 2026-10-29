@@ -870,7 +870,7 @@
   // ============================================================
   async function cargarTurnosDesdeBackend() {
     try {
-      const respuesta = await fetch('http://localhost:3000/api/turnos');
+      const respuesta = await fetch('/api/turnos');
       const data = await respuesta.json();
 
       const hoy = new Date();
@@ -1280,7 +1280,7 @@
     }
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/turnos', {
+      const respuesta = await fetch('/api/turnos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

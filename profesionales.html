@@ -1482,7 +1482,7 @@ body.tema-noche #btnTemaNoche:hover {
 
   async function cargarDatosServidor() {
     try {
-      const response = await fetch('http://localhost:3000/api/datos');
+      const response = await fetch('/api/datos');
       const data = await response.json();
       
       window.listaPacientes = data.pacientes || [];
@@ -1592,7 +1592,7 @@ body.tema-noche #btnTemaNoche:hover {
 
   async function guardarDatosServidor() {
     try {
-      const response = await fetch('http://localhost:3000/api/datos', {
+      const response = await fetch('/api/datos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -3913,7 +3913,7 @@ function cambiarPaginaEstudiosHC(dir) {
           <td>${p.nombre}</td>
           <td>${p.dni}</td>
           <td>${p.obra}</td>
-          <td>${p.direccion}</td>
+          <td>${p.direccion || '-'}</td>
           <td>${p.telefono}</td>
           <td style="text-align:center; white-space:nowrap;">${botones || '-'}</td>
         </tr>`;
