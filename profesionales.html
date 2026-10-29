@@ -1482,7 +1482,7 @@ body.tema-noche #btnTemaNoche:hover {
 
   async function cargarDatosServidor() {
     try {
-      const response = await fetch('/api/datos');
+      const response = await fetch('http://localhost:3000/api/datos');
       const data = await response.json();
       
       window.listaPacientes = data.pacientes || [];
@@ -1592,7 +1592,7 @@ body.tema-noche #btnTemaNoche:hover {
 
   async function guardarDatosServidor() {
     try {
-      const response = await fetch('/api/datos', {
+      const response = await fetch('http://localhost:3000/api/datos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2060,7 +2060,23 @@ body.tema-noche #btnTemaNoche:hover {
 
   function renderizarTurnos() {
     const container = document.getElementById('appointments');
-    if (!container) return;
+    if (!container) return `
+        <div class="${rowClass}" style="${estiloFilaInicio}">
+          <div style="font-weight:700; color:#dc2626; width:90px;">
+            ${t.hora || '10:00'}<br>
+            <span style="font-size:11px; font-weight:400; color:#6b5a5a;">a ${t.horaHasta || '-'}</span>
+          </div>
+          <div style="flex:1; padding-left:10px; min-width:140px;">
+            <strong>${t.paciente || t.motivo || 'Sin nombre'}</strong>
+            <div style="font-size:12px; color:#0c4a6e; font-weight:600; margin-top:2px;">
+              📋 <strong>Tipo:</strong> ${t.tipoEvento || 'Consulta'} | 💬 <strong>Motivo:</strong> ${t.motivo || 'No especificado'}
+            </div>
+            ${t.observaciones ? `<div style="font-size:11px; color:#dc2626; background:#fff5f5; border:1px solid #fecaca; border-radius:4px; padding:3px 6px; margin-top:4px;">📝 <strong>Observaciones del paciente:</strong> ${t.observaciones}</div>` : ''}
+            <div style="font-size:11px; color:#6b5a5a; opacity:0.85; margin-top:2px;"><em>Estado: ${etiquetaTiempo}</em></div>
+          </div>
+          <span class="badge ${claseBadge}" style="margin-right:8px;">${t.estado || 'Pendiente'}</span>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">${botonesAccion || '-'}</div>
+        </div>`;
 
     if (listaTurnosLocal.length === 0) {
       container.innerHTML = `<p style="padding:15px; color:#6b5a5a;">No hay eventos ni turnos registrados para hoy.</p>`;
@@ -3913,7 +3929,7 @@ function cambiarPaginaEstudiosHC(dir) {
           <td>${p.nombre}</td>
           <td>${p.dni}</td>
           <td>${p.obra}</td>
-          <td>${p.direccion || '-'}</td>
+          <td>${p.direccion}</td>
           <td>${p.telefono}</td>
           <td style="text-align:center; white-space:nowrap;">${botones || '-'}</td>
         </tr>`;
