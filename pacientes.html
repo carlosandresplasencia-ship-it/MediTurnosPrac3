@@ -290,7 +290,6 @@
   .form-group textarea { resize: vertical; min-height: 70px; }
   .form-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
 
-  /* Botón Inteligente WhatsApp */
   .btn-copiar-telefono {
     display: inline-flex;
     align-items: center;
@@ -342,7 +341,28 @@
   }
   .slot-btn:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
   .slot-btn.selected { background: var(--green); border-color: var(--green); color: white; }
-  .slot-btn:disabled { opacity: 0.4; cursor: not-allowed; text-decoration: line-through; }
+ /* Estilo por defecto para deshabilitado (Modo Claro) */
+  .slot-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    text-decoration-color: var(--danger);
+    text-decoration-thickness: 2px;
+    background: #f1f5f9;
+    color: #94a3b8;
+    border-color: #cbd5e1;
+  }
+
+  /* Estilo específico para deshabilitado en Modo Oscuro */
+  body.dark-mode .slot-btn:disabled {
+    opacity: 0.85;
+    background: #331c24; /* Fondo rojizo suave oscuro */
+    color: #f87171;     /* Texto rojo claro legible */
+    border-color: #7f1d1d;
+    text-decoration: line-through;
+    text-decoration-color: #ef4444; /* Línea de tachado roja visible */
+    text-decoration-thickness: 2px;
+  }
 
   .selected-summary {
     margin-top: 12px; padding: 10px 14px; background: var(--green-light);
@@ -598,7 +618,7 @@
 
 <!-- MODAL OBLIGATORIO PARA NUEVO PACIENTE -->
 <div id="modalRegistroObligatorio" class="modal-overlay">
-  <div class="modal-card">
+<div class="modal-card">
     <div class="modal-header">
       <h2>📋 Completa tus datos personales</h2>
       <p>Es obligatorio completar esta información por única vez para poder navegar y solicitar turnos.</p>
@@ -659,7 +679,7 @@
 
         <div class="modal-group">
           <label>Obra Social / Prepaga <span class="req">*</span></label>
-          <select id="regObraSocial" onchange="evaluarObraSocialModal()">
+          <select id="regObraSocial" disabled style="opacity: 0.7; cursor: not-allowed;" title="Dato registrado previamente">
             <option value="Particular">Particular</option>
             <option value="OSDE">OSDE</option>
             <option value="Swiss Medical">Swiss Medical</option>
@@ -1227,7 +1247,6 @@
       return;
     }
 
-    // 1. Obtener la sesión activa
     const usuarioActivoRaw = localStorage.getItem('usuario_activo');
     if (!usuarioActivoRaw) {
       alert('Error: No se encontró la sesión activa.');
@@ -1238,7 +1257,6 @@
     const dniActual = usuarioActivo.dni || usuarioActivo.usuario;
 
     try {
-      // 2. Enviar la actualización de contraseña al servidor Node.js
       const respuesta = await fetch('/api/pacientes/cambiar-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1256,7 +1274,6 @@
         return;
       }
 
-      // 3. Actualizar la contraseña en la sesión local
       usuarioActivo.password = passNueva;
       localStorage.setItem('usuario_activo', JSON.stringify(usuarioActivo));
 
@@ -1361,25 +1378,21 @@
   }
 
   // ============================================================
-  // DATOS DEL PACIENTE
+  // DATOS DEL PACIENTE Y TURNOS GLOBALES
   // ============================================================
   let paciente = {
     nombre: 'Paciente',
     dni: '',
     telefono: '',
     email: '',
-    telegram: '', // <-- Se agrega para soportar notificaciones por bot si se carga luego
     obra: 'Particular',
     afiliado: ''
   };
 
   let datosConfirmados = false;
   let turnosFuturos = [];
-
-  let turnosAnteriores = [
-    { date: '20/08/2026', time: '11:00', type: 'Control dermatológico', status: 'Atendido', cls: 'attended' },
-    { date: '05/08/2026', time: '09:30', type: 'Primera consulta', status: 'Atendido', cls: 'attended' }
-  ];
+  let turnosAnteriores = [];
+  let todosLosTurnosGlobales = []; // Guarda la base completa del servidor para bloquear turnos duplicados
 
   // ============================================================
   // COPIAR TELÉFONO A WHATSAPP
@@ -1516,14 +1529,6 @@
     paciente.dni = dniActual || '';
     paciente.telefono = usuarioActivo.telefono || '';
     paciente.obra = usuarioActivo.obra || 'Particular';
-    paciente.email = usuarioActivo.email || '';
-    paciente.telegram = usuarioActivo.telegram || '';
-
-    // Declaramos datosLocales UNA SOLA VEZ aquí
-    const datosLocales = JSON.parse(localStorage.getItem(`datosPaciente_${dniActual}`));
-    if (datosLocales && datosLocales.email) {
-      paciente.email = datosLocales.email;
-    }
 
     const chipNombre = document.getElementById('chipNombre');
     const chipIniciales = document.getElementById('chipIniciales');
@@ -1547,27 +1552,23 @@
     if (vistaObra) vistaObra.textContent = paciente.obra;
 
     const registradoLocal = localStorage.getItem(`pacienteRegistrado_${dniActual}`);
+    const datosLocales = JSON.parse(localStorage.getItem(`datosPaciente_${dniActual}`));
 
-    // Reutilizamos datosLocales sin volver a escribir 'const'
     if (registradoLocal === 'true' && datosLocales) {
       actualizarVistaDatos(datosLocales);
-      datosConfirmados = true;
     } else {
-      // Si es la primera vez, mostramos el modal obligatorio
       const modal = document.getElementById('modalRegistroObligatorio');
       if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      // Autocompletar y bloquear datos del registro previo
       const inputNombre = document.getElementById('regNombre');
       const inputApellido = document.getElementById('regApellido');
       const inputDni = document.getElementById('regNumDoc');
       const inputTel = document.getElementById('regTelefono');
       const inputObra = document.getElementById('regObraSocial');
 
-      // Separar Nombre y Apellido si vienen juntos
       if (paciente.nombre && paciente.nombre !== 'Paciente') {
         const partesNombre = paciente.nombre.trim().split(/\s+/);
         if (inputNombre) inputNombre.value = partesNombre[0] || '';
@@ -1628,7 +1629,6 @@
       localStorage.setItem(`datosPaciente_${dniInput}`, JSON.stringify(datosPaciente));
 
       actualizarVistaDatos(datosPaciente);
-      datosConfirmados = true; // <-- Habilita la solicitud de turnos inmediatamente
 
       document.getElementById('modalRegistroObligatorio').classList.remove('active');
       document.body.style.overflow = 'auto';
@@ -1677,8 +1677,8 @@
     };
 
     try {
-      await fetch('/api/pacientes/registro-completo', {
-        method: 'POST',
+      await fetch('/api/pacientes/modificar', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datosActualizados)
       }).catch(err => console.log('Sincronizando modificaciones de manera local...'));
@@ -1826,7 +1826,7 @@
       if (items[idx]) items[idx].classList.add('active');
     }
 
-    if (id === 'mis-turnos' || id === 'confirmar-turno') {
+    if (id === 'mis-turnos' || id === 'confirmar-turno' || id === 'nuevo-turno') {
       cargarTurnosDesdeBackend();
     }
 
@@ -1840,10 +1840,8 @@
     const turnoACancelar = turnosFuturos[index];
     if (!turnoACancelar) return;
 
-    // 1. Obtener la fecha y hora actual
     const ahora = new Date();
 
-    // 2. Convertir la fecha y hora del turno a un objeto Date
     let fechaTurnoStr = turnoACancelar.iso || turnoACancelar.date;
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaTurnoStr)) {
       const partes = fechaTurnoStr.split('/');
@@ -1853,11 +1851,9 @@
     const horaTurnoStr = turnoACancelar.time24 || turnoACancelar.time || '00:00';
     const fechaHoraTurno = new Date(`${fechaTurnoStr}T${horaTurnoStr}:00`);
 
-    // 3. Calcular las horas restantes hasta el turno
     const diferenciaMs = fechaHoraTurno - ahora;
     const horasFaltantes = diferenciaMs / (1000 * 60 * 60);
 
-    // 4. Validar si faltan menos de 24 horas para el turno
     if (horasFaltantes < 24) {
       alert('⚠️ No es posible cancelar el turno.\n\nLas cancelaciones solo se permiten con al menos 24 horas de anticipación. Por favor, comunicate directamente con el consultorio.');
       showToast('Cancelación no permitida (menos de 24 hs restantes)');
@@ -1873,20 +1869,8 @@
         body: JSON.stringify({ fecha: turnoACancelar.date, hora: turnoACancelar.time, paciente: paciente.nombre })
       }).catch(err => console.log('Sincronizando de forma local...'));
 
-      turnosAnteriores.unshift({
-        date: turnoACancelar.date,
-        time: turnoACancelar.time,
-        type: turnoACancelar.type,
-        status: 'Cancelado',
-        cls: 'cancelled'
-      });
-
-      turnosFuturos.splice(index, 1);
-
       showToast('El turno ha sido cancelado exitosamente');
-      renderMisTurnos();
-      renderConfirmarTurno();
-      renderProximoTurnoAbajo();
+      await cargarTurnosDesdeBackend();
     } catch (error) {
       console.error('Error al cancelar el turno:', error);
       showToast('Error al cancelar el turno');
@@ -1981,12 +1965,13 @@
   }
 
   // ============================================================
-  // CARGAR TURNOS DESDE BACKEND
+  // CARGAR TURNOS DESDE BACKEND Y BLOQUEAR OCUPADOS
   // ============================================================
   async function cargarTurnosDesdeBackend() {
     try {
       const respuesta = await fetch('/api/turnos');
       const data = await respuesta.json();
+      todosLosTurnosGlobales = data || [];
 
       const hoy = new Date();
       hoy.setHours(0, 0, 0, 0);
@@ -2004,7 +1989,10 @@
         return new Date(fecha + 'T' + horaSegura);
       }
 
-      const turnosBackend = data.map(t => {
+      // Filtrar únicamente los turnos del paciente que está logueado
+      const turnosDelPaciente = todosLosTurnosGlobales.filter(t => t.paciente === paciente.nombre);
+
+      const turnosProcesados = turnosDelPaciente.map(t => {
         const fechaTurno = convertirFechaTurno(t.fecha, t.hora);
         const esPasado = !Number.isNaN(fechaTurno.getTime()) && fechaTurno < hoy;
         const estado = t.estado || (esPasado ? 'Atendido' : 'Pendiente');
@@ -2021,35 +2009,23 @@
         };
       });
 
-      const turnosPasadosBackend = turnosBackend.filter(t => t.esPasado);
-      const turnosFuturosBackend = turnosBackend.filter(t => !t.esPasado);
-
-      if (turnosPasadosBackend.length > 0) {
-        turnosAnteriores = turnosPasadosBackend.map(t => ({
-          date: t.date,
-          time: t.time,
-          type: t.type,
-          status: t.status,
-          cls: t.cls
-        }));
-      }
-
-      turnosAnteriores.sort((a, b) => {
-        const fechaA = convertirFechaTurno(a.date, a.time);
-        const fechaB = convertirFechaTurno(b.date, b.time);
-        return fechaB - fechaA;
+      turnosAnteriores = turnosProcesados.filter(t => t.esPasado || t.status === 'Cancelado').sort((a, b) => {
+        return convertirFechaTurno(b.date, b.time) - convertirFechaTurno(a.date, a.time);
       });
 
-      turnosFuturos = turnosFuturosBackend.sort((a, b) => {
-        const fechaA = new Date(a.iso + 'T' + (a.time24 || '00:00'));
-        const fechaB = new Date(b.iso + 'T' + (b.time24 || '00:00'));
-        return fechaA - fechaB;
+      turnosFuturos = turnosProcesados.filter(t => !t.esPasado && t.status !== 'Cancelado').sort((a, b) => {
+        return convertirFechaTurno(a.date, a.time) - convertirFechaTurno(b.date, b.time);
       });
 
       historialPaginaActual = 1;
       renderMisTurnos();
       renderConfirmarTurno();
       renderProximoTurnoAbajo();
+
+      // Si hay una fecha seleccionada en el calendario, actualizar slots ocupados en vivo
+      if (selectedDate) {
+        renderSlots(selectedDate, parseInt(selectedDate.split('-')[2], 10));
+      }
     } catch (error) {
       console.error('Error al cargar turnos del servidor:', error);
       showToast('No se pudieron sincronizar los turnos con el servidor');
@@ -2110,6 +2086,7 @@
       `;
     } else {
       const primero = turnosFuturos[0];
+      
       let html = `
         <div class="turno-destacado">
           <div class="turno-destacado-top">
@@ -2297,7 +2274,7 @@
   }
 
   // ============================================================
-  // CALENDARIO
+  // CALENDARIO Y VALIDACIÓN DE HORARIOS OCUPADOS
   // ============================================================
   let calMonth = new Date().getMonth();
   let calYear = new Date().getFullYear();
@@ -2305,11 +2282,19 @@
   let selectedTime = null;
   const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','16:00','16:30','17:00','17:30'];
 
+  // Obtiene los horarios ocupados reales consultando los turnos activos en el servidor
   function getBusySlots(dateStr) {
-    const n = parseInt(dateStr.split('-').join('').slice(-2), 10);
-    if (n % 3 === 0) return ['09:00','09:30','10:00','16:00'];
-    if (n % 3 === 1) return ['10:30','11:00','11:30','17:00'];
-    return ['09:30','12:00','16:30'];
+    if (!todosLosTurnosGlobales) return [];
+
+    let dateFormatted = dateStr;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const p = dateStr.split('-');
+      dateFormatted = `${p[2]}/${p[1]}/${p[0]}`;
+    }
+
+    return todosLosTurnosGlobales
+      .filter(t => (t.fecha === dateStr || t.fecha === dateFormatted) && t.estado !== 'Cancelado')
+      .map(t => t.hora);
   }
 
   function isAvailableDay(y, m, d) {
@@ -2359,7 +2344,9 @@
     document.getElementById('slotsBox').style.display = 'block';
     const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     document.getElementById('slotsTitle').textContent = `Horarios disponibles · ${day} de ${monthNames[calMonth]}`;
+    
     const busy = getBusySlots(dateStr);
+
     document.getElementById('slotsGrid').innerHTML = ALL_SLOTS.map(t => {
       const taken = busy.includes(t);
       return `<button type="button" class="slot-btn${selectedTime===t?' selected':''}" ${taken?'disabled':''} onclick="selectSlot('${t}')">${t}</button>`;
@@ -2410,19 +2397,20 @@
           profesional: 'Dra. María González',
           fecha: fecha,
           hora: hora,
-          motivo: motivo,
-          email: paciente.email, // <-- Se envía el correo del paciente al backend
-          telegram_chat_id: paciente.telegram // <-- Opcional, si está cargado
+          motivo: motivo
         })
       });
 
-      if (respuesta.ok) {
-        showToast('¡Turno registrado / trasladado con éxito!');
+      const resData = await respuesta.json();
+
+      if (respuesta.ok && resData.ok !== false) {
+        showToast('¡Turno registrado con éxito!');
         limpiarFormulario();
-        cargarTurnosDesdeBackend();
+        await cargarTurnosDesdeBackend();
         mostrarSeccion('mis-turnos');
       } else {
-        showToast('Error al registrar el turno en el servidor');
+        alert('⚠️ ' + (resData.mensaje || 'El horario seleccionado ya no está disponible.'));
+        await cargarTurnosDesdeBackend();
       }
     } catch (error) {
       console.error('Error de red:', error);
